@@ -12,7 +12,7 @@ landmark-fitting-cminpack：使用 [Minpack](<https://github.com/devernay/cminpa
 
 *[NOTE] landmark-fitting-cam.cpp中有详细注释。*
 
-landmarks.txt：BFM标准人脸的68个特征点的三维坐标，获取方式和格式见：[FM使用 - 获取平均脸模型的68个特征点坐标](https://www.cnblogs.com/bemfoo/p/11215643.html)
+landmarks.txt：BFM标准人脸的68个特征点的三维坐标，获取方式和格式见：[BFM使用 - 获取平均脸模型的68个特征点坐标](https://www.cnblogs.com/bemfoo/p/11215643.html)
 
 
 
