@@ -132,7 +132,7 @@ void split_string(const std::string& s, std::vector<std::string>& v, const std::
 /* 3d landmarks coordinates of standard model */
 std::vector<point3f> model_landmarks(LANDMARK_NUM);
 /* Temp 3d landmarks used for iteration */
-std::vector<point3f> fitting_landmarks(LANDMARK_NUM); // 经过旋转、平移的特征点三维坐标
+std::vector<point3f> fitting_landmarks(LANDMARK_NUM);
 
 /* Cost functor used for Ceres optimisation */
 struct CostFunctor {

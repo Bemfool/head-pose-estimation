@@ -1,6 +1,6 @@
 # 头部姿态估计
 
-使用 [dlib](<https://github.com/davisking/dlib>) 和 [Ceres](<https://github.com/ceres-solver/ceres-solver>) 进行人脸特征点拟合，从而得到头部姿态的各个参数（**yaw**, **pitch**, **roll**, tx, ty, tz）。
+使用 [dlib](<https://github.com/davisking/dlib>) 和 [Ceres](<https://github.com/ceres-solver/ceres-solver>) 进行人脸特征点拟合，从而得到头部姿态的各个参数（**yaw**, **pitch**, **roll**, tx, ty, tz）。详细原理解释见博客：<https://www.cnblogs.com/bemfoo/p/11253450.html>
 
 ## 内容
 
