@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/landmark-fitting-ceres.dir/landmark-fitting-ceres.cpp.o  -o landmark-fitting-ceres -Wl,-rpath,/usr/local/lib dlib_build/libdlib.a /usr/local/lib/libceres.so.2.0.0 -lnsl -lSM -lICE -lX11 -lXext -lpng -lz -ljpeg -lopenblas -lsqlite3 -lglog /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 -lpthread 
