@@ -18,9 +18,9 @@ landmarks.txt：BFM标准人脸的68个特征点的三维坐标，获取方式�
 
 ## 测试
 
-![only_face](https://github.com/Great-Keith/head-pose-estimation/raw/master/assets/only_face.gif)
+![only_face](https://github.com/Great-Keith/head-pose-estimation/raw/master/cpp/assets/only_face.gif)
 
-![work_place](https://github.com/Great-Keith/head-pose-estimation/raw/master/assets/work_place.gif)
+![work_place](https://github.com/Great-Keith/head-pose-estimation/raw/master/cpp/assets/work_place.gif)
 
 
 ## 编译

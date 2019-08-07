@@ -1,3 +1,3 @@
-
-video/only_face.mp4
-video/whole_work.mp4
+cpp/build
+*.so
+*.a
