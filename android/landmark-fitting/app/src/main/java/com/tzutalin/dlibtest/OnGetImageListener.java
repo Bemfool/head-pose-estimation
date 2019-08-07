@@ -37,6 +37,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.keith.ceres_solver.CeresSolver;
+import com.keith.ceres_solver.Point3f;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
@@ -73,6 +75,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private TrasparentTitleView mTransparentTitleView;
     private FloatingCameraWindow mWindow;
     private Paint mFaceLandmardkPaint;
+    private Paint mModelFaceLandmardkPaint;
 
     void initialize(
             final Context context,
@@ -89,6 +92,11 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mFaceLandmardkPaint.setColor(Color.GREEN);
         mFaceLandmardkPaint.setStrokeWidth(2);
         mFaceLandmardkPaint.setStyle(Paint.Style.STROKE);
+
+        mModelFaceLandmardkPaint = new Paint();
+        mModelFaceLandmardkPaint.setColor(Color.BLUE);
+        mModelFaceLandmardkPaint.setStrokeWidth(2);
+        mModelFaceLandmardkPaint.setStyle(Paint.Style.STROKE);
     }
 
     void deInitialize() {
@@ -247,10 +255,20 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                                 // Draw landmark
                                 ArrayList<Point> landmarks = ret.getFaceLandmarks();
+                                Point[] tmp = landmarks.toArray(new Point[0]);
                                 for (Point point : landmarks) {
                                     int pointX = (int) (point.x * resizeRatio);
                                     int pointY = (int) (point.y * resizeRatio);
                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
+                                }
+                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
+                                CeresSolver.solve(x, tmp);
+                                Point3f[] points3f = CeresSolver.transform(x);
+                                Point[] points2d = CeresSolver.transformTo2d(points3f);
+                                for (Point point : points2d) {
+                                    int pointX = (int) (point.x * resizeRatio);
+                                    int pointY = (int) (point.y * resizeRatio);
+                                    canvas.drawCircle(pointX, pointY, 2, mModelFaceLandmardkPaint);
                                 }
                             }
                         }

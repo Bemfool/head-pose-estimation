@@ -23,17 +23,18 @@ using namespace std;
 /* File name of 3d standard model landmarks */
 #define LANDMARK_FILE_NAME "landmarks.txt"
 
+jclass point2dClass;
+jclass point3fClass;
+
 class Point2d {
-private:
-    int _x;
-    int _y;
 public:
-    Point2d(int x, int y) {
-        _x = x;
-        _y = y;
+    int x;
+    int y;
+public:
+    Point2d(int _x, int _y) {
+        x = _x;
+        y = _y;
     }
-    int x() {return _x;}
-    int y() {return _y;}
 };
 jfieldID getX2d;
 jfieldID getY2d;
@@ -58,6 +59,10 @@ public:
         return result;
     }
 };
+
+jfieldID getX3f;
+jfieldID getY3f;
+jfieldID getZ3f;
 
 class point_transform_affine3d {
 public:
@@ -165,11 +170,23 @@ void transform(std::vector<Point3f>& points, const double * const x)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_keith_ceres_1solver_CeresSolver_initModelLandmarks(JNIEnv *env, jobject instance, jobject point) {
-    jclass point2dClass = env->GetObjectClass(point);
+Java_com_keith_ceres_1solver_CeresSolver_init_1(JNIEnv *env, jclass type, jobject point2d, jobject point3f) {
+    point2dClass = env->GetObjectClass(point2d);
+    point3fClass = env->GetObjectClass(point3f);
     getX2d = env->GetFieldID(point2dClass, "x", "I");
     getY2d = env->GetFieldID(point2dClass, "y", "I");
+    getX3f = env->GetFieldID(point3fClass, "x", "I");
+    getY3f = env->GetFieldID(point3fClass, "y", "I");
+    getZ3f = env->GetFieldID(point3fClass, "z", "I");
 
+    jmethodID getLandmarks = env->GetMethodID(type, "getLandmarks", "(I)Lcom/keith/ceres_solver/Point3f;");
+    jobject tmp;
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        tmp = env->CallObjectMethod(type, getLandmarks, i);
+        model_landmarks[i] = Point3f(env->GetDoubleField(tmp, getX3f),
+                                     env->GetDoubleField(tmp, getY3f),
+                                     env->GetDoubleField(tmp, getZ3f));
+    }
 }
 
 struct CostFunctor {
@@ -189,8 +206,8 @@ public:
         /* Calculate the energe (Euclid distance from two points) */
         for(unsigned long i=0; i<LANDMARK_NUM; i++) {
             jobject point = env->GetObjectArrayElement(shape, static_cast<jsize>(i));
-            long tmp1 = env->GetIntField(point, getX2d) - model_landmarks_2d.at(i).x();
-            long tmp2 = env->GetIntField(point, getY2d) - model_landmarks_2d.at(i).y();
+            long tmp1 = env->GetIntField(point, getX2d) - model_landmarks_2d.at(i).x;
+            long tmp2 = env->GetIntField(point, getY2d) - model_landmarks_2d.at(i).y;
             residual[i] = sqrt(tmp1 * tmp1 + tmp2 * tmp2);
         }
         return true;
@@ -203,7 +220,7 @@ private:
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jobject instance, jdoubleArray x_,
+Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jclass type, jdoubleArray x_,
                                        jobjectArray landmarks) {
     jdouble *x = env->GetDoubleArrayElements(x_, nullptr);
     Problem problem;
@@ -216,4 +233,43 @@ Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jobject instance, jd
     Solver::Summary summary;
     Solve(options, &problem, &summary);
     env->ReleaseDoubleArrayElements(x_, x, 0);
+}
+
+
+extern "C"
+JNIEXPORT jobjectArray JNICALL
+Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
+                                                   jdoubleArray x_) {
+    jdouble *x = env->GetDoubleArrayElements(x_, nullptr);
+    std::vector<Point3f> points(LANDMARK_NUM);
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        points[i] = model_landmarks[i];
+    }
+    transform(points, x);
+    jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point3fClass, nullptr);
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        env->SetObjectArrayElement(results, i, (jobject)points[i]);
+    }
+    env->ReleaseDoubleArrayElements(x_, x, 0);
+    return results;
+}
+
+extern "C"
+JNIEXPORT jobjectArray JNICALL
+Java_com_keith_ceres_1solver_CeresSolver_transformTo2d(JNIEnv *env, jclass type,
+                                                       jobjectArray points_) {
+    std::vector<Point3f> points(LANDMARK_NUM);
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        jobject point = env->GetObjectArrayElement(points_, i);
+        points[i] = Point3f(env->GetDoubleField(point, getX3f),
+                            env->GetDoubleField(point, getY3f),
+                            env->GetDoubleField(point, getZ3f));
+    }
+    std::vector<Point2d> points2d(LANDMARK_NUM);
+    landmarks_3d_to_2d(points, points2d);
+    jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point2dClass, nullptr);
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        env->SetObjectArrayElement(results, i, (jobject)points2d[i]);
+    }
+    return results;
 }

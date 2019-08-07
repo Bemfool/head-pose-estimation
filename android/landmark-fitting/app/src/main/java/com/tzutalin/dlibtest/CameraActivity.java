@@ -25,6 +25,10 @@ import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.keith.ceres_solver.CeresSolver;
+
+import java.io.IOException;
+
 /**
  * Created by darrenl on 2016/5/20.
  */
@@ -35,6 +39,13 @@ public class CameraActivity extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // init
+        try {
+            CeresSolver.init(getResources().getAssets().open("landmarks.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // 设置窗口始终点亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

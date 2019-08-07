@@ -1,3 +1,4 @@
 cpp/build
 *.so
 *.a
+*.dat
