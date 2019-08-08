@@ -1,0 +1,2 @@
+[1/2] Building CXX object CMakeFiles/android_ceres.dir/android_ceres.cpp.o
+[2/2] Linking CXX shared library /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libandroid_ceres.so

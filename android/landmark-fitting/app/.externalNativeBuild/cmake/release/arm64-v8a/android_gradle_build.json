@@ -1,0 +1,49 @@
+
+{
+	"buildFiles" : 
+	[
+		"/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/CMakeLists.txt"
+	],
+	"cleanCommands" : 
+	[
+		"/home/keith/android-sdk-linux/cmake/3.6.4111459/bin/cmake --build /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/arm64-v8a --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"android_ceres-Release-arm64-v8a" : 
+		{
+			"abi" : "arm64-v8a",
+			"artifactName" : "android_ceres",
+			"buildCommand" : "/home/keith/android-sdk-linux/cmake/3.6.4111459/bin/cmake --build /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/arm64-v8a --target android_ceres",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=aarch64-none-linux-android21 --gcc-toolchain=/home/keith/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/keith/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Dandroid_ceres_EXPORTS -I/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp -I/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/ceres/internal/miniglog  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC    -c ",
+					"src" : "/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/android_ceres.cpp",
+					"workingDirectory" : "/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/arm64-v8a"
+				}
+			],
+			"output" : "/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/release/obj/arm64-v8a/libandroid_ceres.so",
+			"toolchain" : "14624504415026077633"
+		},
+		"ceres-Release-arm64-v8a" : 
+		{
+			"abi" : "arm64-v8a",
+			"artifactName" : "ceres",
+			"buildType" : "release",
+			"output" : "/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/../jniLibs/arm64-v8a/libceres.so",
+			"toolchain" : "14624504415026077633"
+		}
+	},
+	"toolchains" : 
+	{
+		"14624504415026077633" : 
+		{
+			"cCompilerExecutable" : "/home/keith/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/home/keith/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+		}
+	}
+}

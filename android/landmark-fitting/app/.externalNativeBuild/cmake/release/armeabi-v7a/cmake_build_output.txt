@@ -1,0 +1,5 @@
+-- jniLibs_DIR: /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/../jniLibs
+-- tmp_dir: /home/keith/tmp
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/armeabi-v7a

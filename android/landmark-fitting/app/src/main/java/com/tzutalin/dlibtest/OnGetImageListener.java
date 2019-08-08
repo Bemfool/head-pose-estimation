@@ -261,15 +261,15 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                     int pointY = (int) (point.y * resizeRatio);
                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
                                 }
-                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
-                                CeresSolver.solve(x, tmp);
-                                Point3f[] points3f = CeresSolver.transform(x);
-                                Point[] points2d = CeresSolver.transformTo2d(points3f);
-                                for (Point point : points2d) {
-                                    int pointX = (int) (point.x * resizeRatio);
-                                    int pointY = (int) (point.y * resizeRatio);
-                                    canvas.drawCircle(pointX, pointY, 2, mModelFaceLandmardkPaint);
-                                }
+//                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
+//                                CeresSolver.solve(x, tmp);
+//                                Point3f[] points3f = CeresSolver.transform(x);
+//                                Point[] points2d = CeresSolver.transformTo2d(points3f);
+//                                for (Point point : points2d) {
+//                                    int pointX = (int) (point.x * resizeRatio);
+//                                    int pointY = (int) (point.y * resizeRatio);
+//                                    canvas.drawCircle(pointX, pointY, 2, mModelFaceLandmardkPaint);
+//                                }
                             }
                         }
 

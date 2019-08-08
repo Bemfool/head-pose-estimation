@@ -1,0 +1,22 @@
+# ninja log v5
+0	3074	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+3075	4097	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	9a8df90afe26508a
+1	3818	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+3818	4819	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	9a8df90afe26508a
+1	2522	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2522	2706	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	9a8df90afe26508a
+2	2692	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2	2590	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+3	230	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2302	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2302	2513	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2262	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2262	2527	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2160	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2160	2356	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2123	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2123	2320	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2057	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2057	2252	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196
+1	2360	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	af9c26f9afb58221
+2360	2554	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so	6ec826fe56d62196

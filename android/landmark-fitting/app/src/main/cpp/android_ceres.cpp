@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <ceres/ceres.h>
+#include <android/log.h>
 
 using ceres::NumericDiffCostFunction;
 using ceres::CostFunction;
@@ -10,6 +11,13 @@ using ceres::Problem;
 using ceres::Solver;
 using ceres::Solve;
 using namespace std;
+
+#define LOG    "ffmpegDemo-jni" // 这个是自定义的LOG的标识
+#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG,__VA_ARGS__) // 定义LOGD类型
+#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG,__VA_ARGS__) // 定义LOGI类型
+#define LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG,__VA_ARGS__) // 定义LOGW类型
+#define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG,__VA_ARGS__) // 定义LOGE类型
+#define LOGF(...)  __android_log_print(ANDROID_LOG_FATAL,LOG,__VA_ARGS__) // 定义LOGF类型
 
 /* Intrinsic parameters (from calibration) */
 #define FX 1744.327628674942
@@ -28,16 +36,18 @@ jclass point3fClass;
 
 class Point2d {
 public:
-    int x;
-    int y;
+    int x{};
+    int y{};
 public:
     Point2d(int _x, int _y) {
         x = _x;
         y = _y;
     }
+    Point2d() = default;
 };
 jfieldID getX2d;
 jfieldID getY2d;
+jmethodID init2d;
 
 class Point3f {
 public:
@@ -63,6 +73,7 @@ public:
 jfieldID getX3f;
 jfieldID getY3f;
 jfieldID getZ3f;
+jmethodID init3f;
 
 class point_transform_affine3d {
 public:
@@ -170,19 +181,25 @@ void transform(std::vector<Point3f>& points, const double * const x)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_keith_ceres_1solver_CeresSolver_init_1(JNIEnv *env, jclass type, jobject point2d, jobject point3f) {
-    point2dClass = env->GetObjectClass(point2d);
-    point3fClass = env->GetObjectClass(point3f);
+Java_com_keith_ceres_1solver_CeresSolver_init_1(JNIEnv *env, jclass type) {
+    point2dClass = env->FindClass("android/graphics/Point");
+    point3fClass = env->FindClass("com/keith/ceres_solver/Point3f");
     getX2d = env->GetFieldID(point2dClass, "x", "I");
     getY2d = env->GetFieldID(point2dClass, "y", "I");
-    getX3f = env->GetFieldID(point3fClass, "x", "I");
-    getY3f = env->GetFieldID(point3fClass, "y", "I");
-    getZ3f = env->GetFieldID(point3fClass, "z", "I");
+    init2d = env->GetMethodID(point2dClass, "<init>", "(II)V");
+    getX3f = env->GetFieldID(point3fClass, "x", "D");
+    getY3f = env->GetFieldID(point3fClass, "y", "D");
+    getZ3f = env->GetFieldID(point3fClass, "z", "D");
+    init3f = env->GetMethodID(point3fClass, "<init>", "(DDD)V");
 
-    jmethodID getLandmarks = env->GetMethodID(type, "getLandmarks", "(I)Lcom/keith/ceres_solver/Point3f;");
+    jmethodID getLandmarks = env->GetStaticMethodID(type, "getLandmarks", "(I)Lcom/keith/ceres_solver/Point3f;");
     jobject tmp;
-    for(int i=0; i<LANDMARK_NUM; i++) {
-        tmp = env->CallObjectMethod(type, getLandmarks, i);
+    for(unsigned int i=0; i<LANDMARK_NUM; i++) {
+        LOGI("#################### Call %d ##################", i);
+        tmp = env->CallStaticObjectMethod(type, getLandmarks, i);
+        if(tmp== nullptr) {
+            LOGI("#################### Stop in %d ##################", i);
+        }
         model_landmarks[i] = Point3f(env->GetDoubleField(tmp, getX3f),
                                      env->GetDoubleField(tmp, getY3f),
                                      env->GetDoubleField(tmp, getZ3f));
@@ -248,7 +265,8 @@ Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
     transform(points, x);
     jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point3fClass, nullptr);
     for(int i=0; i<LANDMARK_NUM; i++) {
-        env->SetObjectArrayElement(results, i, (jobject)points[i]);
+        jobject object = env->NewObject(point3fClass, init3f, points[i].x, points[i].y, points[i].z);
+        env->SetObjectArrayElement(results, i, object);
     }
     env->ReleaseDoubleArrayElements(x_, x, 0);
     return results;
@@ -269,7 +287,8 @@ Java_com_keith_ceres_1solver_CeresSolver_transformTo2d(JNIEnv *env, jclass type,
     landmarks_3d_to_2d(points, points2d);
     jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point2dClass, nullptr);
     for(int i=0; i<LANDMARK_NUM; i++) {
-        env->SetObjectArrayElement(results, i, (jobject)points2d[i]);
+        jobject object = env->NewObject(point2dClass, init2d, points[i].x, points[i].y);
+        env->SetObjectArrayElement(results, i, object);
     }
     return results;
 }
