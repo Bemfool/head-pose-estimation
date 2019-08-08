@@ -240,6 +240,13 @@ JNIEXPORT void JNICALL
 Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jclass type, jdoubleArray x_,
                                        jobjectArray landmarks) {
     jdouble *x = env->GetDoubleArrayElements(x_, nullptr);
+    LOGI("[CPP-SOLVE] Check landmarks is right?");
+    for(unsigned long i=0; i<LANDMARK_NUM; i++) {
+        jobject point = env->GetObjectArrayElement(landmarks, static_cast<jsize>(i));
+        LOGI("[CPP-SOLVE] => %d %d", env->GetIntField(point, getX2d),
+                                     env->GetIntField(point, getY2d));
+    }
+
     Problem problem;
     CostFunction *cost_function =
             new NumericDiffCostFunction<CostFunctor, ceres::RIDDERS, LANDMARK_NUM, 6>(
@@ -249,6 +256,7 @@ Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jclass type, jdouble
     options.minimizer_progress_to_stdout = true;
     Solver::Summary summary;
     Solve(options, &problem, &summary);
+    cout << "SUMMARY: " << summary.BriefReport() << endl;
     env->ReleaseDoubleArrayElements(x_, x, 0);
 }
 
