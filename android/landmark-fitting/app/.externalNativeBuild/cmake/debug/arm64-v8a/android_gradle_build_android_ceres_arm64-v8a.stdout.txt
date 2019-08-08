@@ -1,9 +1,1 @@
-[1/2] Building CXX object CMakeFiles/android_ceres.dir/android_ceres.cpp.o
-/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/android_ceres.cpp:15:9: warning: 'LOG' macro redefined [-Wmacro-redefined]
-#define LOG    "ffmpegDemo-jni" // 这个是自定义的LOG的标识
-        ^
-/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/src/main/cpp/ceres/internal/miniglog/glog/logging.h:310:11: note: previous definition is here
-#  define LOG(n)  MessageLogger((char *)__FILE__, __LINE__, "native", n).stream()    // NOLINT
-          ^
-1 warning generated.
-[2/2] Linking CXX shared library /home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/arm64-v8a/libandroid_ceres.so
+ninja: no work to do.

@@ -31,8 +31,8 @@ using namespace std;
 /* File name of 3d standard model landmarks */
 #define LANDMARK_FILE_NAME "landmarks.txt"
 
-jclass point2dClass;
-jclass point3fClass;
+static jclass point2dClass;
+static jclass point3fClass;
 
 class Point2d {
 public:
@@ -45,9 +45,9 @@ public:
     }
     Point2d() = default;
 };
-jfieldID getX2d;
-jfieldID getY2d;
-jmethodID init2d;
+static jfieldID getX2d;
+static jfieldID getY2d;
+static jmethodID init2d;
 
 class Point3f {
 public:
@@ -70,10 +70,10 @@ public:
     }
 };
 
-jfieldID getX3f;
-jfieldID getY3f;
-jfieldID getZ3f;
-jmethodID init3f;
+static jfieldID getX3f;
+static jfieldID getY3f;
+static jfieldID getZ3f;
+static jmethodID init3f;
 
 class point_transform_affine3d {
 public:
@@ -119,7 +119,7 @@ inline point_transform_affine3d rotate_around_y (double angle)
     const double sa = std::sin(angle);
     double m[3][3] = {
             { ca, 0, sa},
-            { 0,  1, 0},
+            { 0,  1, 0 },
             {-sa, 0, ca}
     };
     return point_transform_affine3d(m);
@@ -257,18 +257,28 @@ extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
                                                    jdoubleArray x_) {
+    LOGI("[CPP-TRANSFORM] Transforming");
     jdouble *x = env->GetDoubleArrayElements(x_, nullptr);
     std::vector<Point3f> points(LANDMARK_NUM);
     for(int i=0; i<LANDMARK_NUM; i++) {
         points[i] = model_landmarks[i];
     }
+    LOGI("[CPP-TRANSFORM] Transform modellandmarks into vector list.");
+    LOGI("[CPP-TRANSFORM] Get points[0]: %f %f %f", points[0].x, points[0].y, points[0].z);
     transform(points, x);
-    jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point3fClass, nullptr);
+    LOGI("[CPP-TRANSFORM] After transform.");
+    LOGI("[CPP-TRANSFORM] Get points[0]: %f %f %f", points[0].x, points[0].y, points[0].z);
+    jobjectArray results;
+    point3fClass = env->FindClass("com/keith/ceres_solver/Point3f");
+    results = env->NewObjectArray(LANDMARK_NUM, point3fClass, nullptr);
+    LOGI("[CPP-TRANSFORM] Init result array successfully");
     for(int i=0; i<LANDMARK_NUM; i++) {
         jobject object = env->NewObject(point3fClass, init3f, points[i].x, points[i].y, points[i].z);
+        LOGI("[CPP-TRANSFORM] Check get x: %f", env->GetDoubleField(object, getX3f));
         env->SetObjectArrayElement(results, i, object);
     }
     env->ReleaseDoubleArrayElements(x_, x, 0);
+    LOGI("[CPP-TRANSFORM] Transform ended.");
     return results;
 }
 
@@ -276,6 +286,7 @@ extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_com_keith_ceres_1solver_CeresSolver_transformTo2d(JNIEnv *env, jclass type,
                                                        jobjectArray points_) {
+    LOGI("[CPP-TRANSFORM-2D] Begin transforming points into 2d.");
     std::vector<Point3f> points(LANDMARK_NUM);
     for(int i=0; i<LANDMARK_NUM; i++) {
         jobject point = env->GetObjectArrayElement(points_, i);
@@ -283,12 +294,15 @@ Java_com_keith_ceres_1solver_CeresSolver_transformTo2d(JNIEnv *env, jclass type,
                             env->GetDoubleField(point, getY3f),
                             env->GetDoubleField(point, getZ3f));
     }
+    LOGI("[CPP-TRANSFORM-2D] Transform into vector successfully.");
     std::vector<Point2d> points2d(LANDMARK_NUM);
     landmarks_3d_to_2d(points, points2d);
+    point2dClass = env->FindClass("android/graphics/Point");
     jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point2dClass, nullptr);
     for(int i=0; i<LANDMARK_NUM; i++) {
         jobject object = env->NewObject(point2dClass, init2d, points[i].x, points[i].y);
         env->SetObjectArrayElement(results, i, object);
     }
+    LOGI("[CPP-TRANSFORM-2D] Finish transforming points into 2d.");
     return results;
 }

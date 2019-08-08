@@ -254,22 +254,29 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 canvas.drawRect(bounds, mFaceLandmardkPaint);
 
                                 // Draw landmark
+                                Log.i(TAG, "Begin drawing.");
                                 ArrayList<Point> landmarks = ret.getFaceLandmarks();
                                 Point[] tmp = landmarks.toArray(new Point[0]);
                                 for (Point point : landmarks) {
                                     int pointX = (int) (point.x * resizeRatio);
                                     int pointY = (int) (point.y * resizeRatio);
+                                    Log.i(TAG, "=> Dlib Landmarks: " + pointX + " " + pointY);
                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
                                 }
-//                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
-//                                CeresSolver.solve(x, tmp);
-//                                Point3f[] points3f = CeresSolver.transform(x);
-//                                Point[] points2d = CeresSolver.transformTo2d(points3f);
-//                                for (Point point : points2d) {
-//                                    int pointX = (int) (point.x * resizeRatio);
-//                                    int pointY = (int) (point.y * resizeRatio);
-//                                    canvas.drawCircle(pointX, pointY, 2, mModelFaceLandmardkPaint);
-//                                }
+                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
+                                CeresSolver.solve(x, tmp);
+                                Log.i(TAG, String.format("After Solve x: %f %f %f %f %f %f",
+                                        x[0], x[1], x[2], x[3], x[4], x[5]));
+                                Point3f[] points3f = CeresSolver.transform(x);
+                                Log.i(TAG, "Rotate and translate successfully.");
+                                Point[] points2d = CeresSolver.transformTo2d(points3f);
+                                Log.i(TAG, "Transform to 2d successfully.");
+                                for (Point point : points2d) {
+                                    int pointX = (int) (point.x * resizeRatio);
+                                    int pointY = (int) (point.y * resizeRatio);
+                                    Log.i(TAG, "=> My Landmarks: " + pointX + " " + pointY);
+                                    canvas.drawCircle(pointX, pointY, 2, mModelFaceLandmardkPaint);
+                                }
                             }
                         }
 
