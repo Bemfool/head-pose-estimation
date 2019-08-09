@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class OnGetImageListener implements OnImageAvailableListener {
     private static final boolean SAVE_PREVIEW_BITMAP = false;
-
+    double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
     private static final int INPUT_SIZE = 224;
     private static final String TAG = "OnGetImageListener";
 
@@ -263,7 +263,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                     Log.i(TAG, "=> Dlib Landmarks: " + pointX + " " + pointY);
                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
                                 }
-                                double[] x = {0.f, 0.f, 0.f, 0.f, 0.f, 10000.f};
                                 CeresSolver.solve(x, tmp);
                                 Log.i(TAG, String.format("After Solve x: %f %f %f %f %f %f",
                                         x[0], x[1], x[2], x[3], x[4], x[5]));

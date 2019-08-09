@@ -12,18 +12,19 @@ using ceres::Solver;
 using ceres::Solve;
 using namespace std;
 
-#define LOG    "ffmpegDemo-jni" // 这个是自定义的LOG的标识
-#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG,__VA_ARGS__) // 定义LOGD类型
-#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG,__VA_ARGS__) // 定义LOGI类型
-#define LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG,__VA_ARGS__) // 定义LOGW类型
-#define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG,__VA_ARGS__) // 定义LOGE类型
-#define LOGF(...)  __android_log_print(ANDROID_LOG_FATAL,LOG,__VA_ARGS__) // 定义LOGF类型
+/* Logger used for debugging */
+#define TAG        "CERES-CPP"
+#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, TAG,__VA_ARGS__)
+#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,  TAG,__VA_ARGS__)
+#define LOGW(...)  __android_log_print(ANDROID_LOG_WARN,  TAG,__VA_ARGS__)
+#define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, TAG,__VA_ARGS__)
+#define LOGF(...)  __android_log_print(ANDROID_LOG_FATAL, TAG,__VA_ARGS__)
 
 /* Intrinsic parameters (from calibration) */
-#define FX 1744.327628674942
-#define FY 1747.838275588676
-#define CX 800
-#define CY 600
+#define FX 2468.247368994031
+#define FY 2456.598297752814
+#define CX 1224
+#define CY 1632
 
 /* Number of landmarks */
 #define LANDMARK_NUM 68
@@ -282,7 +283,7 @@ Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
     LOGI("[CPP-TRANSFORM] Init result array successfully");
     for(int i=0; i<LANDMARK_NUM; i++) {
         jobject object = env->NewObject(point3fClass, init3f, points[i].x, points[i].y, points[i].z);
-        LOGI("[CPP-TRANSFORM] Check get x: %f", env->GetDoubleField(object, getX3f));
+        LOGI("[CPP-TRANSFORM] Check get y: %f", env->GetDoubleField(object, getY3f));
         env->SetObjectArrayElement(results, i, object);
     }
     env->ReleaseDoubleArrayElements(x_, x, 0);
@@ -307,9 +308,18 @@ Java_com_keith_ceres_1solver_CeresSolver_transformTo2d(JNIEnv *env, jclass type,
     landmarks_3d_to_2d(points, points2d);
     point2dClass = env->FindClass("android/graphics/Point");
     jobjectArray results = env->NewObjectArray(LANDMARK_NUM, point2dClass, nullptr);
+    LOGI("Real points after 2d");
     for(int i=0; i<LANDMARK_NUM; i++) {
-        jobject object = env->NewObject(point2dClass, init2d, points[i].x, points[i].y);
+        LOGI("=> %d %d", points2d[i].x, points2d[i].y);
+        jobject object = env->NewObject(point2dClass,
+                                        env->GetMethodID(point2dClass, "<init>", "(II)V"),
+                                        points2d[i].x, points2d[i].y);
         env->SetObjectArrayElement(results, i, object);
+    }
+    LOGI("Check points after 2d");
+    for(int i=0; i<LANDMARK_NUM; i++) {
+        jobject object = env->GetObjectArrayElement(results, i);
+        LOGI("=> %d %d", env->GetIntField(object, getX2d), env->GetIntField(object, getY2d));
     }
     LOGI("[CPP-TRANSFORM-2D] Finish transforming points into 2d.");
     return results;
