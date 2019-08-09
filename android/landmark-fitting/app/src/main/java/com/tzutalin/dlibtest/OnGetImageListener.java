@@ -27,6 +27,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
@@ -36,6 +37,7 @@ import android.os.Trace;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Switch;
 
 import com.keith.ceres_solver.CeresSolver;
 import com.keith.ceres_solver.Point3f;
@@ -77,11 +79,15 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Paint mFaceLandmardkPaint;
     private Paint mModelFaceLandmardkPaint;
 
+    private Switch switchBtn;
+
     void initialize(
             final Context context,
             final AssetManager assetManager,
             final TrasparentTitleView scoreView,
-            final Handler handler) {
+            final Handler handler,
+            Switch switchBtn) {
+
         this.mContext = context;
         this.mTransparentTitleView = scoreView;
         this.mInferenceHandler = handler;
@@ -97,6 +103,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mModelFaceLandmardkPaint.setColor(Color.BLUE);
         mModelFaceLandmardkPaint.setStrokeWidth(2);
         mModelFaceLandmardkPaint.setStyle(Paint.Style.STROKE);
+
+        this.switchBtn = switchBtn;
     }
 
     void deInitialize() {
@@ -145,6 +153,12 @@ public class OnGetImageListener implements OnImageAvailableListener {
         if (mScreenRotation != 0) {
             matrix.postTranslate(-dst.getWidth() / 2.0f, -dst.getHeight() / 2.0f);
             matrix.postRotate(mScreenRotation);
+            matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
+        }
+
+        if(!switchBtn.isChecked()) {
+            matrix.postTranslate(-dst.getWidth() / 2.0f, -dst.getHeight() / 2.0f);
+            matrix.postRotate(180);
             matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
         }
 

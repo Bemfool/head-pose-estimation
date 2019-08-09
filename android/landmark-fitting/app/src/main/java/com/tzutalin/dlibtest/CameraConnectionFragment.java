@@ -301,7 +301,7 @@ public class CameraConnectionFragment extends Fragment {
         // 上方要显示使用时间
         mScoreView = (TrasparentTitleView) view.findViewById(R.id.results);
         // 用于切换相机
-        switchBtn = (Switch) view.findViewById(R.id.cameraSwitch);
+        switchBtn = view.findViewById(R.id.cameraSwitch);
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -631,7 +631,11 @@ public class CameraConnectionFragment extends Fragment {
             Timber.tag(TAG).e("Exception!", e);
         }
 
-        mOnGetPreviewListener.initialize(getActivity().getApplicationContext(), getActivity().getAssets(), mScoreView, inferenceHandler);
+        mOnGetPreviewListener.initialize(getActivity().getApplicationContext(),
+                                         getActivity().getAssets(),
+                                         mScoreView,
+                                         inferenceHandler,
+                                         switchBtn);
     }
 
     /**
@@ -711,4 +715,7 @@ public class CameraConnectionFragment extends Fragment {
                     .create();
         }
     }
+
+    String getCameraId() {return cameraId; }
+
 }
