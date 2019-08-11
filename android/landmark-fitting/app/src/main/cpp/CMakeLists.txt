@@ -1,8 +1,3 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html
-
-# Sets the minimum version of CMake required to build the native library.
-
 cmake_minimum_required(VERSION 3.4.1)
 
 set(jniLibs_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs)
@@ -10,19 +5,8 @@ message(STATUS "jniLibs_DIR: ${jniLibs_DIR}")
 
 set(lib_build_DIR $ENV{HOME}/tmp)
 message(STATUS "tmp_dir: ${lib_build_DIR}")
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
 
-add_library( # Sets the name of the library.
-        android_ceres
-
-        # Sets the library as a shared library.
-        SHARED
-
-        # Provides a relative path to your source file(s).
-        android_ceres.cpp)
+add_library(android_ceres SHARED android_ceres.cpp)
 
 # 添加ceres库
 add_library(ceres SHARED IMPORTED)
@@ -33,15 +17,6 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/ceres/internal/miniglog
 )
-find_library( # Sets the name of the path variable.
-        # android系统每个类型的库会存放一个特定的位置，而log库存放在log-lib中
-        log-lib
+find_library(log-lib log )
 
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        # android系统在c环境下打log到logcat的库
-        log )
-
-target_link_libraries( # Specifies the target library.
-        android_ceres
-        ceres ${log-lib})
+target_link_libraries(android_ceres ceres ${log-lib})

@@ -21,6 +21,7 @@ using namespace std;
 #define LOGF(...)  __android_log_print(ANDROID_LOG_FATAL, TAG,__VA_ARGS__)
 
 /* Intrinsic parameters (from calibration) */
+// TODO Intrinsic parameters should change when camera changes
 #define FX 2468.247368994031
 #define FY 2456.598297752814
 #define CX 1224
@@ -29,12 +30,21 @@ using namespace std;
 /* Number of landmarks */
 #define LANDMARK_NUM 68
 
-/* File name of 3d standard model landmarks */
-#define LANDMARK_FILE_NAME "landmarks.txt"
-
+/* Not quiet useful because of garbage recycling tech of java.
+ * But some of them, like getX2d, is useful.
+ */
 static jclass point2dClass;
 static jclass point3fClass;
+static jfieldID getX2d;
+static jfieldID getY2d;
+static jmethodID init2d;
+static jfieldID getX3f;
+static jfieldID getY3f;
+static jfieldID getZ3f;
+static jmethodID init3f;
 
+
+/* Point2d is corresponding dlib::point */
 class Point2d {
 public:
     int x{};
@@ -46,10 +56,9 @@ public:
     }
     Point2d() = default;
 };
-static jfieldID getX2d;
-static jfieldID getY2d;
-static jmethodID init2d;
 
+
+/* Point3f is corresponding dlib::vector<double, 3> */
 class Point3f {
 public:
     double x;
@@ -71,11 +80,11 @@ public:
     }
 };
 
-static jfieldID getX3f;
-static jfieldID getY3f;
-static jfieldID getZ3f;
-static jmethodID init3f;
 
+/* point_transform_affine3d is corresponding to dlib::point_transform_affine3d, but much
+ * easier. The difference is that our method only have rotate parameters but translate
+ * parameters.
+ */
 class point_transform_affine3d {
 public:
     point_transform_affine3d() = default;
@@ -92,6 +101,7 @@ public:
         return result;
     }
 private:
+    /* Rotate matrix */
     double m[3][3] = {
             {1, 0, 0},
             {0, 1, 0},
@@ -99,8 +109,19 @@ private:
     };
 };
 
+
+/* Used for saving model 3d landmarks */
 std::vector<Point3f> model_landmarks(LANDMARK_NUM);
+/* Used for saving 3d landmarks during processing */
 std::vector<Point3f> fitting_landmarks(LANDMARK_NUM);
+
+
+/*
+ * Function: rotate_around_x
+ * Use: point_transform_affine3d around_x = rotate_around_x(angle);
+ * -----------------------------------------------------------------------
+ * Get transform affine of rotating around x by angle.
+ */
 
 inline point_transform_affine3d rotate_around_x (double angle)
 {
@@ -114,6 +135,14 @@ inline point_transform_affine3d rotate_around_x (double angle)
     return point_transform_affine3d(m);
 }
 
+
+/*
+ * Function: rotate_around_y
+ * Use: point_transform_affine3d around_y = rotate_around_y(angle);
+ * -----------------------------------------------------------------------
+ * Get transform affine of rotating around y by angle.
+ */
+
 inline point_transform_affine3d rotate_around_y (double angle)
 {
     const double ca = std::cos(angle);
@@ -126,6 +155,14 @@ inline point_transform_affine3d rotate_around_y (double angle)
     return point_transform_affine3d(m);
 }
 
+
+/*
+ * Function: rotate_around_z
+ * Use: point_transform_affine3d around_z = rotate_around_z(angle);
+ * -----------------------------------------------------------------------
+ * Get transform affine of rotating around z by angle.
+ */
+
 inline point_transform_affine3d rotate_around_z (double angle)
 {
     const double ca = std::cos(angle);
@@ -137,6 +174,16 @@ inline point_transform_affine3d rotate_around_z (double angle)
     };
     return point_transform_affine3d(m);
 }
+
+
+/* Function: landmarks_3d_to_2d
+ * Usage: landmarks_3d_to_2d(landmarks_3d, landmarks_2d);
+ * Parameters:
+ * 		landmarks_3d: 3d landmarks coordinates
+ * 		landmarks_2d: transformed 2d landmarks coordinates to be saved
+ * --------------------------------------------------------------------------------------------
+ * Transform 3d landmarks into 2d landmarks.
+ */
 
 void landmarks_3d_to_2d(std::vector<Point3f>& landmarks_3d, std::vector<Point2d>& landmarks_2d)
 {
@@ -157,6 +204,16 @@ void landmarks_3d_to_2d(std::vector<Point3f>& landmarks_3d, std::vector<Point2d>
 }
 
 
+/* Function: rotate
+ * Usage: rotate(points, yaw, pitch, roll);
+ * Parameters:
+ * 		points: 3d coordinates to be transform
+ * 		yaw: angle to rotate with y axis
+ * 		pitch: angle to rotate with x axis
+ * 		roll: angle to rotate with z axis
+ * --------------------------------------------------------------------------------------------
+ * Transform a series 3d points to rotate with R(yaw, pitch, roll)
+ */
 
 void rotate(std::vector<Point3f>& points, const double yaw, const double pitch, const double roll)
 {
@@ -168,11 +225,39 @@ void rotate(std::vector<Point3f>& points, const double yaw, const double pitch, 
 }
 
 
+/* Function: translate
+ * Usage: translate(points, x, y, z);
+ * Parameters:
+ * 		points: 3d coordinates to be transform
+ * 		x distance to translate along x axis
+ * 		y: distance to translate along y axis
+ * 		z: distance to translate along z axis
+ * --------------------------------------------------------------------------------------------
+ * Transform a series 3d points to translate with T(x, y, z)
+ */
+
 void translate(std::vector<Point3f>& points, const double x, const double y, const double z)
 {
     for (auto &point : points)
         point = point + Point3f(x, y, z);
 }
+
+
+/* Function: transform
+ * Usage: transform(x);
+ * Parameters:
+ * 		points: 3d coordinates to be transform
+ * 		x: a double array of length 6.
+ * 			x[0]: yaw
+ * 			x[1]: pitch
+ * 			x[2]: roll
+ * 			x[3]: tx
+ * 			x[4]: ty
+ * 			x[5]: tz
+ * --------------------------------------------------------------------------------------------
+ * Transform a series 3d points to rotate with R(yaw, pitch, roll) and translate with T(tx, ty, tz).
+ * Actually, this function encapsulates rotate() and translate() two functions.
+ */
 
 void transform(std::vector<Point3f>& points, const double * const x)
 {
@@ -207,6 +292,8 @@ Java_com_keith_ceres_1solver_CeresSolver_init_1(JNIEnv *env, jclass type) {
     }
 }
 
+
+/* Cost functor used for Ceres optimisation */
 struct CostFunctor {
 public:
     explicit CostFunctor(JNIEnv *_env, jobjectArray _shape){
@@ -262,21 +349,48 @@ Java_com_keith_ceres_1solver_CeresSolver_solve(JNIEnv *env, jclass type, jdouble
 }
 
 
+/* Function: Java_com_keith_ceres_1solver_CeresSolver_transform
+ * Package: com.keith.ceres_solver.CeresSolver
+ * Native Function: transform
+ * Usage: Point3f[] points = transform(x);
+ * Parameters:
+ * 		env: JNI environment
+ * 		type: CeresSolver.this
+ * 		x_: a double array of length 6.
+ * 			x_[0]: yaw
+ * 			x_[1]: pitch
+ * 			x_[2]: roll
+ * 			x_[3]: tx
+ * 			x_[4]: ty
+ * 			x_[5]: tz
+ * 	Return:
+ * 	    Point3f[] points after transformed
+ * --------------------------------------------------------------------------------------------
+ * Transform a series 3d points to rotate with R(yaw, pitch, roll) and translate with T(tx, ty, tz).
+ * Actually, this function encapsulates rotate() and translate() two functions.
+ * The same as transform in cpp and used by java.
+ */
+
 extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
                                                    jdoubleArray x_) {
     LOGI("[CPP-TRANSFORM] Transforming");
     jdouble *x = env->GetDoubleArrayElements(x_, nullptr);
+
+    /* transform model landmarks into vector list */
     std::vector<Point3f> points(LANDMARK_NUM);
     for(int i=0; i<LANDMARK_NUM; i++) {
         points[i] = model_landmarks[i];
     }
-    LOGI("[CPP-TRANSFORM] Transform modellandmarks into vector list.");
+    LOGI("[CPP-TRANSFORM] Transform model landmarks into vector list.");
+
     LOGI("[CPP-TRANSFORM] Get points[0]: %f %f %f", points[0].x, points[0].y, points[0].z);
     transform(points, x);
     LOGI("[CPP-TRANSFORM] After transform.");
     LOGI("[CPP-TRANSFORM] Get points[0]: %f %f %f", points[0].x, points[0].y, points[0].z);
+
+    /* transform results into jobjectArray */
     jobjectArray results;
     point3fClass = env->FindClass("com/keith/ceres_solver/Point3f");
     results = env->NewObjectArray(LANDMARK_NUM, point3fClass, nullptr);
@@ -290,6 +404,22 @@ Java_com_keith_ceres_1solver_CeresSolver_transform(JNIEnv *env, jclass type,
     LOGI("[CPP-TRANSFORM] Transform ended.");
     return results;
 }
+
+
+/* Function: Java_com_keith_ceres_1solver_CeresSolver_transformTo2d
+ * Package: com.keith.ceres_solver.CeresSolver
+ * Native Function: transformTo2d
+ * Usage: Point[] points = transformTo2d(points_);
+ * Parameters:
+ *   	env: JNI environment
+ * 		type: CeresSolver.this
+ * 		points_: 3d landmarks coordinates
+ * Return:
+ * 		Point[] transformed 2d landmarks coordinates
+ * --------------------------------------------------------------------------------------------
+ * Transform 3d landmarks into 2d landmarks.
+ * The same as transform in cpp and used by java.
+ */
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL

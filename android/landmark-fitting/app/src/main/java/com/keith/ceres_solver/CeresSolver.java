@@ -7,12 +7,21 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * CeresSolver is android port for Ceres of cpp version.
+ * @author Bemfoo
+ */
 public class CeresSolver {
     private static final String TAG = "CeresSolver";
     /**
      * Number of landmarks. Here is 68 because dlib support 68 landmarks detection.
      */
     private static final int LANDMARK_NUM = 68;
+
+    /**
+     * Scale of 3d landmarks or model.
+     */
+    private static final double RATIO = 100.0;
 
     /**
      * Model 3d landmarks, loaded from 'landmarks.txt'.
@@ -39,9 +48,9 @@ public class CeresSolver {
             int i = 0;
             while((line = bufReader.readLine()) != null) {
                 String[] nums = line.split(" ");
-                modelLandmarks[i] = new Point3f(Double.valueOf(nums[0]),
-                                                Double.valueOf(nums[1]),
-                                                Double.valueOf(nums[2]));
+                modelLandmarks[i] = new Point3f(Double.valueOf(nums[0]) / RATIO,
+                                                Double.valueOf(nums[1]) / RATIO,
+                                                Double.valueOf(nums[2]) / RATIO);
                 Log.i(TAG, "[" + i + "] => "
                         + modelLandmarks[i].x + " "
                         + modelLandmarks[i].y + " "

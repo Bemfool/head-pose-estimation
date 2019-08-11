@@ -76,9 +76,18 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private FaceDet mFaceDet;
     private TrasparentTitleView mTransparentTitleView;
     private FloatingCameraWindow mWindow;
+
+    /* Used for drawing green/blue color circle to focus landmarks.
+     *      mFaceLandmarkPaint:         draw landmarks got from dlib;
+     *      mModelFaceLandmarkPaint:    draw landmarks got from ceres;
+     */
     private Paint mFaceLandmardkPaint;
     private Paint mModelFaceLandmardkPaint;
 
+    /* Used for check current camera.
+     * If checked, current camera is back.
+     * Otherwise, current camera is front.
+     */
     private Switch switchBtn;
 
     void initialize(
@@ -156,6 +165,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
             matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
         }
 
+        /* If using front camera, matrix should rotate 180 */
         if(!switchBtn.isChecked()) {
             matrix.postTranslate(-dst.getWidth() / 2.0f, -dst.getHeight() / 2.0f);
             matrix.postRotate(180);
@@ -270,6 +280,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 // Draw landmark
                                 Log.i(TAG, "Begin drawing.");
                                 ArrayList<Point> landmarks = ret.getFaceLandmarks();
+
+                                /* Transform landmarks to array, which is needed by JNI */
                                 Point[] tmp = landmarks.toArray(new Point[0]);
                                 for (Point point : landmarks) {
                                     int pointX = (int) (point.x * resizeRatio);
@@ -277,13 +289,20 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                     Log.i(TAG, "=> Dlib Landmarks: " + pointX + " " + pointY);
                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
                                 }
+                                /* Use ceres solver to close optimality */
                                 CeresSolver.solve(x, tmp);
                                 Log.i(TAG, String.format("After Solve x: %f %f %f %f %f %f",
                                         x[0], x[1], x[2], x[3], x[4], x[5]));
+
+                                /* Use optimality to transform model's position */
                                 Point3f[] points3f = CeresSolver.transform(x);
                                 Log.i(TAG, "Rotate and translate successfully.");
+
+                                /* And map to 2d coordinate */
                                 Point[] points2d = CeresSolver.transformTo2d(points3f);
                                 Log.i(TAG, "Transform to 2d successfully.");
+
+                                /* Draw landmarks got from ceres */
                                 for (Point point : points2d) {
                                     int pointX = (int) (point.x * resizeRatio);
                                     int pointY = (int) (point.y * resizeRatio);
@@ -292,7 +311,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 }
                             }
                         }
-
                         mWindow.setRGBBitmap(mCroppedBitmap);
                         mIsComputing = false;
                     }

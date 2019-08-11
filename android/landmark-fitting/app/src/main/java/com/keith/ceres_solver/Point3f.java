@@ -1,5 +1,9 @@
 package com.keith.ceres_solver;
 
+/**
+ * Point3f is used for clear 3d point expression.
+ * And use android.graphics.Point to express 2d point.
+ */
 public class Point3f {
     public double x;
     public double y;
