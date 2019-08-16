@@ -1,1 +1,0 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/landmark-fitting-solvepnp.dir/landmark-fitting-solvepnp.cpp.o  -o landmark-fitting-solvepnp dlib_build/libdlib.a -lpthread -lnsl -lSM -lICE -lX11 -lXext -lpng -lz -ljpeg -lopenblas -lsqlite3 

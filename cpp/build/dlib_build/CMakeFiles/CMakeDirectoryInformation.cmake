@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/home/keith/dlib-19.17/dlib")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/keith/Desktop/landmark-fitting/build")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/keith/Desktop/head-pose-estimation/cpp/build")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

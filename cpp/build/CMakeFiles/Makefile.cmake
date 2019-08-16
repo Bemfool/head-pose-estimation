@@ -19,10 +19,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/lib/cmake/eigen3/Eigen3Config.cmake"
   "/usr/lib/cmake/eigen3/Eigen3ConfigVersion.cmake"
   "/usr/lib/cmake/eigen3/Eigen3Targets.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-config-version.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-config.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-targets-release.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-targets.cmake"
   "/usr/local/lib/cmake/Ceres/CeresConfig.cmake"
   "/usr/local/lib/cmake/Ceres/CeresConfigVersion.cmake"
   "/usr/local/lib/cmake/Ceres/CeresTargets-release.cmake"
@@ -30,6 +26,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/local/lib/cmake/Ceres/FindEigen.cmake"
   "/usr/local/lib/cmake/Ceres/FindGflags.cmake"
   "/usr/local/lib/cmake/Ceres/FindGlog.cmake"
+  "/usr/local/lib/cmake/gflags/gflags-config-version.cmake"
+  "/usr/local/lib/cmake/gflags/gflags-config.cmake"
+  "/usr/local/lib/cmake/gflags/gflags-nonamespace-targets-release.cmake"
+  "/usr/local/lib/cmake/gflags/gflags-nonamespace-targets.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig-version.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig.cmake"
   "/usr/local/share/OpenCV/OpenCVModules-release.cmake"
@@ -84,8 +84,10 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/landmark-fitting-cam.dir/DependInfo.cmake"
-  "CMakeFiles/landmark-fitting-cminpack.dir/DependInfo.cmake"
-  "CMakeFiles/landmark-fitting-ceres.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-cam-ceres-analyticdiff.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-oneshot-cminpack.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-cam-ceres-numericdiff.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/DependInfo.cmake"
   "dlib_build/CMakeFiles/dlib.dir/DependInfo.cmake"
   )

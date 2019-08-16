@@ -4,12 +4,14 @@
 
 ## 内容
 
-| 文件名                    | 内容                                                         |
-| ------------------------- | ------------------------------------------------------------ |
-| landmark-fiitting-cam     | 使用Ceres和dlib，用电脑自带摄像头进行实时拟合。              |
-| landmark-fitting-ceres    | 使用Ceres和dlib，读取单张照片进行拟合。                      |
-| landmark-fitting-cminpack | 使用 [Minpack](<https://github.com/devernay/cminpack>) 和dlib，读取单张照片进行拟合（存在问题）。 |
-| landmarks.txt             | BFM标准人脸的68个特征点的三维坐标，获取方式和格式见：[BFM使用 - 获取平均脸模型的68个特征点坐标](https://www.cnblogs.com/bemfoo/p/11215643.html) |
+| 文件名                             | 内容                                                         | 照片来源 | 求解器  | 差分方式 | 是否可用 |
+| ---------------------------------- | ------------------------------------------------------------ | -------- | ------- | -------- | -------- |
+| hpe-cam-ceres-analyticdiff.cpp     | 使用Ceres中的自动差分和dlib，用电脑自带摄像头进行实时拟合。  | 摄像头   | ceres   | 分析差分 | 否       |
+| hpe-cam-ceres-numericdiff.cpp      | 使用Ceres中的数值差分和dlib，读取单张照片进行拟合。          | 摄像头   | ceres   | 数值差分 | 是       |
+| hpe-oneshot-ceres-analyticdiff.cpp | 使用Ceres中的自动差分和dlib，读取单张照片进行拟合            | 本地图片 | ceres   | 分析差分 | 否       |
+| hpe-oneshot-ceres-numericdiff.cpp  | 使用Ceres中的数值差分和dlib，读取单张照片进行拟合            | 本地图片 | ceres   | 数值差分 | 是       |
+| hpe-oneshot-cminpack.cpp           | 使用 [Minpack](<https://github.com/devernay/cminpack>) 和dlib，读取单张照片进行拟合（存在问题）。 |          | minpack | 数值差分 | 否       |
+| landmarks.txt                      | BFM标准人脸的68个特征点的三维坐标，获取方式和格式见：[BFM使用 - 获取平均脸模型的68个特征点坐标](https://www.cnblogs.com/bemfoo/p/11215643.html) |      |
 
 *[NOTE] landmark-fitting-cam.cpp中有详细注释。*
 

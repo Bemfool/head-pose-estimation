@@ -48,24 +48,13 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/keith/Desktop/landmark-fitting
+CMAKE_SOURCE_DIR = /home/keith/Desktop/head-pose-estimation/cpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/keith/Desktop/landmark-fitting/build
+CMAKE_BINARY_DIR = /home/keith/Desktop/head-pose-estimation/cpp/build
 
 #=============================================================================
 # Targets provided globally by CMake.
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -78,11 +67,22 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/landmark-fitting/build/CMakeFiles /home/keith/Desktop/landmark-fitting/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/landmark-fitting/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,43 +111,69 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named landmark-fitting-cam
+# Target rules for targets named hpe-oneshot-ceres-numericdiff
 
 # Build rule for target.
-landmark-fitting-cam: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 landmark-fitting-cam
-.PHONY : landmark-fitting-cam
+hpe-oneshot-ceres-numericdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-oneshot-ceres-numericdiff
+.PHONY : hpe-oneshot-ceres-numericdiff
 
 # fast build rule for target.
-landmark-fitting-cam/fast:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cam.dir/build.make CMakeFiles/landmark-fitting-cam.dir/build
-.PHONY : landmark-fitting-cam/fast
+hpe-oneshot-ceres-numericdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build
+.PHONY : hpe-oneshot-ceres-numericdiff/fast
 
 #=============================================================================
-# Target rules for targets named landmark-fitting-cminpack
+# Target rules for targets named hpe-cam-ceres-analyticdiff
 
 # Build rule for target.
-landmark-fitting-cminpack: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 landmark-fitting-cminpack
-.PHONY : landmark-fitting-cminpack
+hpe-cam-ceres-analyticdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-analyticdiff
+.PHONY : hpe-cam-ceres-analyticdiff
 
 # fast build rule for target.
-landmark-fitting-cminpack/fast:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cminpack.dir/build.make CMakeFiles/landmark-fitting-cminpack.dir/build
-.PHONY : landmark-fitting-cminpack/fast
+hpe-cam-ceres-analyticdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build
+.PHONY : hpe-cam-ceres-analyticdiff/fast
 
 #=============================================================================
-# Target rules for targets named landmark-fitting-ceres
+# Target rules for targets named hpe-oneshot-cminpack
 
 # Build rule for target.
-landmark-fitting-ceres: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 landmark-fitting-ceres
-.PHONY : landmark-fitting-ceres
+hpe-oneshot-cminpack: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-oneshot-cminpack
+.PHONY : hpe-oneshot-cminpack
 
 # fast build rule for target.
-landmark-fitting-ceres/fast:
-	$(MAKE) -f CMakeFiles/landmark-fitting-ceres.dir/build.make CMakeFiles/landmark-fitting-ceres.dir/build
-.PHONY : landmark-fitting-ceres/fast
+hpe-oneshot-cminpack/fast:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/build
+.PHONY : hpe-oneshot-cminpack/fast
+
+#=============================================================================
+# Target rules for targets named hpe-cam-ceres-numericdiff
+
+# Build rule for target.
+hpe-cam-ceres-numericdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-numericdiff
+.PHONY : hpe-cam-ceres-numericdiff
+
+# fast build rule for target.
+hpe-cam-ceres-numericdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/build
+.PHONY : hpe-cam-ceres-numericdiff/fast
+
+#=============================================================================
+# Target rules for targets named hpe-oneshot-ceres-analyticdiff
+
+# Build rule for target.
+hpe-oneshot-ceres-analyticdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-oneshot-ceres-analyticdiff
+.PHONY : hpe-oneshot-ceres-analyticdiff
+
+# fast build rule for target.
+hpe-oneshot-ceres-analyticdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build
+.PHONY : hpe-oneshot-ceres-analyticdiff/fast
 
 #=============================================================================
 # Target rules for targets named dlib
@@ -162,86 +188,140 @@ dlib/fast:
 	$(MAKE) -f dlib_build/CMakeFiles/dlib.dir/build.make dlib_build/CMakeFiles/dlib.dir/build
 .PHONY : dlib/fast
 
-landmark-fitting-cam.o: landmark-fitting-cam.cpp.o
+hpe-cam-ceres-analyticdiff.o: hpe-cam-ceres-analyticdiff.cpp.o
 
-.PHONY : landmark-fitting-cam.o
-
-# target to build an object file
-landmark-fitting-cam.cpp.o:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cam.dir/build.make CMakeFiles/landmark-fitting-cam.dir/landmark-fitting-cam.cpp.o
-.PHONY : landmark-fitting-cam.cpp.o
-
-landmark-fitting-cam.i: landmark-fitting-cam.cpp.i
-
-.PHONY : landmark-fitting-cam.i
-
-# target to preprocess a source file
-landmark-fitting-cam.cpp.i:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cam.dir/build.make CMakeFiles/landmark-fitting-cam.dir/landmark-fitting-cam.cpp.i
-.PHONY : landmark-fitting-cam.cpp.i
-
-landmark-fitting-cam.s: landmark-fitting-cam.cpp.s
-
-.PHONY : landmark-fitting-cam.s
-
-# target to generate assembly for a file
-landmark-fitting-cam.cpp.s:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cam.dir/build.make CMakeFiles/landmark-fitting-cam.dir/landmark-fitting-cam.cpp.s
-.PHONY : landmark-fitting-cam.cpp.s
-
-landmark-fitting-ceres.o: landmark-fitting-ceres.cpp.o
-
-.PHONY : landmark-fitting-ceres.o
+.PHONY : hpe-cam-ceres-analyticdiff.o
 
 # target to build an object file
-landmark-fitting-ceres.cpp.o:
-	$(MAKE) -f CMakeFiles/landmark-fitting-ceres.dir/build.make CMakeFiles/landmark-fitting-ceres.dir/landmark-fitting-ceres.cpp.o
-.PHONY : landmark-fitting-ceres.cpp.o
+hpe-cam-ceres-analyticdiff.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/hpe-cam-ceres-analyticdiff.cpp.o
+.PHONY : hpe-cam-ceres-analyticdiff.cpp.o
 
-landmark-fitting-ceres.i: landmark-fitting-ceres.cpp.i
+hpe-cam-ceres-analyticdiff.i: hpe-cam-ceres-analyticdiff.cpp.i
 
-.PHONY : landmark-fitting-ceres.i
+.PHONY : hpe-cam-ceres-analyticdiff.i
 
 # target to preprocess a source file
-landmark-fitting-ceres.cpp.i:
-	$(MAKE) -f CMakeFiles/landmark-fitting-ceres.dir/build.make CMakeFiles/landmark-fitting-ceres.dir/landmark-fitting-ceres.cpp.i
-.PHONY : landmark-fitting-ceres.cpp.i
+hpe-cam-ceres-analyticdiff.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/hpe-cam-ceres-analyticdiff.cpp.i
+.PHONY : hpe-cam-ceres-analyticdiff.cpp.i
 
-landmark-fitting-ceres.s: landmark-fitting-ceres.cpp.s
+hpe-cam-ceres-analyticdiff.s: hpe-cam-ceres-analyticdiff.cpp.s
 
-.PHONY : landmark-fitting-ceres.s
+.PHONY : hpe-cam-ceres-analyticdiff.s
 
 # target to generate assembly for a file
-landmark-fitting-ceres.cpp.s:
-	$(MAKE) -f CMakeFiles/landmark-fitting-ceres.dir/build.make CMakeFiles/landmark-fitting-ceres.dir/landmark-fitting-ceres.cpp.s
-.PHONY : landmark-fitting-ceres.cpp.s
+hpe-cam-ceres-analyticdiff.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/hpe-cam-ceres-analyticdiff.cpp.s
+.PHONY : hpe-cam-ceres-analyticdiff.cpp.s
 
-landmark-fitting-cminpack.o: landmark-fitting-cminpack.cpp.o
+hpe-cam-ceres-numericdiff.o: hpe-cam-ceres-numericdiff.cpp.o
 
-.PHONY : landmark-fitting-cminpack.o
+.PHONY : hpe-cam-ceres-numericdiff.o
 
 # target to build an object file
-landmark-fitting-cminpack.cpp.o:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cminpack.dir/build.make CMakeFiles/landmark-fitting-cminpack.dir/landmark-fitting-cminpack.cpp.o
-.PHONY : landmark-fitting-cminpack.cpp.o
+hpe-cam-ceres-numericdiff.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/hpe-cam-ceres-numericdiff.cpp.o
+.PHONY : hpe-cam-ceres-numericdiff.cpp.o
 
-landmark-fitting-cminpack.i: landmark-fitting-cminpack.cpp.i
+hpe-cam-ceres-numericdiff.i: hpe-cam-ceres-numericdiff.cpp.i
 
-.PHONY : landmark-fitting-cminpack.i
+.PHONY : hpe-cam-ceres-numericdiff.i
 
 # target to preprocess a source file
-landmark-fitting-cminpack.cpp.i:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cminpack.dir/build.make CMakeFiles/landmark-fitting-cminpack.dir/landmark-fitting-cminpack.cpp.i
-.PHONY : landmark-fitting-cminpack.cpp.i
+hpe-cam-ceres-numericdiff.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/hpe-cam-ceres-numericdiff.cpp.i
+.PHONY : hpe-cam-ceres-numericdiff.cpp.i
 
-landmark-fitting-cminpack.s: landmark-fitting-cminpack.cpp.s
+hpe-cam-ceres-numericdiff.s: hpe-cam-ceres-numericdiff.cpp.s
 
-.PHONY : landmark-fitting-cminpack.s
+.PHONY : hpe-cam-ceres-numericdiff.s
 
 # target to generate assembly for a file
-landmark-fitting-cminpack.cpp.s:
-	$(MAKE) -f CMakeFiles/landmark-fitting-cminpack.dir/build.make CMakeFiles/landmark-fitting-cminpack.dir/landmark-fitting-cminpack.cpp.s
-.PHONY : landmark-fitting-cminpack.cpp.s
+hpe-cam-ceres-numericdiff.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/hpe-cam-ceres-numericdiff.cpp.s
+.PHONY : hpe-cam-ceres-numericdiff.cpp.s
+
+hpe-oneshot-ceres-analyticdiff.o: hpe-oneshot-ceres-analyticdiff.cpp.o
+
+.PHONY : hpe-oneshot-ceres-analyticdiff.o
+
+# target to build an object file
+hpe-oneshot-ceres-analyticdiff.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.o
+.PHONY : hpe-oneshot-ceres-analyticdiff.cpp.o
+
+hpe-oneshot-ceres-analyticdiff.i: hpe-oneshot-ceres-analyticdiff.cpp.i
+
+.PHONY : hpe-oneshot-ceres-analyticdiff.i
+
+# target to preprocess a source file
+hpe-oneshot-ceres-analyticdiff.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.i
+.PHONY : hpe-oneshot-ceres-analyticdiff.cpp.i
+
+hpe-oneshot-ceres-analyticdiff.s: hpe-oneshot-ceres-analyticdiff.cpp.s
+
+.PHONY : hpe-oneshot-ceres-analyticdiff.s
+
+# target to generate assembly for a file
+hpe-oneshot-ceres-analyticdiff.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.s
+.PHONY : hpe-oneshot-ceres-analyticdiff.cpp.s
+
+hpe-oneshot-ceres-numericdiff.o: hpe-oneshot-ceres-numericdiff.cpp.o
+
+.PHONY : hpe-oneshot-ceres-numericdiff.o
+
+# target to build an object file
+hpe-oneshot-ceres-numericdiff.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/hpe-oneshot-ceres-numericdiff.cpp.o
+.PHONY : hpe-oneshot-ceres-numericdiff.cpp.o
+
+hpe-oneshot-ceres-numericdiff.i: hpe-oneshot-ceres-numericdiff.cpp.i
+
+.PHONY : hpe-oneshot-ceres-numericdiff.i
+
+# target to preprocess a source file
+hpe-oneshot-ceres-numericdiff.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/hpe-oneshot-ceres-numericdiff.cpp.i
+.PHONY : hpe-oneshot-ceres-numericdiff.cpp.i
+
+hpe-oneshot-ceres-numericdiff.s: hpe-oneshot-ceres-numericdiff.cpp.s
+
+.PHONY : hpe-oneshot-ceres-numericdiff.s
+
+# target to generate assembly for a file
+hpe-oneshot-ceres-numericdiff.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/hpe-oneshot-ceres-numericdiff.cpp.s
+.PHONY : hpe-oneshot-ceres-numericdiff.cpp.s
+
+hpe-oneshot-cminpack.o: hpe-oneshot-cminpack.cpp.o
+
+.PHONY : hpe-oneshot-cminpack.o
+
+# target to build an object file
+hpe-oneshot-cminpack.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.o
+.PHONY : hpe-oneshot-cminpack.cpp.o
+
+hpe-oneshot-cminpack.i: hpe-oneshot-cminpack.cpp.i
+
+.PHONY : hpe-oneshot-cminpack.i
+
+# target to preprocess a source file
+hpe-oneshot-cminpack.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.i
+.PHONY : hpe-oneshot-cminpack.cpp.i
+
+hpe-oneshot-cminpack.s: hpe-oneshot-cminpack.cpp.s
+
+.PHONY : hpe-oneshot-cminpack.s
+
+# target to generate assembly for a file
+hpe-oneshot-cminpack.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.s
+.PHONY : hpe-oneshot-cminpack.cpp.s
 
 # Help Target
 help:
@@ -249,21 +329,29 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
-	@echo "... landmark-fitting-cam"
-	@echo "... landmark-fitting-cminpack"
 	@echo "... rebuild_cache"
-	@echo "... landmark-fitting-ceres"
+	@echo "... hpe-oneshot-ceres-numericdiff"
+	@echo "... hpe-cam-ceres-analyticdiff"
+	@echo "... hpe-oneshot-cminpack"
+	@echo "... hpe-cam-ceres-numericdiff"
+	@echo "... hpe-oneshot-ceres-analyticdiff"
+	@echo "... edit_cache"
 	@echo "... dlib"
-	@echo "... landmark-fitting-cam.o"
-	@echo "... landmark-fitting-cam.i"
-	@echo "... landmark-fitting-cam.s"
-	@echo "... landmark-fitting-ceres.o"
-	@echo "... landmark-fitting-ceres.i"
-	@echo "... landmark-fitting-ceres.s"
-	@echo "... landmark-fitting-cminpack.o"
-	@echo "... landmark-fitting-cminpack.i"
-	@echo "... landmark-fitting-cminpack.s"
+	@echo "... hpe-cam-ceres-analyticdiff.o"
+	@echo "... hpe-cam-ceres-analyticdiff.i"
+	@echo "... hpe-cam-ceres-analyticdiff.s"
+	@echo "... hpe-cam-ceres-numericdiff.o"
+	@echo "... hpe-cam-ceres-numericdiff.i"
+	@echo "... hpe-cam-ceres-numericdiff.s"
+	@echo "... hpe-oneshot-ceres-analyticdiff.o"
+	@echo "... hpe-oneshot-ceres-analyticdiff.i"
+	@echo "... hpe-oneshot-ceres-analyticdiff.s"
+	@echo "... hpe-oneshot-ceres-numericdiff.o"
+	@echo "... hpe-oneshot-ceres-numericdiff.i"
+	@echo "... hpe-oneshot-ceres-numericdiff.s"
+	@echo "... hpe-oneshot-cminpack.o"
+	@echo "... hpe-oneshot-cminpack.i"
+	@echo "... hpe-oneshot-cminpack.s"
 .PHONY : help
 
 
