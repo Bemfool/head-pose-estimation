@@ -34,8 +34,12 @@ target_link_libraries (hpe-oneshot-cminpack m)
 find_package(Ceres REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
 
+include_directories(./include)
+add_library(hpe SHARED lib/hpe.cpp)
+target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS})
+
 add_executable(hpe-oneshot-ceres-numericdiff hpe-oneshot-ceres-numericdiff.cpp)
-target_link_libraries(hpe-oneshot-ceres-numericdiff dlib::dlib)
+target_link_libraries(hpe-oneshot-ceres-numericdiff dlib::dlib hpe)
 target_link_libraries(hpe-oneshot-ceres-numericdiff ${CERES_LIBRARIES})
 
 add_executable(hpe-oneshot-ceres-analyticdiff hpe-oneshot-ceres-analyticdiff.cpp)
@@ -49,10 +53,9 @@ add_executable(hpe-cam-ceres-analyticdiff hpe-cam-ceres-analyticdiff.cpp)
 find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
    include_directories(${OpenCV_INCLUDE_DIRS})
-   target_link_libraries(hpe-cam-ceres-numericdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} )
+   target_link_libraries(hpe-cam-ceres-numericdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} hpe)
    target_link_libraries(hpe-cam-ceres-analyticdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} )
 else()
    message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
 endif()
-
 

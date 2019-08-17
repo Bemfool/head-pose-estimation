@@ -613,6 +613,9 @@ head-pose-estimation_BINARY_DIR:STATIC=/home/keith/Desktop/head-pose-estimation/
 //Value Computed by CMake
 head-pose-estimation_SOURCE_DIR:STATIC=/home/keith/Desktop/head-pose-estimation/cpp
 
+//Dependencies for the target
+hpe_LIB_DEPENDS:STATIC=general;dlib::dlib;general;ceres;general;cminpack;general;m;
+
 //Path to a library.
 mkl_core:FILEPATH=mkl_core-NOTFOUND
 

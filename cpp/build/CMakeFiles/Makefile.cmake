@@ -84,6 +84,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/hpe.dir/DependInfo.cmake"
   "CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/DependInfo.cmake"
   "CMakeFiles/hpe-cam-ceres-analyticdiff.dir/DependInfo.cmake"
   "CMakeFiles/hpe-oneshot-cminpack.dir/DependInfo.cmake"

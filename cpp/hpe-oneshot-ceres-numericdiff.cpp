@@ -1,20 +1,5 @@
-#include <dlib/image_processing/frontal_face_detector.h>
-#include <dlib/image_processing/render_face_detections.h>
-#include <dlib/image_processing.h>
-#include <dlib/gui_widgets.h>
-#include <dlib/image_io.h>
-#include <opencv2/highgui/highgui.hpp>
-#include <dlib/opencv.h>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <math.h>
-#include <assert.h>
-#include "ceres/ceres.h"
-#include "glog/logging.h"
-#include <vector>
+#include "hpe.h"
 
-using ceres::NumericDiffCostFunction;
 using ceres::CostFunction;
 using ceres::Problem;
 using ceres::Solver;
@@ -44,35 +29,6 @@ std::vector<point3f> model_landmarks(LANDMARK_NUM);	// 标准模型的特征点�
 std::vector<point3f> fitting_landmarks(LANDMARK_NUM); // 经过旋转、平移的特征点三维坐标
 array2d<rgb_pixel> img;
 
-struct CostFunctor {
-	bool operator()(const double* const x, double* residual) const {
-		fitting_landmarks.clear();
-		for(std::vector<point3f>::iterator iter=model_landmarks.begin(); iter!=model_landmarks.end(); ++iter)
-			fitting_landmarks.push_back(*iter);
-		transform(fitting_landmarks, x);
-		std::vector<point> model_landmarks_2d;
-		landmarks_3d_to_2d(fitting_landmarks, model_landmarks_2d);
-
-		// std::vector<full_object_detection> model_shapes;
-		// std::vector<point> parts;
-		// for(int i=0; i<LANDMARK_NUM; i++)
-		// 	parts.push_back(model_landmarks_2d.at(i));
-		// model_shapes.push_back(full_object_detection(rectangle(), parts));
-		// image_window win;
-		// win.clear_overlay();
-		// win.set_image(img);
-		// win.add_overlay(render_face_detections(model_shapes));
-		// cin.get();
-
-		for(int i=0; i<LANDMARK_NUM; i++) {
-			long tmp1 = current_shape.part(i).x() - model_landmarks_2d.at(i).x();
-			long tmp2 = current_shape.part(i).y() - model_landmarks_2d.at(i).y();
-			residual[i] = sqrt(tmp1 * tmp1 + tmp2 * tmp2);
-		}
-		return true;
-	}
-};
-
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
@@ -96,10 +52,10 @@ int main(int argc, char** argv)
 		}
 
 		// 打开图片获得人脸框选
-		// cout << "processing image " << "2019-07-21-123713.jpg" << endl;
-		// load_image(img, "2019-07-21-123713.jpg");
-		cout << "processing image " << "2019-07-23-214644.jpg" << endl;
-		load_image(img, "2019-07-23-214644.jpg");
+		cout << "processing image " << "2019-07-21-123713.jpg" << endl;
+		load_image(img, "2019-07-21-123713.jpg");
+		// cout << "processing image " << "2019-07-23-214644.jpg" << endl;
+		// load_image(img, "2019-07-23-214644.jpg");
 
 
 		pyramid_up(img);
@@ -113,17 +69,25 @@ int main(int argc, char** argv)
 			current_shape = shape;
 
 			// 变量定义以及初始化
-			double x[6] = {0.f, 0.f, 0.f, 0.f, 0.f, 100000};
+			double x[6] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
 
-			Problem problem;
-			CostFunction* cost_function =
-				new NumericDiffCostFunction<CostFunctor, ceres::RIDDERS, LANDMARK_NUM, 6>(new CostFunctor());
-			problem.AddResidualBlock(cost_function, NULL, x);
+			coarse_estimation(x, shape, model_landmarks);
+
+			Problem real_problem, coarse_problem;
+			// CostFunction* cost_function =
+			// 	new NumericDiffCostFunction<CostFunctor, ceres::RIDDERS, LANDMARK_NUM, 6>(new CostFunctor());
+			CostFunction* coarse_cost_function =
+				new NumericDiffCostFunction<NumericCostFunctor, ceres::RIDDERS, LANDMARK_NUM, 6>(new NumericCostFunctor(shape, model_landmarks, COARSE));
+			CostFunction* real_cost_function =
+				new NumericDiffCostFunction<NumericCostFunctor, ceres::RIDDERS, LANDMARK_NUM, 6>(new NumericCostFunctor(shape, model_landmarks, REAL));
+			coarse_problem.AddResidualBlock(coarse_cost_function, NULL, x);
+			real_problem.AddResidualBlock(real_cost_function, NULL, x);
 			Solver::Options options;
 			// options.gradient_tolerance = true;
 			options.minimizer_progress_to_stdout = true;
 			Solver::Summary summary;
-			Solve(options, &problem, &summary);
+			Solve(options, &coarse_problem, &summary);
+			Solve(options, &real_problem, &summary);
 			std::cout << summary.BriefReport() << endl;
 			std::cout << "x : " << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << " " << x[5] << endl;
 			

@@ -129,6 +129,8 @@ void translate(std::vector<point3f>& points, const double x, const double y, con
  */
 void split_string(const std::string& s, std::vector<std::string>& v, const std::string& c);
 
+void coarse_estimation(double *x, full_object_detection shape);
+
 /* 3d landmarks coordinates of standard model */
 std::vector<point3f> model_landmarks(LANDMARK_NUM);
 /* Temp 3d landmarks used for iteration */
@@ -142,9 +144,9 @@ public:
   	virtual bool Evaluate(double const* const* parameters,
                        	  double* residuals,
                           double** jacobians) const {
-		double yaw   = parameters[0][0] / 100.0;
-		double pitch = parameters[0][1] / 100.0;
-		double roll  = parameters[0][2] / 100.0;
+		double yaw   = parameters[0][0];
+		double pitch = parameters[0][1];
+		double roll  = parameters[0][2];
 		double tx    = parameters[0][3];
 		double ty    = parameters[0][4];
 		double tz    = parameters[0][5];
@@ -164,15 +166,9 @@ public:
 
 		for(std::vector<point3f>::iterator iter=fitting_landmarks.begin(); iter!=fitting_landmarks.end(); ++iter) {
 			double X = iter->x(), Y = iter->y(), Z = iter->z(); 
-			iter->x() = (c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + (s1 * s3 + c1 * c3 * s2 ) * Z;
-			iter->y() = (c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z;
-			iter->z() = (-s2    ) * X + (c2 * s3               ) * Y + (c2 * c3                ) * Z; 
-		}
-
-		for(std::vector<point3f>::iterator iter=fitting_landmarks.begin(); iter!=fitting_landmarks.end(); ++iter) {
-			iter->x() = iter->x() + tx;
-			iter->y() = iter->y() + ty;
-			iter->z() = iter->z() + tz;
+			iter->x() = (c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + (s1 * s3 + c1 * c3 * s2 ) * Z + tx;
+			iter->y() = (c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+			iter->z() = (-s2    ) * X + (c2 * s3               ) * Y + (c2 * c3                ) * Z + tz; 
 		}
 		
 		landmarks_3d_to_2d(fitting_landmarks, model_landmarks_2d);
@@ -224,11 +220,13 @@ public:
 
 				long residual1 = model_landmarks_2d.at(i).x() - shape.part(i).x();
 				long residual2 = model_landmarks_2d.at(i).y() - shape.part(i).y();
+				// cout << "residual: " << residual1 << " " << residual2 << endl;
 
 				double para1 = 2.0, para2 = 2.0;
 				jacobians[0][i * 6 + 0] = para1 * residual1 * dud2 + para1 * residual2 * dvd2;
 				jacobians[0][i * 6 + 1] = para1 * residual1 * dud3 + para1 * residual2 * dvd3;
 				jacobians[0][i * 6 + 2] = para1 * residual1 * dud1 + para1 * residual2 * dvd1;
+
 				jacobians[0][i * 6 + 3] = para2 * residual1 * dudtx;
 				jacobians[0][i * 6 + 4] = para2 * residual2 * dvdty;
 				jacobians[0][i * 6 + 5] = para2 * residual1 * dudtz + para2 * residual2 * dvdtz;
@@ -289,10 +287,12 @@ int main(int argc, char** argv)
 			cout << "Number of faces detected: " << dets.size() << endl;
 	
 			std::vector<full_object_detection> shapes;
-			
+
 			for (unsigned long j = 0; j < dets.size(); ++j) {
 				/* Use dlib to get landmarks */
 				full_object_detection shape = sp(img, dets[j]);
+
+				coarse_estimation(x, shape);
 
 				/* Use Ceres to solve problem */
 				Problem problem;
@@ -311,10 +311,19 @@ int main(int argc, char** argv)
 				 * 		Green lines: fit landmarks
 				 * 		Blue lines: dlib landmarks
 				 */
+				double yaw = x[0], pitch = x[1], roll = x[2];
+				double tx = x[3], ty = x[4], tz = x[5];
+				double c1 = cos(roll  * pi / 180.0), s1 = sin(roll  * pi / 180.0);
+				double c2 = cos(yaw   * pi / 180.0), s2 = sin(yaw   * pi / 180.0);
+				double c3 = cos(pitch * pi / 180.0), s3 = sin(pitch * pi / 180.0);
 				fitting_landmarks.clear();
-				for(std::vector<point3f>::iterator iter=model_landmarks.begin(); iter!=model_landmarks.end(); ++iter)
-					fitting_landmarks.push_back(*iter);
-				transform(fitting_landmarks, x);
+				for(std::vector<point3f>::iterator iter=fitting_landmarks.begin(); iter!=fitting_landmarks.end(); ++iter) {
+					double X = iter->x(), Y = iter->y(), Z = iter->z(); 
+					iter->x() = (c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + (s1 * s3 + c1 * c3 * s2 ) * Z + tx;
+					iter->y() = (c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+					iter->z() = (-s2    ) * X + (c2 * s3               ) * Y + (c2 * c3                ) * Z + tz; 
+				}
+				
 				std::vector<point> model_landmarks_2d;
 				landmarks_3d_to_2d(fitting_landmarks, model_landmarks_2d);
 				std::vector<full_object_detection> model_shapes;
@@ -416,4 +425,47 @@ void translate(std::vector<point3f>& points, const double x, const double y, con
 {
 	for(std::vector<point3f>::iterator iter=points.begin(); iter!=points.end(); ++iter)
 		*iter = (*iter) + point3f(x, y, z);
+}
+
+void coarse_estimation(double *x, full_object_detection shape)
+{
+	for(int i=0; i<3; i++)
+		if(x[i] < 0 || x[i]>360)
+			x[i] = 0;
+	for(int i=3; i<6; i++)
+		if(x[i] < -1e7 || x[i] > 1e7) 
+			x[i] = 0;
+
+	dlib::vector<double, 2> vec;
+	dlib::vector<double, 2> model_vec;
+	dlib::vector<double, 2> x_axis;
+	x_axis.x() = 1;
+	x_axis.y() = 0;
+
+	/* Estimate roll angle using line crossing two eyes */
+	vec = shape.part(46) - shape.part(37);
+	x[2] = acos(vec.dot(x_axis) / (vec.length() * x_axis.length()) ) * 180.0 / pi;
+	cout << "roll: " << x[2] << endl;
+
+	/* Estimate scaling size using line crossing two temples */
+	vec = shape.part(1) - shape.part(17);
+	model_vec = model_landmarks.at(1) - model_landmarks.at(17); 
+	double scale = vec.length() / model_vec.length();
+	cout << vec.length() << " " << model_vec.length() << endl;
+	cout << "scale: " <<  scale << endl;
+	
+	for(auto iter=model_landmarks.begin(); iter!=model_landmarks.end(); ++iter) {
+		// cout << "before: " << iter->x();
+		(*iter) = (*iter) * scale;
+		// cout << "after: " << iter->x() << endl;
+	}
+
+	/* Estimate yaw angle using line crossing mouth */
+	vec = shape.part(49) - shape.part(55);
+	model_vec = model_landmarks.at(49) - model_landmarks.at(55); 
+	cout << "mouth: " << vec.length() << " " << model_vec.length() << endl;
+	cout << vec.length() / model_vec.length() << endl;
+	cout << acos(vec.length() / model_vec.length()) << endl; 
+	x[0] = acos(vec.length() / model_vec.length()) * 180.0 / pi;
+	cout << "yaw: " << x[0] << endl;
 }

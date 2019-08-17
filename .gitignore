@@ -1,4 +1,4 @@
-cpp/build
+cpp/build/*
 *.so
 *.a
 *.dat

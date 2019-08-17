@@ -1,27 +1,32 @@
 [
 {
   "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
-  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -isystem /usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/hpe-oneshot-ceres-numericdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-numericdiff.cpp",
+  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -Dhpe_EXPORTS -I/home/keith/Desktop/head-pose-estimation/cpp/./include -isystem /usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG -fPIC   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe.dir/lib/hpe.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/lib/hpe.cpp",
+  "file": "/home/keith/Desktop/head-pose-estimation/cpp/lib/hpe.cpp"
+},
+{
+  "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
+  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -I/home/keith/Desktop/head-pose-estimation/cpp/./include -isystem /usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/hpe-oneshot-ceres-numericdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-numericdiff.cpp",
   "file": "/home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-numericdiff.cpp"
 },
 {
   "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
-  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -isystem /usr/local/include -isystem /usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-cam-ceres-analyticdiff.dir/hpe-cam-ceres-analyticdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-analyticdiff.cpp",
+  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -I/home/keith/Desktop/head-pose-estimation/cpp/./include -isystem /usr/local/include -isystem /usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-cam-ceres-analyticdiff.dir/hpe-cam-ceres-analyticdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-analyticdiff.cpp",
   "file": "/home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-analyticdiff.cpp"
 },
 {
   "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
-  "command": "/usr/bin/c++   -I/usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/..  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-cminpack.cpp",
+  "command": "/usr/bin/c++   -I/home/keith/Desktop/head-pose-estimation/cpp/./include -I/usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/..  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-cminpack.cpp",
   "file": "/home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-cminpack.cpp"
 },
 {
   "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
-  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -isystem /usr/local/include -isystem /usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-cam-ceres-numericdiff.dir/hpe-cam-ceres-numericdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-numericdiff.cpp",
+  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -I/home/keith/Desktop/head-pose-estimation/cpp/./include -isystem /usr/local/include -isystem /usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-cam-ceres-numericdiff.dir/hpe-cam-ceres-numericdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-numericdiff.cpp",
   "file": "/home/keith/Desktop/head-pose-estimation/cpp/hpe-cam-ceres-numericdiff.cpp"
 },
 {
   "directory": "/home/keith/Desktop/head-pose-estimation/cpp/build",
-  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -isystem /usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-analyticdiff.cpp",
+  "command": "/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -I/home/keith/Desktop/head-pose-estimation/cpp/./include -isystem /usr/local/include -I/usr/local/include/opencv -I/home/keith/dlib-19.17/dlib/.. -isystem /usr/include/eigen3  -O3 -DNDEBUG   -DDLIB_JPEG_SUPPORT -DDLIB_USE_BLAS -DDLIB_USE_LAPACK -DDLIB_PNG_SUPPORT -Wreturn-type -std=gnu++11 -o CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.o -c /home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-analyticdiff.cpp",
   "file": "/home/keith/Desktop/head-pose-estimation/cpp/hpe-oneshot-ceres-analyticdiff.cpp"
 },
 {

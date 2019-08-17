@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named hpe
+
+# Build rule for target.
+hpe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe
+.PHONY : hpe
+
+# fast build rule for target.
+hpe/fast:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/build
+.PHONY : hpe/fast
+
+#=============================================================================
 # Target rules for targets named hpe-oneshot-ceres-numericdiff
 
 # Build rule for target.
@@ -323,6 +336,33 @@ hpe-oneshot-cminpack.cpp.s:
 	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.s
 .PHONY : hpe-oneshot-cminpack.cpp.s
 
+lib/hpe.o: lib/hpe.cpp.o
+
+.PHONY : lib/hpe.o
+
+# target to build an object file
+lib/hpe.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/hpe.cpp.o
+.PHONY : lib/hpe.cpp.o
+
+lib/hpe.i: lib/hpe.cpp.i
+
+.PHONY : lib/hpe.i
+
+# target to preprocess a source file
+lib/hpe.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/hpe.cpp.i
+.PHONY : lib/hpe.cpp.i
+
+lib/hpe.s: lib/hpe.cpp.s
+
+.PHONY : lib/hpe.s
+
+# target to generate assembly for a file
+lib/hpe.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/hpe.cpp.s
+.PHONY : lib/hpe.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -330,12 +370,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... edit_cache"
+	@echo "... hpe"
 	@echo "... hpe-oneshot-ceres-numericdiff"
 	@echo "... hpe-cam-ceres-analyticdiff"
 	@echo "... hpe-oneshot-cminpack"
 	@echo "... hpe-cam-ceres-numericdiff"
 	@echo "... hpe-oneshot-ceres-analyticdiff"
-	@echo "... edit_cache"
 	@echo "... dlib"
 	@echo "... hpe-cam-ceres-analyticdiff.o"
 	@echo "... hpe-cam-ceres-analyticdiff.i"
@@ -352,6 +393,9 @@ help:
 	@echo "... hpe-oneshot-cminpack.o"
 	@echo "... hpe-oneshot-cminpack.i"
 	@echo "... hpe-oneshot-cminpack.s"
+	@echo "... lib/hpe.o"
+	@echo "... lib/hpe.i"
+	@echo "... lib/hpe.s"
 .PHONY : help
 
 
