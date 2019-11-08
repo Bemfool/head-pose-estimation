@@ -23,27 +23,34 @@ cmake_minimum_required(VERSION 2.8.12)
 
 add_subdirectory(/home/keith/dlib-19.17/dlib dlib_build)
 
-add_executable(hpe-oneshot-cminpack hpe-oneshot-cminpack.cpp)
-target_link_libraries(hpe-oneshot-cminpack dlib::dlib)
-
 include_directories (${CMINPACK_SOURCE_DIR})
 link_directories (${CMINPACK_BINARY_DIR})
-target_link_libraries (hpe-oneshot-cminpack cminpack)
-target_link_libraries (hpe-oneshot-cminpack m)
 
 find_package(Ceres REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
 
+find_package(HDF5 REQUIRED C CXX)
+
 include_directories(./include)
-add_library(hpe SHARED lib/hpe.cpp)
-target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS})
+add_library(bfm SHARED lib/bfm.cpp lib/data.cpp lib/random.cpp)
+target_link_libraries(bfm dlib::dlib m ${OpenCV_LIBS}  ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+add_library(hpe SHARED lib/hpe.cpp lib/transform.cpp lib/string_utils.cpp)
+target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS} )
+
+add_executable(bfm-test bfm-test.cpp)
+target_link_libraries(bfm-test bfm) 
+
+add_executable(hpe-oneshot-cminpack hpe-oneshot-cminpack.cpp)
+target_link_libraries(hpe-oneshot-cminpack dlib::dlib hpe)
+target_link_libraries (hpe-oneshot-cminpack cminpack)
+target_link_libraries (hpe-oneshot-cminpack m)
 
 add_executable(hpe-oneshot-ceres-numericdiff hpe-oneshot-ceres-numericdiff.cpp)
 target_link_libraries(hpe-oneshot-ceres-numericdiff dlib::dlib hpe)
 target_link_libraries(hpe-oneshot-ceres-numericdiff ${CERES_LIBRARIES})
 
 add_executable(hpe-oneshot-ceres-analyticdiff hpe-oneshot-ceres-analyticdiff.cpp)
-target_link_libraries(hpe-oneshot-ceres-analyticdiff dlib::dlib)
+target_link_libraries(hpe-oneshot-ceres-analyticdiff dlib::dlib hpe)
 target_link_libraries(hpe-oneshot-ceres-analyticdiff ${CERES_LIBRARIES})
 
 
@@ -54,8 +61,7 @@ find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
    include_directories(${OpenCV_INCLUDE_DIRS})
    target_link_libraries(hpe-cam-ceres-numericdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} hpe)
-   target_link_libraries(hpe-cam-ceres-analyticdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} )
+   target_link_libraries(hpe-cam-ceres-analyticdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} hpe)
 else()
    message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
 endif()
-
