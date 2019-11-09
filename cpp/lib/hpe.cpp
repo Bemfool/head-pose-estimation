@@ -2,7 +2,9 @@
 
 /************************ Numeric  Cost Functor ******************************/
 
-NumericCostFunctor::NumericCostFunctor(full_object_detection _shape, std::vector<point3f> _model_landmarks, op_type _type){ 
+NumericCostFunctor::NumericCostFunctor(full_object_detection _shape, 
+									   std::vector<point3f> _model_landmarks, 
+									   op_type _type){ 
 	shape = _shape; 
 	model_landmarks = _model_landmarks;
 	type = _type;
@@ -114,7 +116,7 @@ void coarse_estimation(double *x, full_object_detection shape, std::vector<point
 			x[0] = - acos(vec.length() / model_vec.length()) * 180.0 / pi;
 		}
 	}
-	cout << "yaw: " << x[0] << endl;
+	std::cout << "yaw: " << x[0] << std::endl;
 
 	/* Esitimate pitch angle using vertical line crossing mouth */
 	// vec = shape.part(52) - shape.part(58);
@@ -152,4 +154,90 @@ bool get_landmark(std::vector<point3f>& model_landmarks)
 		cout << "no LANDMARK_FILE_NAME file" << endl;
 		return false;
 	}
+}
+
+ShapeNumericCostFunctor::ShapeNumericCostFunctor(full_object_detection _shape) : shape(_shape) {} 
+
+bool ShapeNumericCostFunctor::operator()(const double* const x, double* residual) const {
+	/* Init landmarks to be transformed */
+	std::vector<point3f> landmarks3d(LANDMARK_NUM);
+	get_landmarks(x, landmarks3d);
+	std::vector<point2d> landmarks2d;	
+
+	/* We use Z1Y2X3 format of Tait–Bryan angles */
+	double c1 = cos(roll  * pi / 180.0), s1 = sin(roll  * pi / 180.0);
+	double c2 = cos(yaw   * pi / 180.0), s2 = sin(yaw   * pi / 180.0);
+	double c3 = cos(pitch * pi / 180.0), s3 = sin(pitch * pi / 180.0);
+
+	for(std::vector<point3f>::iterator iter=landmarks3d.begin(); iter!=landmarks3d.end(); ++iter) {
+		double X = iter->x(), Y = iter->y(), Z = iter->z(); 
+		iter->x() = ( c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + ( s1 * s3 + c1 * c3 * s2) * Z + tx;
+		iter->y() = ( c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+		iter->z() = (-s2     ) * X + (c2 * s3               ) * Y + ( c2 * c3               ) * Z + tz; 
+	}
+	
+	landmarks_3d_to_2d(PINHOLE, landmarks3d, landmarks2d);
+
+	/* Calculate the energe (Euclid distance from two points) */
+	for(int i=0; i<LANDMARK_NUM; i++) {
+		long tmp1 = this->shape.part(i).x() - landmarks2d.at(i).x();
+		long tmp2 = this->shape.part(i).y() - landmarks2d.at(i).y();
+		residual[i] = sqrt(tmp1 * tmp1 + tmp2 * tmp2);
+	}
+	return true;
+}
+
+
+void get_landmarks(const double* const x, std::vector<point3f> &landmarks) {
+	dlib::matrix<double> tmp(N_PC, 1);
+	for(int i=0; i<N_PC; i++)
+		tmp(i) = x[i];
+	current_shape = coef2object(tmp, shape_mu, shape_pc, shape_ev);
+	get_landmarks(landmarks);
+}
+
+void get_landmarks(std::vector<point3f> &landmarks) {
+	for(int i=0; i<LANDMARK_NUM; i++) {
+		landmarks[i].x() = current_shape(landmark_idx[i] * 3, 0);
+		landmarks[i].y() = current_shape(landmark_idx[i] * 3 + 1, 0);
+		landmarks[i].z() = current_shape(landmark_idx[i] * 3 + 2, 0);
+	}
+}
+
+HeadPoseNumericCostFunctor::HeadPoseNumericCostFunctor(full_object_detection _shape) : shape(_shape) {} 
+
+bool HeadPoseNumericCostFunctor::operator()(const double* const x, double* residual) const {
+	/* Init landmarks to be transformed */
+	std::vector<point3f> landmarks3d(LANDMARK_NUM);
+	get_landmarks(landmarks3d);
+	std::vector<point2d> landmarks2d;	
+	
+	double yaw   = x[0];
+	double pitch = x[1];
+	double roll  = x[2];
+	double tx    = x[3];
+	double ty    = x[4];
+	double tz    = x[5];
+
+	/* We use Z1Y2X3 format of Tait–Bryan angles */
+	double c1 = cos(roll  * pi / 180.0), s1 = sin(roll  * pi / 180.0);
+	double c2 = cos(yaw   * pi / 180.0), s2 = sin(yaw   * pi / 180.0);
+	double c3 = cos(pitch * pi / 180.0), s3 = sin(pitch * pi / 180.0);
+
+	for(std::vector<point3f>::iterator iter=landmarks3d.begin(); iter!=landmarks3d.end(); ++iter) {
+		double X = iter->x(), Y = iter->y(), Z = iter->z(); 
+		iter->x() = ( c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + ( s1 * s3 + c1 * c3 * s2) * Z + tx;
+		iter->y() = ( c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+		iter->z() = (-s2     ) * X + (c2 * s3               ) * Y + ( c2 * c3               ) * Z + tz; 
+	}
+	
+	landmarks_3d_to_2d(PINHOLE, landmarks3d, landmarks2d);
+
+	/* Calculate the energe (Euclid distance from two points) */
+	for(int i=0; i<LANDMARK_NUM; i++) {
+		long tmp1 = shape.part(i).x() - landmarks2d.at(i).x();
+		long tmp2 = shape.part(i).y() - landmarks2d.at(i).y();
+		residual[i] = sqrt(tmp1 * tmp1 + tmp2 * tmp2);
+	}
+	return true;
 }

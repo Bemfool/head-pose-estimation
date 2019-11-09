@@ -1,7 +1,8 @@
 ﻿#pragma once
-#include <vector>
 #include <random>
 #include <time.h>
+#include <dlib/image_io.h>
+#include <dlib/opencv.h>
 
 /* Function: randn
  * Usage: 
@@ -15,4 +16,4 @@
  * miu = 1.
  */
 
-std::vector<double> randn(int n, double scale = 1.0);
+dlib::matrix<double> randn(int n, double scale);

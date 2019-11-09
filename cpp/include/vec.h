@@ -14,6 +14,14 @@ typedef dlib::point point2d;
  * Two vectors multiply each other element by element.
  */
 
+inline dlib::matrix<double> dot(dlib::matrix<double> lhs, dlib::matrix<double> rhs) {
+	int length = (lhs.nr()==1) ? lhs.nc() : lhs.nr();
+	dlib::matrix<double> res(length, 1);
+	for(int i=0; i<length; i++)
+		res(i) = lhs(i) * rhs(i);
+	return res;
+}
+
 template<typename T> std::vector<T> dot(std::vector<T> a, std::vector<T> b) {
 	if (a.size() != b.size()) {
 		std::cout << "[ERROR] dot size is not compartible." << std::endl;
@@ -56,4 +64,35 @@ template<typename T> std::vector<T> operator+(const std::vector<T> &lhs, const s
 	for (int i = 0; i < lhs.size(); i++) 
 		res.push_back(lhs.at(i) + rhs.at(i));
 	return res;
+}
+
+
+inline dlib::matrix<double> vec2mat(std::vector<double> &v) {
+	dlib::matrix<double> m(v.size(), 1);
+	for(int i=0; i<v.size(); i++)
+		m(i, 1) = v.at(i);
+	return m;
+}
+
+inline dlib::matrix<double> vec2mat(std::vector<point3f> &v) {
+	dlib::matrix<double> m(v.size() * 3, 1);
+	for(int i=0; i<v.size(); i++) {
+		m(i * 3, 1)     = v.at(i).x();
+		m(i * 3 + 1, 1) = v.at(i).y();
+		m(i * 3 + 2, 1) = v.at(i).z();
+	}
+	return m;
+}
+
+inline dlib::matrix<double> vec2mat(std::vector<std::vector<point3f>> &v) {
+	int w = v.size(), h = v.at(0).size();
+	dlib::matrix<double> m(w, h);
+	for(int i=0; i<w; i++) {
+		for(int j=0; j<h; j++) {
+			m(i, j * 3) = v.at(i).at(j).x();
+			m(i, j * 3 + 1) = v.at(i).at(j).y();
+			m(i, j * 3 + 2) = v.at(i).at(j).z();
+		}
+	}
+	return m;
 }
