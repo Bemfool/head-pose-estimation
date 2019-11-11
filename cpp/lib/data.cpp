@@ -9,7 +9,7 @@ dlib::matrix<double> tex_coef(N_PC, 1);
 dlib::matrix<double> tex_mu(N_VERTICE * 3, 1);
 dlib::matrix<double> tex_ev(N_PC, 1);
 dlib::matrix<double> tex_pc(N_VERTICE * 3, N_PC);
-std::vector<point3d> tl(N_FACE_HDF5);	/* triangle list */
+std::vector<point3d> tl(N_FACE);	/* triangle list */
 dlib::matrix<double> current_shape(N_VERTICE * 3, 1);
 dlib::matrix<double> current_tex(N_VERTICE * 3, 1);
 
