@@ -2,14 +2,16 @@
 
 /* data collection */
 dlib::matrix<double> shape_coef(N_PC, 1);
-
 dlib::matrix<double> shape_mu(N_VERTICE * 3, 1);
 dlib::matrix<double> shape_ev(N_PC, 1);
 dlib::matrix<double> shape_pc(N_VERTICE * 3, N_PC);
-
+dlib::matrix<double> tex_coef(N_PC, 1);
+dlib::matrix<double> tex_mu(N_VERTICE * 3, 1);
+dlib::matrix<double> tex_ev(N_PC, 1);
+dlib::matrix<double> tex_pc(N_VERTICE * 3, N_PC);
 std::vector<point3d> tl(N_FACE_HDF5);	/* triangle list */
-
 dlib::matrix<double> current_shape(N_VERTICE * 3, 1);
+dlib::matrix<double> current_tex(N_VERTICE * 3, 1);
 
 std::vector<double> landmark_idx(LANDMARK_NUM);
 
@@ -24,21 +26,24 @@ int load() {
 	float *shape_mu_raw  = new float[N_VERTICE * 3];
 	float *shape_ev_raw  = new float[N_PC];
 	float *shape_pc_raw  = new float[N_VERTICE * 3 * N_PC];
-	unsigned int *tl_raw = new unsigned int[N_FACE_HDF5 * 3];
+	float *tex_mu_raw  = new float[N_VERTICE * 3];
+	float *tex_ev_raw  = new float[N_PC];
+	float *tex_pc_raw  = new float[N_VERTICE * 3 * N_PC];
+	unsigned int *tl_raw = new unsigned int[N_FACE * 3];
 
 	std::cout << "trying to open " << bfm_h5_path << std::endl;
 	H5File file(bfm_h5_path, H5F_ACC_RDONLY);
-	std::cout << "mean" << std::endl;
 	load_hdf5_model(shape_mu, "/shape/model/mean",        PredType::NATIVE_FLOAT);
-	std::cout << "mean" << std::endl;
 	load_hdf5_model(shape_ev, "/shape/model/pcaVariance", PredType::NATIVE_FLOAT);
-	std::cout << "mean" << std::endl;
 	load_hdf5_model(shape_pc, "/shape/model/pcaBasis",    PredType::NATIVE_FLOAT);
-	std::cout << "mean" << std::endl;
+	load_hdf5_model(tex_mu,   "/color/model/mean",        PredType::NATIVE_FLOAT);
+	load_hdf5_model(tex_ev,   "/color/model/pcaVariance", PredType::NATIVE_FLOAT);
+	load_hdf5_model(tex_pc,   "/color/model/pcaBasis",    PredType::NATIVE_FLOAT);	
 	load_hdf5_model(tl,       "/color/representer/cells", PredType::NATIVE_UINT32);
 	file.close();
 
 	shape_mu = shape_mu * 1000.0;
+	tex_mu = tex_mu * 255.0;
 
 	return (res < 0) ? FAIL : SUCCESS;
 }
@@ -51,10 +56,10 @@ void raw2matrix(dlib::matrix<double> &m, float *raw) {
 }
 
 void raw2matrix(std::vector<point3d> &vec, unsigned int *raw) {
-	for (int i = 0; i < N_FACE_HDF5; i++) {
+	for (int i = 0; i < N_FACE; i++) {
 		vec[i].x() = raw[i];
-		vec[i].y() = raw[i + N_FACE_HDF5];
-		vec[i].z() = raw[i + N_FACE_HDF5 * 2];
+		vec[i].y() = raw[i + N_FACE];
+		vec[i].z() = raw[i + N_FACE * 2];
 	}
 }
 
@@ -70,6 +75,15 @@ void data_check() {
 	std::cout << "	(3) shape pc: " << std::endl;
 	std::cout << "		Yours:   " << shape_pc(0, 0) << std::endl;
 	std::cout << "		Correct: -0.0024\n" << std::endl;
+	std::cout << "	(4) texture mu: " << std::endl;
+	std::cout << "		Yours:   " << tex_mu(0, 0) << endl;
+	std::cout << "		Correct: 182.8750 135.0400 107.1400\n" << endl;
+	std::cout << "	(5) texture ev: " << std::endl;
+	std::cout << "		Yours:   " << tex_ev(0) << " " << tex_ev(1) << std::endl;
+	std::cout << "		Correct: 4103.2 2024.1\n" << std::endl;
+	std::cout << "	(3) texture pc: " << std::endl;
+	std::cout << "		Yours:   " << tex_pc(0, 0) << std::endl;
+	std::cout << "		Correct: -0.0028\n" << std::endl;
 }
 
 void set_shape_pc_basis(const double *x) {

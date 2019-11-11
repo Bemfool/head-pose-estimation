@@ -30,6 +30,7 @@ void generate_random_face(double scale) {
 	std::cout << "generate random face" << std::endl;
 	std::cout << "	generate random sequence - ";
 	shape_coef = randn(N_PC, scale);
+	tex_coef   = randn(N_PC, scale);
 	std::cout << "success" << std::endl;
 	generate_face();
 }
@@ -37,6 +38,7 @@ void generate_random_face(double scale) {
 void generate_face() {
 	std::cout << "	pca - ";
 	current_shape = coef2object(shape_coef, shape_mu, shape_pc, shape_ev);
+	current_tex = coef2object(tex_coef, tex_mu, tex_pc, tex_ev);
 	std::cout << "success" << std::endl;
 }
 
@@ -62,7 +64,8 @@ dlib::matrix<double> coef2object(dlib::matrix<double> &coef,
 
 void ply_write(string fn) {
 	ofstream out;
-	out.open(fn, std::ios::binary);
+	/* Note: In Linux Cpp, we should use std::ios::out as flag, which is not necessary in Windows */
+	out.open(fn, std::ios::out | std::ios::binary);
 	if (!out) {
 		std::cout << "Creation of " << fn << " failed." << std::endl;
 		return;
@@ -74,17 +77,26 @@ void ply_write(string fn) {
 	out << "property float x\n";
 	out << "property float y\n";
 	out << "property float z\n";
+	out << "property uchar red\n";
+	out << "property uchar green\n";
+	out << "property uchar blue\n";
 	out << "element face " << N_FACE << "\n";
 	out << "property list uchar int vertex_indices\n";
 	out << "end_header\n";
 
 	for (int i = 0; i < N_VERTICE; i++) {
-		float x = float(current_shape(i * 3, 0));
-		float y = float(current_shape(i * 3 + 1, 0));
-		float z = float(current_shape(i * 3 + 2, 0));
+		float x = float(current_shape(i * 3    ));
+		float y = float(current_shape(i * 3 + 1));
+		float z = float(current_shape(i * 3 + 2));
+		unsigned char r = current_tex(i * 3    );
+		unsigned char g = current_tex(i * 3 + 1);
+		unsigned char b = current_tex(i * 3 + 2);
 		out.write((char *)&x, sizeof(x));
 		out.write((char *)&y, sizeof(y));
 		out.write((char *)&z, sizeof(z));
+		out.write((char *)&r, sizeof(r));
+		out.write((char *)&g, sizeof(g));
+		out.write((char *)&b, sizeof(b));
 	}
 
 	unsigned char N_VER_PER_FACE = 3;

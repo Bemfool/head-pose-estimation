@@ -9,8 +9,7 @@ static std::string bfm_path = "../data/";
 static std::string bfm_h5_path = bfm_path + "model2009-publicmm1-bfm.h5";
 
 #define N_VERTICE	53490
-#define N_FACE		106466
-#define N_FACE_HDF5 106333
+#define N_FACE		106333
 #define N_PC		199
 
 #define FAIL	 -1
