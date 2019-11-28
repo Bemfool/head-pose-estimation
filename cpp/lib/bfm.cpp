@@ -29,16 +29,30 @@ bool init_bfm() {
 void generate_random_face(double scale) {
 	std::cout << "generate random face" << std::endl;
 	std::cout << "	generate random sequence - ";
-	shape_coef = randn(N_PC, scale);
-	tex_coef   = randn(N_PC, scale);
+	shape_coef = randn(N_ID_PC,   scale);
+	tex_coef   = randn(N_ID_PC,   scale);
+	expr_coef  = randn(N_EXPR_PC, scale);
 	std::cout << "success" << std::endl;
 	generate_face();
 }
 
+void generate_random_face(double shape_scale, double tex_scale, double expr_scale) {
+	std::cout << "generate random face" << std::endl;
+	std::cout << "	generate random sequence - ";
+	shape_coef = randn(N_ID_PC,   shape_scale);
+	tex_coef   = randn(N_ID_PC,   tex_scale);
+	expr_coef  = randn(N_EXPR_PC, expr_scale);
+	std::cout << "success" << std::endl;
+	generate_face();
+}
+
+
 void generate_face() {
 	std::cout << "	pca - ";
 	current_shape = coef2object(shape_coef, shape_mu, shape_pc, shape_ev);
-	current_tex = coef2object(tex_coef, tex_mu, tex_pc, tex_ev);
+	current_tex   = coef2object(tex_coef, tex_mu, tex_pc, tex_ev);
+	current_expr  = coef2object(expr_coef, expr_mu, expr_pc, expr_ev);
+	current_blendshape = current_shape + current_expr;
 	std::cout << "success" << std::endl;
 }
 
@@ -85,9 +99,9 @@ void ply_write(string fn) {
 	out << "end_header\n";
 
 	for (int i = 0; i < N_VERTICE; i++) {
-		float x = float(current_shape(i * 3    ));
-		float y = float(current_shape(i * 3 + 1));
-		float z = float(current_shape(i * 3 + 2));
+		float x = float(current_blendshape(i * 3    ));
+		float y = float(current_blendshape(i * 3 + 1));
+		float z = float(current_blendshape(i * 3 + 2));
 		unsigned char r = current_tex(i * 3    );
 		unsigned char g = current_tex(i * 3 + 1);
 		unsigned char b = current_tex(i * 3 + 2);

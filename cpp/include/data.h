@@ -9,7 +9,6 @@
 using namespace H5;
 using namespace std;
 
-
 /* Macro Function: load_hdf5_model
  * Usage: load_hdf5_model(model_type, dataset_path, data_type);
  * Parameters:
@@ -53,3 +52,4 @@ void data_check();
 
 void set_shape_pc_basis(const double *x);
 void set_head_pose_parameters(const double *x);
+void set_expr_pc_basis(const double *x);

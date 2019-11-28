@@ -1,3 +1,4 @@
+#pragma once
 #include <dlib/image_processing/frontal_face_detector.h>
 #include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
@@ -20,14 +21,28 @@ using ceres::Solve;
 using namespace dlib;
 using namespace std;
 
+/* data collection */
 extern dlib::matrix<double> shape_coef;
 extern dlib::matrix<double> shape_mu;
 extern dlib::matrix<double> shape_ev;
 extern dlib::matrix<double> shape_pc;
 
+extern dlib::matrix<double> tex_coef;
+extern dlib::matrix<double> tex_mu;
+extern dlib::matrix<double> tex_ev;
+extern dlib::matrix<double> tex_pc;
+
+extern dlib::matrix<double> expr_coef;
+extern dlib::matrix<double> expr_mu;
+extern dlib::matrix<double> expr_ev;
+extern dlib::matrix<double> expr_pc;
+
 extern std::vector<point3d> tl;	/* triangle list */
 
 extern dlib::matrix<double> current_shape;
+extern dlib::matrix<double> current_tex;
+extern dlib::matrix<double> current_expr;
+extern dlib::matrix<double> current_blendshape;
 
 extern std::vector<double> landmark_idx;
 
@@ -63,21 +78,8 @@ private:
     op_type type;
 };
 
-struct HeadPoseNumericCostFunctor {
-public:
-	HeadPoseNumericCostFunctor(dlib::full_object_detection _shape);
-	bool operator()(const double* const x, double* residual) const;
-private:
-	dlib::full_object_detection shape;	/* 3d landmarks coordinates got from dlib */
-};
 
-struct ShapeNumericCostFunctor {
-public:
-	ShapeNumericCostFunctor(dlib::full_object_detection _shape);
-	bool operator()(const double* const x, double* residual) const;
-private:
-	dlib::full_object_detection shape;	/* 3d landmarks coordinates got from dlib */
-};
-
-void get_landmarks(const double* const x, std::vector<point3f> &landmarks);
+double get_landmarks_by_shape(const double* const x, std::vector<point3f> &landmarks);
+double get_landmarks_by_expr(const double* const x, std::vector<point3f> &landmarks);
 void get_landmarks(std::vector<point3f> &landmarks);
+point3f get_landmark(int idx);

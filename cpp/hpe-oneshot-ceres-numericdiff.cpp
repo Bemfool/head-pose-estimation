@@ -40,7 +40,6 @@ int main(int argc, char** argv)
 		cout << "processing image " << "2019-07-23-214644.jpg" << endl;
 		load_image(img, "2019-07-23-214644.jpg");
 
-
 		pyramid_up(img);
 		std::vector<rectangle> dets = detector(img);
 		cout << "Number of faces detected: " << dets.size() << endl;

@@ -9,3 +9,5 @@ dlib::matrix<double> randn(int n, double scale) {
 		res(i) = dis(e);
 	return res;
 }
+
+

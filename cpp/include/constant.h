@@ -6,11 +6,13 @@
 static std::string bfm_path = "../data/";
 
 /* HDF5 Format Data */
-static std::string bfm_h5_path = bfm_path + "model2009-publicmm1-bfm.h5";
+static std::string bfm_h5_path = bfm_path + "model2017-1_bfm_nomouth.h5";
 
-#define N_VERTICE	53490
-#define N_FACE		106333
-#define N_PC		199
+/* BFM 2017 */
+#define N_VERTICE   53149
+#define N_FACE      105694
+#define N_ID_PC     199
+#define N_EXPR_PC   100
 
 #define FAIL	 -1
 #define SUCCESS 0
@@ -50,5 +52,3 @@ enum {
 	COARSE = 0,
 	REAL   = 1,
 };
-
-inline void set_bfm_path(std::string new_path) { bfm_path = new_path; }
