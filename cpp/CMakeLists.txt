@@ -41,25 +41,11 @@ target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIB
 add_executable(bfm-test bfm-test.cpp)
 target_link_libraries(bfm-test hpe)
 
-add_executable(hpe-oneshot-cminpack hpe-oneshot-cminpack.cpp)
-target_link_libraries(hpe-oneshot-cminpack dlib::dlib hpe)
-target_link_libraries (hpe-oneshot-cminpack cminpack)
-target_link_libraries (hpe-oneshot-cminpack m)
-
-add_executable(hpe-oneshot-ceres-numericdiff hpe-oneshot-ceres-numericdiff.cpp)
-target_link_libraries(hpe-oneshot-ceres-numericdiff dlib::dlib hpe)
-target_link_libraries(hpe-oneshot-ceres-numericdiff ${CERES_LIBRARIES})
-
 add_executable(hpe-oneshot-ceres-numericdiff-with-shape hpe-oneshot-ceres-numericdiff-with-shape.cpp)
 target_link_libraries(hpe-oneshot-ceres-numericdiff-with-shape hpe)
 
 add_executable(hpe-oneshot-ceres-autodiff hpe-oneshot-ceres-autodiff.cpp)
 target_link_libraries(hpe-oneshot-ceres-autodiff hpe)
-
-add_executable(hpe-oneshot-ceres-analyticdiff hpe-oneshot-ceres-analyticdiff.cpp)
-target_link_libraries(hpe-oneshot-ceres-analyticdiff dlib::dlib hpe)
-target_link_libraries(hpe-oneshot-ceres-analyticdiff ${CERES_LIBRARIES})
-
 
 
 add_executable(hpe-cam-ceres-numericdiff hpe-cam-ceres-numericdiff.cpp)
