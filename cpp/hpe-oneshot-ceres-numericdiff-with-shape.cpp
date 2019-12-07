@@ -76,13 +76,13 @@ int main(int argc, char** argv)
 				std::cout << shape_pc_summary.BriefReport() << std::endl;
 				set_shape_pc_basis(shape_pc_basis);
 
-				ply_write("test" + to_string(cnt++) + "shape.ply");
+				ply_write_with_parameter("test" + to_string(cnt++) + "shape.ply", head_pose);
 
 				Solve(options, &expr_pc_problem, &expr_pc_summary);
 				std::cout << expr_pc_summary.BriefReport() << std::endl;
 				set_expr_pc_basis(expr_pc_basis);
 
-				ply_write("test" + to_string(cnt++) + "expr.ply");
+				ply_write_with_parameter("test" + to_string(cnt++) + "expr.ply", head_pose);
 
 				if(shape_pc_summary.initial_cost == shape_pc_summary.final_cost 
 				&& head_pose_summary.final_cost == head_pose_summary.initial_cost
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 		}
 		
 		win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0,0, 255)));
-		std::cout << shape_coef << std::endl;
+		// std::cout << shape_coef << std::endl;
 
 		cin.get();
 	} catch (exception& e) {

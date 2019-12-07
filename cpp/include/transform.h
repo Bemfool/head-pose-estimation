@@ -1,64 +1,50 @@
 #pragma once
-#include <vector>
-#include "vec.h"
-#include "constant.h"
-#include <dlib/opencv.h>
 #include <cmath>
-
+#include <dlib/matrix.h>
 #define _USE_MATH_DEFINES
 
-/* Function: landmarks_3d_to_2d
- * Usage: landmarks_3d_to_2d(landmarks_3d, landmarks_2d);
- * Parameters: 
- * 		landmarks_3d: 3d landmarks coordinates
- * 		landmarks_2d: transformed 2d landmarks coordinates to be saved
- * --------------------------------------------------------------------------------------------
- * Transform 3d landmarks into 2d landmarks.
- */
+template<typename T>
+dlib::matrix<T> transform(const T * const ext_parm, const dlib::matrix<double> &before_points) {
+    dlib::matrix<T> after_points;
+    after_points.set_size(before_points.nr(), 1);
 
-void landmarks_3d_to_2d(camera_type type, std::vector<point3f>& landmarks_3d, std::vector<point2d>& landmarks_2d);
+	const T &yaw   = ext_parm[0];
+	const T &pitch = ext_parm[1];
+	const T &roll  = ext_parm[2];
+	const T &tx    = ext_parm[3];
+	const T &ty    = ext_parm[4];
+	const T &tz    = ext_parm[5];
 
+	T c1 = cos(roll  * T(M_PI) / T(180.0)), s1 = sin(roll  * T(M_PI) / T(180.0));
+	T c2 = cos(yaw   * T(M_PI) / T(180.0)), s2 = sin(yaw   * T(M_PI) / T(180.0));
+	T c3 = cos(pitch * T(M_PI) / T(180.0)), s3 = sin(pitch * T(M_PI) / T(180.0));
 
-/* Function: transform
- * Usage: transform(x);
- * Parameters:
- * 		points: 3d coordinates to be transform
- * 		x: a double array of length 6.
- * 			x[0]: yaw
- * 			x[1]: pitch
- * 			x[2]: roll
- * 			x[3]: tx
- * 			x[4]: ty
- * 			x[5]: tz
- * --------------------------------------------------------------------------------------------
- * Transform a series 3d points to rotate with R(yaw, pitch, roll) and translate with T(tx, ty, tz).
- * Actually, this function encapsulates rotate() and translate() two functions.
- */
-void transform(std::vector<point3f>& points, const double * const x);
+	for(int i=0; i<before_points.nr() / 3; i++) {
+		T X = T(before_points(i*3)), Y = T(before_points(i*3+1)), Z = T(before_points(i*3+2)); 
 
+		after_points(i*3)   = ( c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + ( s1 * s3 + c1 * c3 * s2) * Z + tx;
+		after_points(i*3+1) = ( c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+		after_points(i*3+2) = (-s2     ) * X + (c2 * s3               ) * Y + ( c2 * c3               ) * Z + tz; 
+	}
 
-/* Function: rotate
- * Usage: rotate(points, yaw, pitch, roll);
- * Parameters:
- * 		points: 3d coordinates to be transform
- * 		yaw: angle to rotate with y axis
- * 		pitch: angle to rotate with x axis
- * 		roll: angle to rotate with z axis 
- * --------------------------------------------------------------------------------------------
- * Transform a series 3d points to rotate with R(yaw, pitch, roll)
- */
-void rotate(std::vector<point3f>& points, const double yaw, const double pitch, const double roll);
+    return after_points;
+}
 
+template<typename T>
+void transform(const double ext_parm[6], T &x, T &y, T &z) {
+    const double &yaw   = ext_parm[0];
+	const double &pitch = ext_parm[1];
+	const double &roll  = ext_parm[2];
+	const double &tx    = ext_parm[3];
+	const double &ty    = ext_parm[4];
+	const double &tz    = ext_parm[5];
 
-/* Function: translate
- * Usage: translate(points, x, y, z);
- * Parameters:
- * 		points: 3d coordinates to be transform
- * 		x distance to translate along x axis
- * 		y: distance to translate along y axis
- * 		z: distance to translate along z axis
- * --------------------------------------------------------------------------------------------
- * Transform a series 3d points to translate with T(x, y, z)
- */
-void translate(std::vector<point3f>& points, const double x, const double y, const double z);
+	double c1 = cos(roll  * M_PI / 180.0), s1 = sin(roll  * M_PI / 180.0);
+	double c2 = cos(yaw   * M_PI / 180.0), s2 = sin(yaw   * M_PI / 180.0);
+	double c3 = cos(pitch * M_PI / 180.0), s3 = sin(pitch * M_PI / 180.0);
 
+    T X = x, Y = y, Z = z;
+    x = ( c1 * c2) * X + (c1 * s2 * s3 - c3 * s1) * Y + ( s1 * s3 + c1 * c3 * s2) * Z + tx;
+    y = ( c2 * s1) * X + (c1 * c3 + s1 * s2 * s3) * Y + (-c3 * s1 * s2 - c1 * s3) * Z + ty;
+    z = (-s2     ) * X + (c2 * s3               ) * Y + ( c2 * c3               ) * Z + tz; 
+}

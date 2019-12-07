@@ -60,13 +60,89 @@ CMAKE_SOURCE_DIR = /home/keith/Desktop/head-pose-estimation/cpp
 CMAKE_BINARY_DIR = /home/keith/Desktop/head-pose-estimation/cpp/build
 
 #=============================================================================
+# Target rules for target CMakeFiles/hpe-cam-ceres-analyticdiff.dir
+
+# All Build rule for target.
+CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all: CMakeFiles/hpe.dir/all
+CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/depend
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=67,68 "Built target hpe-cam-ceres-analyticdiff"
+.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
+
+# Include target in all.
+all: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
+.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule
+
+# Convenience name for target.
+hpe-cam-ceres-analyticdiff: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule
+
+.PHONY : hpe-cam-ceres-analyticdiff
+
+# clean rule for target.
+CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
+.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/hpe-cam-ceres-numericdiff.dir
+
+# All Build rule for target.
+CMakeFiles/hpe-cam-ceres-numericdiff.dir/all: CMakeFiles/hpe.dir/all
+CMakeFiles/hpe-cam-ceres-numericdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/depend
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=69,70 "Built target hpe-cam-ceres-numericdiff"
+.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+
+# Include target in all.
+all: CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
+.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule
+
+# Convenience name for target.
+hpe-cam-ceres-numericdiff: CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule
+
+.PHONY : hpe-cam-ceres-numericdiff
+
+# clean rule for target.
+CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
+.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/hpe.dir
 
 # All Build rule for target.
 CMakeFiles/hpe.dir/all: dlib_build/CMakeFiles/dlib.dir/all
 	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/depend
 	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=60,61 "Built target hpe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=62,63,64,65,66 "Built target hpe"
 .PHONY : CMakeFiles/hpe.dir/all
 
 # Include target in all.
@@ -76,7 +152,7 @@ all: CMakeFiles/hpe.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hpe.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 61
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 64
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/hpe.dir/rule
@@ -104,7 +180,7 @@ CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/all: CMakeFiles/hpe.dir/all
 CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
 	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/depend
 	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=68,69 "Built target hpe-oneshot-ceres-numericdiff"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=75,76 "Built target hpe-oneshot-ceres-numericdiff"
 .PHONY : CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/all
 
 # Include target in all.
@@ -114,7 +190,7 @@ all: CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 63
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/rule
@@ -135,50 +211,14 @@ clean: CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/hpe-cam-ceres-analyticdiff.dir
-
-# All Build rule for target.
-CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/depend
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=62,63 "Built target hpe-cam-ceres-analyticdiff"
-.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
-
-# Include target in all.
-all: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 61
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-cam-ceres-analyticdiff.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule
-
-# Convenience name for target.
-hpe-cam-ceres-analyticdiff: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/rule
-
-.PHONY : hpe-cam-ceres-analyticdiff
-
-# clean rule for target.
-CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean:
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
-.PHONY : CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
-
-# clean rule for target.
-clean: CMakeFiles/hpe-cam-ceres-analyticdiff.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
 # Target rules for target CMakeFiles/hpe-oneshot-cminpack.dir
 
 # All Build rule for target.
+CMakeFiles/hpe-oneshot-cminpack.dir/all: CMakeFiles/hpe.dir/all
 CMakeFiles/hpe-oneshot-cminpack.dir/all: dlib_build/CMakeFiles/dlib.dir/all
 	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/depend
 	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=70,71 "Built target hpe-oneshot-cminpack"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=79,80 "Built target hpe-oneshot-cminpack"
 .PHONY : CMakeFiles/hpe-oneshot-cminpack.dir/all
 
 # Include target in all.
@@ -188,7 +228,7 @@ all: CMakeFiles/hpe-oneshot-cminpack.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hpe-oneshot-cminpack.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 61
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-oneshot-cminpack.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/hpe-oneshot-cminpack.dir/rule
@@ -209,40 +249,78 @@ clean: CMakeFiles/hpe-oneshot-cminpack.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/hpe-cam-ceres-numericdiff.dir
+# Target rules for target CMakeFiles/bfm-test.dir
 
 # All Build rule for target.
-CMakeFiles/hpe-cam-ceres-numericdiff.dir/all: CMakeFiles/hpe.dir/all
-CMakeFiles/hpe-cam-ceres-numericdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/depend
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=64,65 "Built target hpe-cam-ceres-numericdiff"
-.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+CMakeFiles/bfm-test.dir/all: CMakeFiles/hpe.dir/all
+CMakeFiles/bfm-test.dir/all: dlib_build/CMakeFiles/dlib.dir/all
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/depend
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=1,2 "Built target bfm-test"
+.PHONY : CMakeFiles/bfm-test.dir/all
 
 # Include target in all.
-all: CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+all: CMakeFiles/bfm-test.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 63
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-cam-ceres-numericdiff.dir/all
+CMakeFiles/bfm-test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/bfm-test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule
+.PHONY : CMakeFiles/bfm-test.dir/rule
 
 # Convenience name for target.
-hpe-cam-ceres-numericdiff: CMakeFiles/hpe-cam-ceres-numericdiff.dir/rule
+bfm-test: CMakeFiles/bfm-test.dir/rule
 
-.PHONY : hpe-cam-ceres-numericdiff
-
-# clean rule for target.
-CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean:
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
-.PHONY : CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
+.PHONY : bfm-test
 
 # clean rule for target.
-clean: CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
+CMakeFiles/bfm-test.dir/clean:
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/clean
+.PHONY : CMakeFiles/bfm-test.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/bfm-test.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir
+
+# All Build rule for target.
+CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/all: CMakeFiles/hpe.dir/all
+CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/all: dlib_build/CMakeFiles/dlib.dir/all
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/depend
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=77,78 "Built target hpe-oneshot-ceres-numericdiff-with-shape"
+.PHONY : CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/all
+
+# Include target in all.
+all: CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
+.PHONY : CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/rule
+
+# Convenience name for target.
+hpe-oneshot-ceres-numericdiff-with-shape: CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/rule
+
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape
+
+# clean rule for target.
+CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/clean:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/clean
+.PHONY : CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/clean
 
 .PHONY : clean
 
@@ -250,10 +328,11 @@ clean: CMakeFiles/hpe-cam-ceres-numericdiff.dir/clean
 # Target rules for target CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir
 
 # All Build rule for target.
+CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/all: CMakeFiles/hpe.dir/all
 CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
 	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/depend
 	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=66,67 "Built target hpe-oneshot-ceres-analyticdiff"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=71,72 "Built target hpe-oneshot-ceres-analyticdiff"
 .PHONY : CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/all
 
 # Include target in all.
@@ -263,7 +342,7 @@ all: CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 61
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/rule
@@ -280,6 +359,44 @@ CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/hpe-oneshot-ceres-autodiff.dir
+
+# All Build rule for target.
+CMakeFiles/hpe-oneshot-ceres-autodiff.dir/all: CMakeFiles/hpe.dir/all
+CMakeFiles/hpe-oneshot-ceres-autodiff.dir/all: dlib_build/CMakeFiles/dlib.dir/all
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/depend
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=73,74 "Built target hpe-oneshot-ceres-autodiff"
+.PHONY : CMakeFiles/hpe-oneshot-ceres-autodiff.dir/all
+
+# Include target in all.
+all: CMakeFiles/hpe-oneshot-ceres-autodiff.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/hpe-oneshot-ceres-autodiff.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 66
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hpe-oneshot-ceres-autodiff.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles 0
+.PHONY : CMakeFiles/hpe-oneshot-ceres-autodiff.dir/rule
+
+# Convenience name for target.
+hpe-oneshot-ceres-autodiff: CMakeFiles/hpe-oneshot-ceres-autodiff.dir/rule
+
+.PHONY : hpe-oneshot-ceres-autodiff
+
+# clean rule for target.
+CMakeFiles/hpe-oneshot-ceres-autodiff.dir/clean:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/clean
+.PHONY : CMakeFiles/hpe-oneshot-ceres-autodiff.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/hpe-oneshot-ceres-autodiff.dir/clean
 
 .PHONY : clean
 
@@ -308,7 +425,7 @@ dlib_build/preinstall:
 dlib_build/CMakeFiles/dlib.dir/all:
 	$(MAKE) -f dlib_build/CMakeFiles/dlib.dir/build.make dlib_build/CMakeFiles/dlib.dir/depend
 	$(MAKE) -f dlib_build/CMakeFiles/dlib.dir/build.make dlib_build/CMakeFiles/dlib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59 "Built target dlib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61 "Built target dlib"
 .PHONY : dlib_build/CMakeFiles/dlib.dir/all
 
 # Include target in all.

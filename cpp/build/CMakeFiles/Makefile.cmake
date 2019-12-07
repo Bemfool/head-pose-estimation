@@ -11,6 +11,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.10.2/CMakeCCompiler.cmake"
   "CMakeFiles/3.10.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.10.2/CMakeSystem.cmake"
+  "CMakeFiles/hdf5/cmake_hdf5_test.c"
+  "CMakeFiles/hdf5/cmake_hdf5_test.cxx"
   "/home/keith/dlib-19.17/dlib/CMakeLists.txt"
   "/home/keith/dlib-19.17/dlib/cmake_utils/find_blas.cmake"
   "/home/keith/dlib-19.17/dlib/cmake_utils/release_build_by_default"
@@ -53,6 +55,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.10/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake-3.10/Modules/Compiler/GNU-CXX.cmake"
   "/usr/share/cmake-3.10/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake-3.10/Modules/FindHDF5.cmake"
   "/usr/share/cmake-3.10/Modules/FindJPEG.cmake"
   "/usr/share/cmake-3.10/Modules/FindPNG.cmake"
   "/usr/share/cmake-3.10/Modules/FindPackageHandleStandardArgs.cmake"
@@ -84,11 +87,14 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/hpe-cam-ceres-analyticdiff.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-cam-ceres-numericdiff.dir/DependInfo.cmake"
   "CMakeFiles/hpe.dir/DependInfo.cmake"
   "CMakeFiles/hpe-oneshot-ceres-numericdiff.dir/DependInfo.cmake"
-  "CMakeFiles/hpe-cam-ceres-analyticdiff.dir/DependInfo.cmake"
   "CMakeFiles/hpe-oneshot-cminpack.dir/DependInfo.cmake"
-  "CMakeFiles/hpe-cam-ceres-numericdiff.dir/DependInfo.cmake"
+  "CMakeFiles/bfm-test.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/DependInfo.cmake"
   "CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/DependInfo.cmake"
+  "CMakeFiles/hpe-oneshot-ceres-autodiff.dir/DependInfo.cmake"
   "dlib_build/CMakeFiles/dlib.dir/DependInfo.cmake"
   )

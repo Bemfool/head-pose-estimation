@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -111,6 +111,32 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named hpe-cam-ceres-analyticdiff
+
+# Build rule for target.
+hpe-cam-ceres-analyticdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-analyticdiff
+.PHONY : hpe-cam-ceres-analyticdiff
+
+# fast build rule for target.
+hpe-cam-ceres-analyticdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build
+.PHONY : hpe-cam-ceres-analyticdiff/fast
+
+#=============================================================================
+# Target rules for targets named hpe-cam-ceres-numericdiff
+
+# Build rule for target.
+hpe-cam-ceres-numericdiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-numericdiff
+.PHONY : hpe-cam-ceres-numericdiff
+
+# fast build rule for target.
+hpe-cam-ceres-numericdiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/build
+.PHONY : hpe-cam-ceres-numericdiff/fast
+
+#=============================================================================
 # Target rules for targets named hpe
 
 # Build rule for target.
@@ -137,19 +163,6 @@ hpe-oneshot-ceres-numericdiff/fast:
 .PHONY : hpe-oneshot-ceres-numericdiff/fast
 
 #=============================================================================
-# Target rules for targets named hpe-cam-ceres-analyticdiff
-
-# Build rule for target.
-hpe-cam-ceres-analyticdiff: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-analyticdiff
-.PHONY : hpe-cam-ceres-analyticdiff
-
-# fast build rule for target.
-hpe-cam-ceres-analyticdiff/fast:
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-cam-ceres-analyticdiff.dir/build
-.PHONY : hpe-cam-ceres-analyticdiff/fast
-
-#=============================================================================
 # Target rules for targets named hpe-oneshot-cminpack
 
 # Build rule for target.
@@ -163,17 +176,30 @@ hpe-oneshot-cminpack/fast:
 .PHONY : hpe-oneshot-cminpack/fast
 
 #=============================================================================
-# Target rules for targets named hpe-cam-ceres-numericdiff
+# Target rules for targets named bfm-test
 
 # Build rule for target.
-hpe-cam-ceres-numericdiff: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 hpe-cam-ceres-numericdiff
-.PHONY : hpe-cam-ceres-numericdiff
+bfm-test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 bfm-test
+.PHONY : bfm-test
 
 # fast build rule for target.
-hpe-cam-ceres-numericdiff/fast:
-	$(MAKE) -f CMakeFiles/hpe-cam-ceres-numericdiff.dir/build.make CMakeFiles/hpe-cam-ceres-numericdiff.dir/build
-.PHONY : hpe-cam-ceres-numericdiff/fast
+bfm-test/fast:
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/build
+.PHONY : bfm-test/fast
+
+#=============================================================================
+# Target rules for targets named hpe-oneshot-ceres-numericdiff-with-shape
+
+# Build rule for target.
+hpe-oneshot-ceres-numericdiff-with-shape: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-oneshot-ceres-numericdiff-with-shape
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape
+
+# fast build rule for target.
+hpe-oneshot-ceres-numericdiff-with-shape/fast:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape/fast
 
 #=============================================================================
 # Target rules for targets named hpe-oneshot-ceres-analyticdiff
@@ -189,6 +215,19 @@ hpe-oneshot-ceres-analyticdiff/fast:
 .PHONY : hpe-oneshot-ceres-analyticdiff/fast
 
 #=============================================================================
+# Target rules for targets named hpe-oneshot-ceres-autodiff
+
+# Build rule for target.
+hpe-oneshot-ceres-autodiff: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hpe-oneshot-ceres-autodiff
+.PHONY : hpe-oneshot-ceres-autodiff
+
+# fast build rule for target.
+hpe-oneshot-ceres-autodiff/fast:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build
+.PHONY : hpe-oneshot-ceres-autodiff/fast
+
+#=============================================================================
 # Target rules for targets named dlib
 
 # Build rule for target.
@@ -200,6 +239,33 @@ dlib: cmake_check_build_system
 dlib/fast:
 	$(MAKE) -f dlib_build/CMakeFiles/dlib.dir/build.make dlib_build/CMakeFiles/dlib.dir/build
 .PHONY : dlib/fast
+
+bfm-test.o: bfm-test.cpp.o
+
+.PHONY : bfm-test.o
+
+# target to build an object file
+bfm-test.cpp.o:
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/bfm-test.cpp.o
+.PHONY : bfm-test.cpp.o
+
+bfm-test.i: bfm-test.cpp.i
+
+.PHONY : bfm-test.i
+
+# target to preprocess a source file
+bfm-test.cpp.i:
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/bfm-test.cpp.i
+.PHONY : bfm-test.cpp.i
+
+bfm-test.s: bfm-test.cpp.s
+
+.PHONY : bfm-test.s
+
+# target to generate assembly for a file
+bfm-test.cpp.s:
+	$(MAKE) -f CMakeFiles/bfm-test.dir/build.make CMakeFiles/bfm-test.dir/bfm-test.cpp.s
+.PHONY : bfm-test.cpp.s
 
 hpe-cam-ceres-analyticdiff.o: hpe-cam-ceres-analyticdiff.cpp.o
 
@@ -282,6 +348,60 @@ hpe-oneshot-ceres-analyticdiff.cpp.s:
 	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-analyticdiff.dir/hpe-oneshot-ceres-analyticdiff.cpp.s
 .PHONY : hpe-oneshot-ceres-analyticdiff.cpp.s
 
+hpe-oneshot-ceres-autodiff.o: hpe-oneshot-ceres-autodiff.cpp.o
+
+.PHONY : hpe-oneshot-ceres-autodiff.o
+
+# target to build an object file
+hpe-oneshot-ceres-autodiff.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/hpe-oneshot-ceres-autodiff.cpp.o
+.PHONY : hpe-oneshot-ceres-autodiff.cpp.o
+
+hpe-oneshot-ceres-autodiff.i: hpe-oneshot-ceres-autodiff.cpp.i
+
+.PHONY : hpe-oneshot-ceres-autodiff.i
+
+# target to preprocess a source file
+hpe-oneshot-ceres-autodiff.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/hpe-oneshot-ceres-autodiff.cpp.i
+.PHONY : hpe-oneshot-ceres-autodiff.cpp.i
+
+hpe-oneshot-ceres-autodiff.s: hpe-oneshot-ceres-autodiff.cpp.s
+
+.PHONY : hpe-oneshot-ceres-autodiff.s
+
+# target to generate assembly for a file
+hpe-oneshot-ceres-autodiff.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-autodiff.dir/build.make CMakeFiles/hpe-oneshot-ceres-autodiff.dir/hpe-oneshot-ceres-autodiff.cpp.s
+.PHONY : hpe-oneshot-ceres-autodiff.cpp.s
+
+hpe-oneshot-ceres-numericdiff-with-shape.o: hpe-oneshot-ceres-numericdiff-with-shape.cpp.o
+
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.o
+
+# target to build an object file
+hpe-oneshot-ceres-numericdiff-with-shape.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/hpe-oneshot-ceres-numericdiff-with-shape.cpp.o
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.cpp.o
+
+hpe-oneshot-ceres-numericdiff-with-shape.i: hpe-oneshot-ceres-numericdiff-with-shape.cpp.i
+
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.i
+
+# target to preprocess a source file
+hpe-oneshot-ceres-numericdiff-with-shape.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/hpe-oneshot-ceres-numericdiff-with-shape.cpp.i
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.cpp.i
+
+hpe-oneshot-ceres-numericdiff-with-shape.s: hpe-oneshot-ceres-numericdiff-with-shape.cpp.s
+
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.s
+
+# target to generate assembly for a file
+hpe-oneshot-ceres-numericdiff-with-shape.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/build.make CMakeFiles/hpe-oneshot-ceres-numericdiff-with-shape.dir/hpe-oneshot-ceres-numericdiff-with-shape.cpp.s
+.PHONY : hpe-oneshot-ceres-numericdiff-with-shape.cpp.s
+
 hpe-oneshot-ceres-numericdiff.o: hpe-oneshot-ceres-numericdiff.cpp.o
 
 .PHONY : hpe-oneshot-ceres-numericdiff.o
@@ -336,6 +456,33 @@ hpe-oneshot-cminpack.cpp.s:
 	$(MAKE) -f CMakeFiles/hpe-oneshot-cminpack.dir/build.make CMakeFiles/hpe-oneshot-cminpack.dir/hpe-oneshot-cminpack.cpp.s
 .PHONY : hpe-oneshot-cminpack.cpp.s
 
+lib/bfm.o: lib/bfm.cpp.o
+
+.PHONY : lib/bfm.o
+
+# target to build an object file
+lib/bfm.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/bfm.cpp.o
+.PHONY : lib/bfm.cpp.o
+
+lib/bfm.i: lib/bfm.cpp.i
+
+.PHONY : lib/bfm.i
+
+# target to preprocess a source file
+lib/bfm.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/bfm.cpp.i
+.PHONY : lib/bfm.cpp.i
+
+lib/bfm.s: lib/bfm.cpp.s
+
+.PHONY : lib/bfm.s
+
+# target to generate assembly for a file
+lib/bfm.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/bfm.cpp.s
+.PHONY : lib/bfm.cpp.s
+
 lib/hpe.o: lib/hpe.cpp.o
 
 .PHONY : lib/hpe.o
@@ -363,6 +510,60 @@ lib/hpe.cpp.s:
 	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/hpe.cpp.s
 .PHONY : lib/hpe.cpp.s
 
+lib/random.o: lib/random.cpp.o
+
+.PHONY : lib/random.o
+
+# target to build an object file
+lib/random.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/random.cpp.o
+.PHONY : lib/random.cpp.o
+
+lib/random.i: lib/random.cpp.i
+
+.PHONY : lib/random.i
+
+# target to preprocess a source file
+lib/random.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/random.cpp.i
+.PHONY : lib/random.cpp.i
+
+lib/random.s: lib/random.cpp.s
+
+.PHONY : lib/random.s
+
+# target to generate assembly for a file
+lib/random.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/random.cpp.s
+.PHONY : lib/random.cpp.s
+
+lib/string_utils.o: lib/string_utils.cpp.o
+
+.PHONY : lib/string_utils.o
+
+# target to build an object file
+lib/string_utils.cpp.o:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/string_utils.cpp.o
+.PHONY : lib/string_utils.cpp.o
+
+lib/string_utils.i: lib/string_utils.cpp.i
+
+.PHONY : lib/string_utils.i
+
+# target to preprocess a source file
+lib/string_utils.cpp.i:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/string_utils.cpp.i
+.PHONY : lib/string_utils.cpp.i
+
+lib/string_utils.s: lib/string_utils.cpp.s
+
+.PHONY : lib/string_utils.s
+
+# target to generate assembly for a file
+lib/string_utils.cpp.s:
+	$(MAKE) -f CMakeFiles/hpe.dir/build.make CMakeFiles/hpe.dir/lib/string_utils.cpp.s
+.PHONY : lib/string_utils.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -370,14 +571,20 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
+	@echo "... hpe-cam-ceres-analyticdiff"
+	@echo "... hpe-cam-ceres-numericdiff"
 	@echo "... hpe"
 	@echo "... hpe-oneshot-ceres-numericdiff"
-	@echo "... hpe-cam-ceres-analyticdiff"
 	@echo "... hpe-oneshot-cminpack"
-	@echo "... hpe-cam-ceres-numericdiff"
+	@echo "... edit_cache"
+	@echo "... bfm-test"
+	@echo "... hpe-oneshot-ceres-numericdiff-with-shape"
 	@echo "... hpe-oneshot-ceres-analyticdiff"
+	@echo "... hpe-oneshot-ceres-autodiff"
 	@echo "... dlib"
+	@echo "... bfm-test.o"
+	@echo "... bfm-test.i"
+	@echo "... bfm-test.s"
 	@echo "... hpe-cam-ceres-analyticdiff.o"
 	@echo "... hpe-cam-ceres-analyticdiff.i"
 	@echo "... hpe-cam-ceres-analyticdiff.s"
@@ -387,15 +594,30 @@ help:
 	@echo "... hpe-oneshot-ceres-analyticdiff.o"
 	@echo "... hpe-oneshot-ceres-analyticdiff.i"
 	@echo "... hpe-oneshot-ceres-analyticdiff.s"
+	@echo "... hpe-oneshot-ceres-autodiff.o"
+	@echo "... hpe-oneshot-ceres-autodiff.i"
+	@echo "... hpe-oneshot-ceres-autodiff.s"
+	@echo "... hpe-oneshot-ceres-numericdiff-with-shape.o"
+	@echo "... hpe-oneshot-ceres-numericdiff-with-shape.i"
+	@echo "... hpe-oneshot-ceres-numericdiff-with-shape.s"
 	@echo "... hpe-oneshot-ceres-numericdiff.o"
 	@echo "... hpe-oneshot-ceres-numericdiff.i"
 	@echo "... hpe-oneshot-ceres-numericdiff.s"
 	@echo "... hpe-oneshot-cminpack.o"
 	@echo "... hpe-oneshot-cminpack.i"
 	@echo "... hpe-oneshot-cminpack.s"
+	@echo "... lib/bfm.o"
+	@echo "... lib/bfm.i"
+	@echo "... lib/bfm.s"
 	@echo "... lib/hpe.o"
 	@echo "... lib/hpe.i"
 	@echo "... lib/hpe.s"
+	@echo "... lib/random.o"
+	@echo "... lib/random.i"
+	@echo "... lib/random.s"
+	@echo "... lib/string_utils.o"
+	@echo "... lib/string_utils.i"
+	@echo "... lib/string_utils.s"
 .PHONY : help
 
 

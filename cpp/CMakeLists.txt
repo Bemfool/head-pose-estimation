@@ -34,12 +34,12 @@ include_directories(${CERES_INCLUDE_DIRS})
 find_package(HDF5 REQUIRED C CXX)
 
 include_directories(./include)
-add_library(hpe SHARED lib/hpe.cpp lib/head_pose_functor.cpp lib/shape_coef_functor.cpp lib/expr_coef_functor.cpp
-                       lib/transform.cpp lib/string_utils.cpp lib/bfm.cpp lib/data.cpp lib/random.cpp)
+add_library(hpe SHARED lib/hpe.cpp
+                       lib/string_utils.cpp lib/bfm.cpp lib/random.cpp)
 target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
 
 add_executable(bfm-test bfm-test.cpp)
-target_link_libraries(bfm-test hpe) 
+target_link_libraries(bfm-test hpe)
 
 add_executable(hpe-oneshot-cminpack hpe-oneshot-cminpack.cpp)
 target_link_libraries(hpe-oneshot-cminpack dlib::dlib hpe)

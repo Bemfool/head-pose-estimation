@@ -1,22 +1,22 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_3f6c0/fast"
-/usr/bin/make -f CMakeFiles/cmTC_3f6c0.dir/build.make CMakeFiles/cmTC_3f6c0.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_adc23/fast"
+/usr/bin/make -f CMakeFiles/cmTC_adc23.dir/build.make CMakeFiles/cmTC_adc23.dir/build
 make[1]: Entering directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_3f6c0.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_3f6c0.dir/CheckSymbolExists.c.o   -c /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_3f6c0
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3f6c0.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_3f6c0.dir/CheckSymbolExists.c.o  -o cmTC_3f6c0 
-CMakeFiles/cmTC_3f6c0.dir/CheckSymbolExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_adc23.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_adc23.dir/CheckSymbolExists.c.o   -c /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_adc23
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_adc23.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_adc23.dir/CheckSymbolExists.c.o  -o cmTC_adc23 
+CMakeFiles/cmTC_adc23.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_3f6c0.dir/build.make:97: recipe for target 'cmTC_3f6c0' failed
-make[1]: *** [cmTC_3f6c0] Error 1
+CMakeFiles/cmTC_adc23.dir/build.make:97: recipe for target 'cmTC_adc23' failed
+make[1]: *** [cmTC_adc23] Error 1
 make[1]: Leaving directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_3f6c0/fast' failed
-make: *** [cmTC_3f6c0/fast] Error 2
+Makefile:126: recipe for target 'cmTC_adc23/fast' failed
+make: *** [cmTC_adc23/fast] Error 2
 
 File /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
@@ -36,62 +36,62 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_66baf/fast"
-/usr/bin/make -f CMakeFiles/cmTC_66baf.dir/build.make CMakeFiles/cmTC_66baf.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_1a320/fast"
+/usr/bin/make -f CMakeFiles/cmTC_1a320.dir/build.make CMakeFiles/cmTC_1a320.dir/build
 make[1]: Entering directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_66baf.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_66baf.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_66baf
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_66baf.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_66baf.dir/CheckFunctionExists.c.o  -o cmTC_66baf -lpthreads 
+Building C object CMakeFiles/cmTC_1a320.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_1a320.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_1a320
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1a320.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_1a320.dir/CheckFunctionExists.c.o  -o cmTC_1a320 -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_66baf.dir/build.make:97: recipe for target 'cmTC_66baf' failed
-make[1]: *** [cmTC_66baf] Error 1
+CMakeFiles/cmTC_1a320.dir/build.make:97: recipe for target 'cmTC_1a320' failed
+make[1]: *** [cmTC_1a320] Error 1
 make[1]: Leaving directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_66baf/fast' failed
-make: *** [cmTC_66baf/fast] Error 2
+Makefile:126: recipe for target 'cmTC_1a320/fast' failed
+make: *** [cmTC_1a320/fast] Error 2
 
 
 Determining if the function sgesv exists failed with the following output:
 Change Dir: /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_254e8/fast"
-/usr/bin/make -f CMakeFiles/cmTC_254e8.dir/build.make CMakeFiles/cmTC_254e8.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_72509/fast"
+/usr/bin/make -f CMakeFiles/cmTC_72509.dir/build.make CMakeFiles/cmTC_72509.dir/build
 make[1]: Entering directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_254e8.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgesv   -o CMakeFiles/cmTC_254e8.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_254e8
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_254e8.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgesv    -rdynamic CMakeFiles/cmTC_254e8.dir/CheckFunctionExists.c.o  -o cmTC_254e8 
-CMakeFiles/cmTC_254e8.dir/CheckFunctionExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_72509.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgesv   -o CMakeFiles/cmTC_72509.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_72509
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_72509.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgesv    -rdynamic CMakeFiles/cmTC_72509.dir/CheckFunctionExists.c.o  -o cmTC_72509 
+CMakeFiles/cmTC_72509.dir/CheckFunctionExists.c.o: In function `main':
 CheckFunctionExists.c:(.text+0x10): undefined reference to `sgesv'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_254e8.dir/build.make:97: recipe for target 'cmTC_254e8' failed
-make[1]: *** [cmTC_254e8] Error 1
+CMakeFiles/cmTC_72509.dir/build.make:97: recipe for target 'cmTC_72509' failed
+make[1]: *** [cmTC_72509] Error 1
 make[1]: Leaving directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_254e8/fast' failed
-make: *** [cmTC_254e8/fast] Error 2
+Makefile:126: recipe for target 'cmTC_72509/fast' failed
+make: *** [cmTC_72509/fast] Error 2
 
 
 Determining if the function sgesv_ exists failed with the following output:
 Change Dir: /home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_8d445/fast"
-/usr/bin/make -f CMakeFiles/cmTC_8d445.dir/build.make CMakeFiles/cmTC_8d445.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_de2eb/fast"
+/usr/bin/make -f CMakeFiles/cmTC_de2eb.dir/build.make CMakeFiles/cmTC_de2eb.dir/build
 make[1]: Entering directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_8d445.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgesv_   -o CMakeFiles/cmTC_8d445.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_8d445
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8d445.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgesv_    -rdynamic CMakeFiles/cmTC_8d445.dir/CheckFunctionExists.c.o  -o cmTC_8d445 
-CMakeFiles/cmTC_8d445.dir/CheckFunctionExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_de2eb.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgesv_   -o CMakeFiles/cmTC_de2eb.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_de2eb
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_de2eb.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgesv_    -rdynamic CMakeFiles/cmTC_de2eb.dir/CheckFunctionExists.c.o  -o cmTC_de2eb 
+CMakeFiles/cmTC_de2eb.dir/CheckFunctionExists.c.o: In function `main':
 CheckFunctionExists.c:(.text+0x10): undefined reference to `sgesv_'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_8d445.dir/build.make:97: recipe for target 'cmTC_8d445' failed
-make[1]: *** [cmTC_8d445] Error 1
+CMakeFiles/cmTC_de2eb.dir/build.make:97: recipe for target 'cmTC_de2eb' failed
+make[1]: *** [cmTC_de2eb] Error 1
 make[1]: Leaving directory '/home/keith/Desktop/head-pose-estimation/cpp/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_8d445/fast' failed
-make: *** [cmTC_8d445/fast] Error 2
+Makefile:126: recipe for target 'cmTC_de2eb/fast' failed
+make: *** [cmTC_de2eb/fast] Error 2
 
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "data.h"
 #include "random.h"
+#include "transform.h"
 
 class bfm {
 public:
@@ -13,7 +14,9 @@ public:
 	void generate_average_face() { generate_random_face(0.0); }
 	void generate_face();
 	void generate_fp_face();
-	void ply_write(string fn = "rnd_face.ply", bool pick_landmarks = false);
+	void ply_write(std::string fn = "face.ply", 
+				   model_write_mode mode = NONE_MODE) const;
+	void ply_write_fp(std::string fn = "fp_face.ply") const;
 
 	int get_n_id_pc() const { return n_id_pc; }
 	int get_n_expr_pc() const { return n_expr_pc; }
@@ -28,17 +31,29 @@ public:
 	double *get_mutable_external_parm() { return external_parm; }
 	double *get_mutable_intrinsic_parm() { return intrinsic_parm; }
 
-	double fx() const { return intrinsic_parm[0]; }
-	double fy() const { return intrinsic_parm[1]; }
-	double cx() const { return intrinsic_parm[2]; }
-	double cy() const { return intrinsic_parm[3]; }
+	double get_fx() const { return intrinsic_parm[0]; }
+	double get_fy() const { return intrinsic_parm[1]; }
+	double get_cx() const { return intrinsic_parm[2]; }
+	double get_cy() const { return intrinsic_parm[3]; }
 
-	double yaw() const { return external_parm[0]; }
-	double roll() const { return external_parm[1]; }
-	double pitch() const { return external_parm[2]; }
-	double tx() const { return external_parm[3]; }
-	double ty() const { return external_parm[4]; }
-	double tz() const { return external_parm[5]; }
+	double get_yaw() const { return external_parm[0]; }
+	double get_pitch() const { return external_parm[1]; }
+	double get_roll() const { return external_parm[2]; }
+	double get_tx() const { return external_parm[3]; }
+	double get_ty() const { return external_parm[4]; }
+	double get_tz() const { return external_parm[5]; }
+
+	void set_yaw(double yaw) { external_parm[0] = yaw; }
+	void set_pitch(double pitch) { external_parm[1] = pitch; }
+	void set_roll(double roll) { external_parm[2] = roll; }
+	void set_rotation(double yaw, double pitch, double roll) {
+		set_yaw(yaw);
+		set_pitch(pitch);
+		set_roll(roll);
+	}
+	void set_tx(double tx) { external_parm[3] = tx; }
+	void set_ty(double ty) { external_parm[4] = ty; }
+	void set_tz(double tz) { external_parm[5] = tz; }
 
 	const dlib::matrix<double> &get_current_shape() const { return current_shape; }
 	const dlib::matrix<double> &get_current_tex() const { return current_tex; }
@@ -47,6 +62,7 @@ public:
 	const dlib::matrix<double> &get_fp_current_blendshape() const { return fp_current_blendshape; }
 	const dlib::matrix<double> &get_tl() const { return tl; }
 
+	void print_fp_shape_mu() const { bfm_out << "landmark - shape average:\n" << fp_shape_mu; }
 	void print_external_parm() const;
 	void print_intrinsic_parm() const;
 
@@ -83,7 +99,7 @@ private:
 	int n_expr_pc;
 	int n_landmark;
 
-	double external_parm[6] = { 0.f };	/* yaw roll pitch tx ty tz */
+	double external_parm[6] = { 0.f };	/* yaw pitch roll tx ty tz */
 	double intrinsic_parm[4] = { 0.f };	/* fx fy cx cy */
 
 	dlib::matrix<double> shape_coef;

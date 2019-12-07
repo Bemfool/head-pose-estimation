@@ -18,7 +18,7 @@
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
 //No help, variable specified on the command line.
-CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_BUILD_TYPE:STRING=Debug
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -373,6 +373,40 @@ GLOG_INCLUDE_DIR:PATH=/usr/local/include
 //Path to a library.
 GLOG_LIBRARY:FILEPATH=/usr/local/lib/libglog.so
 
+//HDF5 CXX Wrapper compiler.  Used only to detect HDF5 compile
+// flags.
+HDF5_CXX_COMPILER_EXECUTABLE:FILEPATH=HDF5_CXX_COMPILER_EXECUTABLE-NOTFOUND
+
+//Path to a file.
+HDF5_CXX_INCLUDE_DIR:PATH=/usr/local/include
+
+//HDF5 C Wrapper compiler.  Used only to detect HDF5 compile flags.
+HDF5_C_COMPILER_EXECUTABLE:FILEPATH=HDF5_C_COMPILER_EXECUTABLE-NOTFOUND
+
+//Path to a file.
+HDF5_C_INCLUDE_DIR:PATH=/usr/local/include
+
+//HDF5 file differencing tool.
+HDF5_DIFF_EXECUTABLE:FILEPATH=HDF5_DIFF_EXECUTABLE-NOTFOUND
+
+//The directory containing a CMake configuration file for HDF5.
+HDF5_DIR:PATH=HDF5_DIR-NOTFOUND
+
+//HDF5 library compiled with parallel IO support
+HDF5_IS_PARALLEL:BOOL=FALSE
+
+//Path to a library.
+HDF5_hdf5_LIBRARY_DEBUG:FILEPATH=HDF5_hdf5_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+HDF5_hdf5_LIBRARY_RELEASE:FILEPATH=/usr/local/hdf5/lib/libhdf5.so
+
+//Path to a library.
+HDF5_hdf5_cpp_LIBRARY_DEBUG:FILEPATH=HDF5_hdf5_cpp_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+HDF5_hdf5_cpp_LIBRARY_RELEASE:FILEPATH=/usr/local/hdf5/lib/libhdf5_cpp.so
+
 //Path to a file.
 JPEG_INCLUDE_DIR:PATH=/usr/include
 
@@ -557,10 +591,10 @@ X11_Xscreensaver_LIB:FILEPATH=X11_Xscreensaver_LIB-NOTFOUND
 X11_Xshape_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
-X11_Xt_INCLUDE_PATH:PATH=X11_Xt_INCLUDE_PATH-NOTFOUND
+X11_Xt_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
-X11_Xt_LIB:FILEPATH=X11_Xt_LIB-NOTFOUND
+X11_Xt_LIB:FILEPATH=/usr/lib/x86_64-linux-gnu/libXt.so
 
 //Path to a file.
 X11_Xutil_INCLUDE_PATH:PATH=/usr/include
@@ -575,7 +609,7 @@ X11_Xv_LIB:FILEPATH=X11_Xv_LIB-NOTFOUND
 X11_Xxf86misc_LIB:FILEPATH=X11_Xxf86misc_LIB-NOTFOUND
 
 //Path to a library.
-X11_Xxf86vm_LIB:FILEPATH=X11_Xxf86vm_LIB-NOTFOUND
+X11_Xxf86vm_LIB:FILEPATH=/usr/lib/x86_64-linux-gnu/libXxf86vm.so
 
 //Path to a file.
 X11_dpms_INCLUDE_PATH:PATH=/usr/include
@@ -584,7 +618,7 @@ X11_dpms_INCLUDE_PATH:PATH=/usr/include
 X11_xf86misc_INCLUDE_PATH:PATH=X11_xf86misc_INCLUDE_PATH-NOTFOUND
 
 //Path to a file.
-X11_xf86vmode_INCLUDE_PATH:PATH=X11_xf86vmode_INCLUDE_PATH-NOTFOUND
+X11_xf86vmode_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=/usr/include
@@ -614,7 +648,7 @@ head-pose-estimation_BINARY_DIR:STATIC=/home/keith/Desktop/head-pose-estimation/
 head-pose-estimation_SOURCE_DIR:STATIC=/home/keith/Desktop/head-pose-estimation/cpp
 
 //Dependencies for the target
-hpe_LIB_DEPENDS:STATIC=general;dlib::dlib;general;ceres;general;cminpack;general;m;
+hpe_LIB_DEPENDS:STATIC=general;dlib::dlib;general;ceres;general;cminpack;general;m;general;/usr/local/hdf5/lib/libhdf5_cpp.so;general;/usr/local/hdf5/lib/libhdf5.so;general;/usr/local/hdf5/lib/libhdf5_cpp.so;general;/usr/local/hdf5/lib/libhdf5.so;
 
 //Path to a library.
 mkl_core:FILEPATH=mkl_core-NOTFOUND
@@ -732,7 +766,7 @@ CMAKE_C_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_RELWITHDEBINFO
 CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Path to cache edit program executable.
-CMAKE_EDIT_COMMAND:INTERNAL=/usr/bin/cmake-gui
+CMAKE_EDIT_COMMAND:INTERNAL=/usr/bin/ccmake
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=ELF
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -930,6 +964,8 @@ CUDA_parse_cubin:INTERNAL=/usr/share/cmake-3.10/Modules/FindCUDA/parse_cubin.cma
 CUDA_run_nvcc:INTERNAL=/usr/share/cmake-3.10/Modules/FindCUDA/run_nvcc.cmake
 //ADVANCED property for variable: EIGEN_INCLUDE_DIR
 EIGEN_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//Details about finding HDF5
+FIND_PACKAGE_MESSAGE_DETAILS_HDF5:INTERNAL=[/usr/local/hdf5/lib/libhdf5_cpp.so;/usr/local/hdf5/lib/libhdf5.so][/usr/local/include][cfound components:  C CXX ][v1.10.5()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v0.29.1()]
 //Details about finding Threads
@@ -954,6 +990,32 @@ HAVE_STDDEF_H:INTERNAL=1
 HAVE_STDINT_H:INTERNAL=1
 //Have include sys/types.h
 HAVE_SYS_TYPES_H:INTERNAL=1
+//ADVANCED property for variable: HDF5_CXX_COMPILER_EXECUTABLE
+HDF5_CXX_COMPILER_EXECUTABLE-ADVANCED:INTERNAL=1
+//Result of TRY_COMPILE
+HDF5_CXX_COMPILER_NO_INTERROGATE:INTERNAL=FALSE
+//ADVANCED property for variable: HDF5_CXX_INCLUDE_DIR
+HDF5_CXX_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_C_COMPILER_EXECUTABLE
+HDF5_C_COMPILER_EXECUTABLE-ADVANCED:INTERNAL=1
+//Result of TRY_COMPILE
+HDF5_C_COMPILER_NO_INTERROGATE:INTERNAL=FALSE
+//ADVANCED property for variable: HDF5_C_INCLUDE_DIR
+HDF5_C_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_DIFF_EXECUTABLE
+HDF5_DIFF_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_DIR
+HDF5_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_IS_PARALLEL
+HDF5_IS_PARALLEL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_hdf5_LIBRARY_DEBUG
+HDF5_hdf5_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_hdf5_LIBRARY_RELEASE
+HDF5_hdf5_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_hdf5_cpp_LIBRARY_DEBUG
+HDF5_hdf5_cpp_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_hdf5_cpp_LIBRARY_RELEASE
+HDF5_hdf5_cpp_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JPEG_INCLUDE_DIR
 JPEG_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JPEG_LIBRARY

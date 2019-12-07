@@ -15,6 +15,7 @@ void hpe::solve_ext_parm() {
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
 	problem.AddResidualBlock(cost_function, nullptr, model.get_mutable_external_parm());
 	ceres::Solver::Options options;
+	options.num_threads = 8;
 	options.minimizer_progress_to_stdout = true;
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
