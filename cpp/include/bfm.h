@@ -2,6 +2,7 @@
 #include "data.h"
 #include "random.h"
 #include "transform.h"
+#include "type_utils.h"
 
 class bfm {
 public:
@@ -14,8 +15,14 @@ public:
 	void generate_average_face() { generate_random_face(0.0); }
 	void generate_face();
 	void generate_fp_face();
-	void ply_write(std::string fn = "face.ply", 
-				   model_write_mode mode = NONE_MODE) const;
+	template<typename T>
+	dlib::matrix<T> generate_fp_face(dlib::matrix<T> shape_coef_, dlib::matrix<T> expr_coef_) const {
+		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev);
+		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev);
+		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
+		return fp_current_blendshape_;
+	}
+	void ply_write(std::string fn = "face.ply", long mode = NONE_MODE) const;
 	void ply_write_fp(std::string fn = "fp_face.ply") const;
 
 	int get_n_id_pc() const { return n_id_pc; }
@@ -24,6 +31,8 @@ public:
 	int get_n_vertice() const { return n_vertice; }
 	int get_n_landmark() const { return n_landmark; }
 	
+	void set_shape_coef(double *coef) { for(int i=0; i<n_id_pc; i++) shape_coef(i) = coef[i]; }
+	void set_expr_coef(double *coef) { for(int i=0; i<n_expr_pc; i++) expr_coef(i) = coef[i]; }
 	dlib::matrix<double> &get_mutable_shape_coef() { return shape_coef; }
 	dlib::matrix<double> &get_mutable_tex_coef() { return tex_coef; }
 	dlib::matrix<double> &get_mutable_expr_coef() { return expr_coef; }
@@ -47,9 +56,7 @@ public:
 	void set_pitch(double pitch) { external_parm[1] = pitch; }
 	void set_roll(double roll) { external_parm[2] = roll; }
 	void set_rotation(double yaw, double pitch, double roll) {
-		set_yaw(yaw);
-		set_pitch(pitch);
-		set_roll(roll);
+		set_yaw(yaw); set_pitch(pitch); set_roll(roll);
 	}
 	void set_tx(double tx) { external_parm[3] = tx; }
 	void set_ty(double ty) { external_parm[4] = ty; }
@@ -71,8 +78,15 @@ private:
 	void init_parm();
 	bool load_data();
 	void extract_landmark();
-	dlib::matrix<double> coef2object(dlib::matrix<double> &coef, dlib::matrix<double> &mu,
-		dlib::matrix<double> &pc, dlib::matrix<double> &ev);
+	template<typename T>
+	dlib::matrix<T> coef2object(const dlib::matrix<T> &coef, const dlib::matrix<double> &mu,
+							    const dlib::matrix<double> &pc, const dlib::matrix<double> &ev) const { 
+		dlib::matrix<T> mu_ = dlib::matrix_cast<T>(mu);
+		dlib::matrix<T> pc_ = dlib::matrix_cast<T>(pc);
+		dlib::matrix<T> ev_ = dlib::matrix_cast<T>(ev);
+		return mu_ + pc_ * pointwise_multiply(coef, ev_);
+	}
+
 
 	bool use_landmark;
 

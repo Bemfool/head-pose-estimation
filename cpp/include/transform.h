@@ -3,8 +3,8 @@
 #include <dlib/matrix.h>
 #define _USE_MATH_DEFINES
 
-template<typename T>
-dlib::matrix<T> transform(const T * const ext_parm, const dlib::matrix<double> &before_points) {
+template<typename T, typename E>
+dlib::matrix<T> transform(const T * const ext_parm, const dlib::matrix<E> &before_points) {
     dlib::matrix<T> after_points;
     after_points.set_size(before_points.nr(), 1);
 

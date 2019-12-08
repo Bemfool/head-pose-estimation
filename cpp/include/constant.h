@@ -8,6 +8,12 @@
 #define bfm_out std::cout
 #endif
 
+/* just for my database */
+#define N_LANDMARK 68
+#define N_ID_PC    99
+#define N_EXPR_PC  29
+#define N_EXT_PARM 6
+
 enum model_write_mode {
 	NONE_MODE      = 0L << 0, 
 	PICK_FP 	   = 1L << 0,

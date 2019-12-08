@@ -216,21 +216,12 @@ void bfm::generate_face() {
 
 void bfm::generate_fp_face() {
 	fp_current_shape = coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev);
-	// bfm_out << fp_current_shape;
 	fp_current_expr = coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev);
-	// bfm_out << fp_current_expr;
 	fp_current_blendshape = fp_current_shape + fp_current_expr;
-	// bfm_out << fp_current_blendshape;
 }
 
 
-dlib::matrix<double> bfm::coef2object(dlib::matrix<double> &coef, dlib::matrix<double> &mu,
-	dlib::matrix<double> &pc, dlib::matrix<double> &ev) {
-	return mu + pc * pointwise_multiply(coef, ev);
-}
-
-
-void bfm::ply_write(std::string fn, model_write_mode mode) const {
+void bfm::ply_write(std::string fn, long mode) const {
 	std::ofstream out;
 	/* Note: In Linux Cpp, we should use std::ios::bfm_out as flag, which is not necessary in Windows */
 	out.open(fn, std::ios::out | std::ios::binary);

@@ -6,33 +6,23 @@
 #include "transform.h"
 #define _USE_MATH_DEFINES
 
-class ext_parm_reproj_err {
+class reg_term {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	ext_parm_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
-	: observed_points(observed_points_), model(model_) {}
+	reg_term() {}
 	
     template<typename T>
-	bool operator () (const T* const x, T* residuals) const {
-		T fx = T(model.get_fx()), fy = T(model.get_fy());
-		T cx = T(model.get_cx()), cy = T(model.get_cy());
-		const dlib::matrix<double> _fp_shape = model.get_fp_current_blendshape();
-		const dlib::matrix<T> fp_shape = transform(x, _fp_shape);
-
-		for(int i=0; i<N_LANDMARK; i++) {
-			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
-			T v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = T(observed_points.part(i).x()) - u;
-			residuals[i*2+1] = T(observed_points.part(i).y()) - v;		
-		}
+	bool operator () (const T* const shape_coef, const T* const expr_coef, T* residuals) const {
+        T sum = T(0);
+        for(int i=0; i<N_ID_PC; i++)
+            sum += shape_coef[i];
+        for(int i=0; i<N_EXPR_PC; i++)
+            sum += expr_coef[i];
+        residuals[0] = T(30.0) * sum;
 		return true;
 	}
 
-	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) {
-		return (new ceres::AutoDiffCostFunction<ext_parm_reproj_err, N_LANDMARK * 2, N_EXT_PARM>(
-			new ext_parm_reproj_err(observed_points, model)));
+	static ceres::CostFunction *create() {
+		return (new ceres::AutoDiffCostFunction<reg_term,1, N_ID_PC, N_EXPR_PC>(
+			new reg_term()));
 	}
-
-private:
-	dlib::full_object_detection observed_points;
-    bfm model;
 };

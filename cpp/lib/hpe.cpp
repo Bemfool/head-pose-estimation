@@ -9,9 +9,42 @@ void hpe::init(std::string filename) {
 }
 
 
+void hpe::solve_total() {
+	ceres::Problem problem;
+	double *shape_coef = (double *)malloc(model.get_n_id_pc() * sizeof(double));
+	double *expr_coef = (double *)malloc(model.get_n_expr_pc() * sizeof(double));
+	fill(shape_coef, shape_coef + model.get_n_id_pc(), 0.f);
+	fill(expr_coef, expr_coef + model.get_n_expr_pc(), 0.f);
+
+	ceres::CostFunction *cost_function = total_reproj_err::create(observed_points, model);
+	ceres::CostFunction *reg_function = reg_term::create();
+	problem.AddResidualBlock(cost_function, nullptr, model.get_mutable_external_parm(), shape_coef, expr_coef);
+	problem.AddResidualBlock(reg_function, nullptr, shape_coef, expr_coef);
+	ceres::Solver::Options options;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	std::cout << summary.BriefReport() << std::endl;
+	model.set_shape_coef(shape_coef);
+	model.set_expr_coef(expr_coef);
+	model.generate_face();
+}
+
 void hpe::solve_ext_parm() {
 	ceres::Problem problem;
-	dlib::matrix<double> fp_shape = model.get_fp_current_blendshape();
+	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
+	problem.AddResidualBlock(cost_function, nullptr, model.get_mutable_external_parm());
+	ceres::Solver::Options options;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	std::cout << summary.BriefReport() << std::endl;
+}
+
+void hpe::solve_shape_coef() {
+	ceres::Problem problem;
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
 	problem.AddResidualBlock(cost_function, nullptr, model.get_mutable_external_parm());
 	ceres::Solver::Options options;

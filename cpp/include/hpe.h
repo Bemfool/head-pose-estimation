@@ -11,6 +11,8 @@
 #include "ceres/ceres.h"
 #include "string_utils.h"
 #include "ext_parm_reproj_err.h"
+#include "total_reproj_err.h"
+#include "reg_term.h"
 
 class hpe {
 public:
@@ -18,9 +20,9 @@ public:
 	hpe(std::string filename);
 	void init(std::string filename);
 	bfm &get_model() { return model; }
-	void solve() {}	// TODO
+	void solve_total();
 	void solve_ext_parm();
-	void solve_shape_coef() {}	// TODO
+	void solve_shape_coef();	// TODO
 	void solve_expr_coef() {}		// TODO
 
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
