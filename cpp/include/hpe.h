@@ -10,9 +10,7 @@
 #include <assert.h>
 #include "ceres/ceres.h"
 #include "string_utils.h"
-#include "ext_parm_reproj_err.h"
-#include "total_reproj_err.h"
-#include "reg_term.h"
+#include "functor/functor.h"
 
 class hpe {
 public:
@@ -22,7 +20,7 @@ public:
 	bfm &get_model() { return model; }
 	void solve_total();
 	void solve_ext_parm();
-	void solve_shape_coef();	// TODO
+	void solve_shape_coef();
 	void solve_expr_coef() {}		// TODO
 
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }

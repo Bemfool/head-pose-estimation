@@ -15,4 +15,4 @@
 * miu = 1.
 */
 
-dlib::matrix<double> randn(int n, double scale);
+double *randn(int n, double scale);

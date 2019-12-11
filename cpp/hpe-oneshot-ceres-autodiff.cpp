@@ -42,8 +42,13 @@ int main(int argc, char** argv)
 			hpe_problem.set_observed_points(obj_detection);
 
 			// 变量定义以及初始化
-			hpe_problem.solve_total();
+			// hpe_problem.solve_total();
+			hpe_problem.solve_ext_parm();
             hpe_problem.get_model().print_external_parm();
+			hpe_problem.solve_shape_coef();
+            hpe_problem.get_model().print_external_parm();
+			hpe_problem.get_model().print_shape_coef();
+			hpe_problem.get_model().print_expr_coef();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
 			const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();

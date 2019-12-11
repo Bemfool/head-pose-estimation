@@ -17,7 +17,7 @@ void bfm::init(const std::string filename) {
 }
 
 
-void bfm::data_check() {
+void bfm::data_check() const {
 	bfm_out << "check data\n";
 	bfm_out << "	(1) shape mu: \n";
 	bfm_out << "		Yours:   " << shape_mu(0, 0) << "\n";
@@ -74,17 +74,20 @@ bool bfm::read_parm_from_file(const std::string &filename) {
 
 
 void bfm::init_parm() {
-	shape_coef.set_size(n_id_pc, 1);
+	shape_coef = new double[n_id_pc];
+	fill(shape_coef, shape_coef + n_id_pc, 0.f);
 	shape_mu.set_size(n_vertice * 3, 1);
 	shape_ev.set_size(n_id_pc, 1);
 	shape_pc.set_size(n_vertice * 3, n_id_pc);
 
-	tex_coef.set_size(n_id_pc, 1);
+	tex_coef = new double[n_id_pc];
+	fill(tex_coef, tex_coef + n_id_pc, 0.f);
 	tex_mu.set_size(n_vertice * 3, 1);
 	tex_ev.set_size(n_id_pc, 1);
 	tex_pc.set_size(n_vertice * 3, n_id_pc);
 
-	expr_coef.set_size(n_expr_pc, 1);
+	expr_coef = new double[n_expr_pc];
+	fill(expr_coef, expr_coef + n_expr_pc, 0.f);
 	expr_mu.set_size(n_vertice * 3, 1);
 	expr_ev.set_size(n_expr_pc, 1);
 	expr_pc.set_size(n_vertice * 3, n_expr_pc);
