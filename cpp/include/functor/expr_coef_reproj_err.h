@@ -6,17 +6,17 @@
 #include "transform.h"
 #define _USE_MATH_DEFINES
 
-class shape_coef_reproj_err {
+class expr_coef_reproj_err {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	shape_coef_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
+	expr_coef_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
 	: observed_points(observed_points_), model(model_) { }
 	
     template<typename T>
-	bool operator () (const T* const shape_coef, T* residuals) const {
+	bool operator () (const T* const expr_coef, T* residuals) const {
 		T fx = T(model.get_fx()), fy = T(model.get_fy());
 		T cx = T(model.get_cx()), cy = T(model.get_cy());
-		
-		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_shape(shape_coef);  
+
+		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_expr(expr_coef);  
 
 		const double *ext_parm = model.get_external_parm();
         T *ext_parm_ = new T[6];

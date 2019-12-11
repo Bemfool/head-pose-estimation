@@ -162,16 +162,16 @@ void bfm::extract_landmark() {
 		fp_expr_mu(i*3+1) = expr_mu(idx*3+1);
 		fp_expr_mu(i*3+2) = expr_mu(idx*3+2);
 		for(int j=0; j<n_id_pc; j++) {
-			fp_shape_pc(i*3) = shape_pc(idx*3, j);
-			fp_shape_pc(i*3+1) = shape_pc(idx*3+1, j);
-			fp_shape_pc(i*3+2) = shape_pc(idx*3+2, j);			
+			fp_shape_pc(i*3, j) = shape_pc(idx*3, j);
+			fp_shape_pc(i*3+1, j) = shape_pc(idx*3+1, j);
+			fp_shape_pc(i*3+2, j) = shape_pc(idx*3+2, j);	
+			// std::cout << "loading fp " <<  fp_shape_pc(i*3) << " " << fp_shape_pc(i*3+1) << " " << fp_shape_pc(i*3+2) << std::endl;		
 		}
 		for(int j=0; j<n_expr_pc; j++) {
-			fp_expr_pc(i*3) = expr_pc(idx*3, j);
-			fp_expr_pc(i*3+1) = expr_pc(idx*3+1, j);
-			fp_expr_pc(i*3+2) = expr_pc(idx*3+2, j);
+			fp_expr_pc(i*3, j) = expr_pc(idx*3, j);
+			fp_expr_pc(i*3+1, j) = expr_pc(idx*3+1, j);
+			fp_expr_pc(i*3+2, j) = expr_pc(idx*3+2, j);
 		}
-
 	}
 }
 
@@ -210,16 +210,20 @@ void bfm::generate_random_face(double shape_scale, double tex_scale, double expr
 
 
 void bfm::generate_face() {
-	current_shape = coef2object(shape_coef, shape_mu, shape_pc, shape_ev);
-	current_tex = coef2object(tex_coef, tex_mu, tex_pc, tex_ev);
-	current_expr = coef2object(expr_coef, expr_mu, expr_pc, expr_ev);
+	current_shape = coef2object(shape_coef, shape_mu, shape_pc, shape_ev, n_id_pc);
+	current_tex = coef2object(tex_coef, tex_mu, tex_pc, tex_ev, n_id_pc);
+	current_expr = coef2object(expr_coef, expr_mu, expr_pc, expr_ev, n_expr_pc);
 	current_blendshape = current_shape + current_expr;
 }
 
 
 void bfm::generate_fp_face() {
-	fp_current_shape = coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev);
-	fp_current_expr = coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev);
+	fp_current_shape = coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
+	// print_shape_ev();
+	// print_fp_shape_pc();
+	// print_shape_coef();
+
+	fp_current_expr = coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 	fp_current_blendshape = fp_current_shape + fp_current_expr;
 }
 

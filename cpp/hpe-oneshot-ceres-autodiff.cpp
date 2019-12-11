@@ -14,13 +14,16 @@ int main(int argc, char** argv)
 
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
-	std::string img_name = "test.jpg";
+	// std::string img_name = "test.jpg";
+	std::string img_name = "test2.jpg";
 	if(argc > 1) img_name = argv[1];	
 	std::cout << "processing image " << img_name << std::endl;
 	load_image(img, img_name);
 
 	image_window win;
 	win.clear_overlay();
+	double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
+	double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
 
 	try {
 		// 初始化detector
@@ -46,16 +49,16 @@ int main(int argc, char** argv)
 			hpe_problem.solve_ext_parm();
             hpe_problem.get_model().print_external_parm();
 			hpe_problem.solve_shape_coef();
+			// hpe_problem.solve_expr_coef();
             hpe_problem.get_model().print_external_parm();
 			hpe_problem.get_model().print_shape_coef();
 			hpe_problem.get_model().print_expr_coef();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
 			const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
+
 			const dlib::matrix<double> fp_shape = transform(
 				hpe_problem.get_model().get_mutable_external_parm(), _fp_shape);
-			double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
-			double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
 			std::vector<point2d> parts;
 			for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
 				int u = int(fx * fp_shape(i*3) / fp_shape(i*3+2) + cx);
@@ -64,9 +67,10 @@ int main(int argc, char** argv)
 			}
 			std::vector<dlib::full_object_detection> final_obj_detection;
 			final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
-			win.add_overlay(render_face_detections(final_obj_detection));	
+			win.add_overlay(render_face_detections(final_obj_detection));
+
 		}
-		win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0,0, 255)));
+		win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0, 0, 255)));
 
 		cin.get();
 	} catch (exception& e) {

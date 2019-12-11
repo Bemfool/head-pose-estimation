@@ -44,7 +44,9 @@ void hpe::solve_shape_coef() {
 	ceres::Problem problem;
 	double *shape_coef = model.get_mutable_shape_coef();
 	ceres::CostFunction *cost_function = shape_coef_reproj_err::create(observed_points, model);
+	ceres::CostFunction *reg_term = shape_coef_reg_term::create();
 	problem.AddResidualBlock(cost_function, nullptr, shape_coef);
+	problem.AddResidualBlock(reg_term, nullptr, shape_coef);
 	ceres::Solver::Options options;
 	options.max_num_consecutive_invalid_steps = 10;
 	options.num_threads = 8;
@@ -52,4 +54,22 @@ void hpe::solve_shape_coef() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
+	model.generate_face();
+	model.generate_fp_face();
+}
+
+void hpe::solve_expr_coef() {
+	ceres::Problem problem;
+	double *expr_coef = model.get_mutable_expr_coef();
+	ceres::CostFunction *cost_function = expr_coef_reproj_err::create(observed_points, model);
+	problem.AddResidualBlock(cost_function, nullptr, expr_coef);
+	ceres::Solver::Options options;
+	options.max_num_consecutive_invalid_steps = 10;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	std::cout << summary.BriefReport() << std::endl;
+	model.generate_face();
+	model.generate_fp_face();
 }

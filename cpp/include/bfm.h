@@ -17,27 +17,29 @@ public:
 	void generate_fp_face();
 	template<typename T>
 	dlib::matrix<T> generate_fp_face(const T * const shape_coef_,const T * const expr_coef_) const {
-		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev);
-		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev);
+		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
+		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;
 	}
 	template<typename T>
 	dlib::matrix<T> generate_fp_face_by_shape(const T * const shape_coef_) const {
-		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev);
-		dlib::matrix<T> fp_current_expr_ = dlib::matrix_cast<T>(coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev));
+		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
+		// std::cout << "fp_current_shape: " << fp_current_shape_(0, 0);
+		// dlib::matrix<T> fp_current_expr_ = dlib::matrix_cast<T>(coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev));
+		// std::cout << "fp_current_expr: " << fp_current_expr(0, 0);
+		dlib::matrix<T> fp_current_expr_ = dlib::matrix_cast<T>(fp_current_expr);
+		// std::cout << "fp_current_expr_: " << fp_current_expr_(0, 0);
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
 	}
 	template<typename T>
 	dlib::matrix<T> generate_fp_face_by_expr(const T * const expr_coef_) const {
-		dlib::matrix<T> fp_current_shape_ = dlib::matrix_cast<T>(coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev));
-		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev);
+		dlib::matrix<T> fp_current_shape_ = dlib::matrix_cast<T>(coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc));
+		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
 	}
-
-
 
 	void ply_write(std::string fn = "face.ply", long mode = NONE_MODE) const;
 	void ply_write_fp(std::string fn = "fp_face.ply") const;
@@ -86,7 +88,9 @@ public:
 	const dlib::matrix<double> &get_fp_current_blendshape() const { return fp_current_blendshape; }
 	const dlib::matrix<double> &get_tl() const { return tl; }
 
-	void print_fp_shape_mu() const { bfm_out << "landmark - shape average:\n" << fp_shape_mu; }
+	void print_fp_shape_mu() const { bfm_out << "landmark - shape average:\n"  << fp_shape_mu; }
+	void print_fp_shape_pc() const { bfm_out << "landmark - shape pc:\n"	   << fp_shape_pc; }
+	void print_shape_ev() const { bfm_out << "shape variance:\n " << shape_ev; }
 	void print_external_parm() const;
 	void print_intrinsic_parm() const;
 	void print_shape_coef() const { 
@@ -104,12 +108,12 @@ private:
 	bool load_data();
 	void extract_landmark();
 	template<typename T>
-	dlib::matrix<T> coef2object(const T *const coef, const dlib::matrix<double> &mu,
-							    const dlib::matrix<double> &pc, const dlib::matrix<double> &ev) const { 
-		int len = sizeof(coef) / sizeof(T);
+	dlib::matrix<T> coef2object(const T *const &coef, const dlib::matrix<double> &mu,
+							    const dlib::matrix<double> &pc, const dlib::matrix<double> &ev, int len) const { 
 		dlib::matrix<T> coef_(len, 1);
 		for(int i=0; i<len; i++)
 			coef_(i) = coef[i];
+
 		dlib::matrix<T> mu_ = dlib::matrix_cast<T>(mu);
 		dlib::matrix<T> pc_ = dlib::matrix_cast<T>(pc);
 		dlib::matrix<T> ev_ = dlib::matrix_cast<T>(ev);
