@@ -12,12 +12,10 @@ public:
 	
     template<typename T>
 	bool operator () (const T* const shape_coef, const T* const expr_coef, T* residuals) const {
-        T sum = T(0);
         for(int i=0; i<N_ID_PC; i++)
-            sum += shape_coef[i];
+            residuals[i] = T(u) * shape_coef[i];
         for(int i=0; i<N_EXPR_PC; i++)
-            sum += expr_coef[i];
-        residuals[0] = T(coef) * sum;
+            residuals[i + N_ID_PC] = T(v) * expr_coef[i];
 		return true;
 	}
 
@@ -26,7 +24,8 @@ public:
 			new total_reg_term()));
 	}
 private:
-	const double coef = 0.0;
+	const double u = 0.0005;
+	const double v = 1.0;
 };
 
 
@@ -46,4 +45,22 @@ public:
 	}
 private:
 	const double u = 0.0005;
+};
+
+class expr_coef_reg_term {
+public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+	expr_coef_reg_term() {}
+    template<typename T>
+	bool operator () (const T* const expr_coef, T* residuals) const {
+        for(int i=0; i<N_EXPR_PC; i++)
+	        residuals[i] = T(u) * expr_coef[i];
+		return true;
+	}
+
+	static ceres::CostFunction *create() {
+		return (new ceres::AutoDiffCostFunction<expr_coef_reg_term, N_EXPR_PC, N_EXPR_PC>(
+			new expr_coef_reg_term()));
+	}
+private:
+	const double u = 0.0001;
 };

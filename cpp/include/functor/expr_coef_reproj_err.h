@@ -35,7 +35,7 @@ public:
 	}
 
 	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) {
-		return (new ceres::AutoDiffCostFunction<shape_coef_reproj_err, N_LANDMARK * 2, N_ID_PC>(
+		return (new ceres::AutoDiffCostFunction<shape_coef_reproj_err, N_LANDMARK * 2, N_EXPR_PC>(
 			new shape_coef_reproj_err(observed_points, model)));
 	}
 

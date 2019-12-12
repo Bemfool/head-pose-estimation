@@ -14,8 +14,8 @@ int main(int argc, char** argv)
 
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
-	// std::string img_name = "test.jpg";
-	std::string img_name = "test2.jpg";
+	std::string img_name = "test.jpg";
+	// std::string img_name = "test2.jpg";
 	if(argc > 1) img_name = argv[1];	
 	std::cout << "processing image " << img_name << std::endl;
 	load_image(img, img_name);
@@ -46,9 +46,8 @@ int main(int argc, char** argv)
 
 			// 变量定义以及初始化
 			// hpe_problem.solve_total();
-			hpe_problem.solve_ext_parm();
-            hpe_problem.get_model().print_external_parm();
-			hpe_problem.solve_shape_coef();
+			// hpe_problem.solve_ext_parm();
+			// hpe_problem.solve_shape_coef();
 			// hpe_problem.solve_expr_coef();
             hpe_problem.get_model().print_external_parm();
 			hpe_problem.get_model().print_shape_coef();

@@ -146,7 +146,11 @@ private:
 	int n_expr_pc;
 	int n_landmark;
 
-	double external_parm[6] = { 0.f };	/* yaw pitch roll tx ty tz */
+	/* euler angle */
+	/* yaw:   rotate around z axis */
+	/* pitch: rotate around y axis */
+    /* roll:  rotate around x axis */
+	double external_parm[6] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };	/* yaw pitch roll tx ty tz */
 	double intrinsic_parm[4] = { 0.f };	/* fx fy cx cy */
 
 	double *shape_coef;

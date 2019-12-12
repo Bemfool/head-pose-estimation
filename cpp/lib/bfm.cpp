@@ -177,8 +177,8 @@ void bfm::extract_landmark() {
 
 void bfm::print_external_parm() const {
 	bfm_out << "yaw: "   << external_parm[0] << "\n";
-	bfm_out << "roll: "  << external_parm[1] << "\n";
-	bfm_out << "pitch: " << external_parm[2] << "\n";
+	bfm_out << "pitch: " << external_parm[1] << "\n";
+	bfm_out << "roll: "  << external_parm[2] << "\n";
 	bfm_out << "tx: "    << external_parm[3] << "\n";
 	bfm_out << "ty: "    << external_parm[4] << "\n";
 	bfm_out << "tz: "    << external_parm[5] << "\n";

@@ -8,8 +8,26 @@ void hpe::init(std::string filename) {
 	model.init(filename);
 }
 
+void hpe::estimate_ext_parm() {
+	double *ext_parm = model.get_mutable_external_parm();
+
+ 	dlib::vector<double, 2> vec;
+	dlib::vector<double, 2> model_vec;
+	dlib::vector<double, 2> x_axis;
+	x_axis.x() = 1;
+	x_axis.y() = 0;
+	dlib::matrix<double> fp_shape = model.get_fp_current_blendshape();
+
+ 	/* Estimate ryaw angle using line crossing two eyes */
+	vec = observed_points.part(46) - observed_points.part(37);
+	ext_parm[0] -= acos(vec.dot(x_axis) / (vec.length() * x_axis.length()) ) * 180.0 / M_PI;
+	cout << "yaw: " << ext_parm[0] << endl;
+}
+
+
 
 void hpe::solve_total() {
+	estimate_ext_parm();
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
 	double *shape_coef = model.get_mutable_shape_coef();
@@ -27,6 +45,7 @@ void hpe::solve_total() {
 	model.generate_face();
 }
 
+
 void hpe::solve_ext_parm() {
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
@@ -39,6 +58,7 @@ void hpe::solve_ext_parm() {
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
 }
+
 
 void hpe::solve_shape_coef() {
 	ceres::Problem problem;
@@ -58,11 +78,14 @@ void hpe::solve_shape_coef() {
 	model.generate_fp_face();
 }
 
+
 void hpe::solve_expr_coef() {
 	ceres::Problem problem;
 	double *expr_coef = model.get_mutable_expr_coef();
 	ceres::CostFunction *cost_function = expr_coef_reproj_err::create(observed_points, model);
+	ceres::CostFunction *reg_term = expr_coef_reg_term::create();
 	problem.AddResidualBlock(cost_function, nullptr, expr_coef);
+	problem.AddResidualBlock(reg_term, nullptr, expr_coef);
 	ceres::Solver::Options options;
 	options.max_num_consecutive_invalid_steps = 10;
 	options.num_threads = 8;

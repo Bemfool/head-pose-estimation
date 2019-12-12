@@ -16,9 +16,6 @@ public:
 		T fx = T(model.get_fx()), fy = T(model.get_fy());
 		T cx = T(model.get_cx()), cy = T(model.get_cy());
 
-		for(int i=0; i<6; i++)
-			std::cout << "T: " << shape_coef[i] << " " << expr_coef[i] << " " << ext_parm[i] << std::endl;
-
 		dlib::matrix<T> _fp_shape = model.generate_fp_face(shape_coef, expr_coef);
 		dlib::matrix<T> fp_shape = transform(ext_parm, _fp_shape);
 
