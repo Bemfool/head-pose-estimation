@@ -14,8 +14,8 @@ int main(int argc, char** argv)
 
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
-	std::string img_name = "test.jpg";
-	// std::string img_name = "test2.jpg";
+	std::string img_name = "test3.jpg";
+
 	if(argc > 1) img_name = argv[1];	
 	std::cout << "processing image " << img_name << std::endl;
 	load_image(img, img_name);
@@ -46,20 +46,25 @@ int main(int argc, char** argv)
 
 			// 变量定义以及初始化
 			// hpe_problem.solve_total();
-			// hpe_problem.solve_ext_parm();
-			// hpe_problem.solve_shape_coef();
-			// hpe_problem.solve_expr_coef();
+			hpe_problem.solve_ext_parm();
+			hpe_problem.solve_shape_coef();
+			hpe_problem.solve_expr_coef();
+			// hpe_problem.solve_parm();
+			// hpe_problem.iter_solve();
+			
             hpe_problem.get_model().print_external_parm();
+			hpe_problem.get_model().print_intrinsic_parm();
 			hpe_problem.get_model().print_shape_coef();
 			hpe_problem.get_model().print_expr_coef();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
 			const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
-
 			const dlib::matrix<double> fp_shape = transform(
 				hpe_problem.get_model().get_mutable_external_parm(), _fp_shape);
 			std::vector<point2d> parts;
-			for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
+
+			parts.push_back(point2d(10, 10));
+			for(int i=1; i<hpe_problem.get_model().get_n_landmark(); i++) {
 				int u = int(fx * fp_shape(i*3) / fp_shape(i*3+2) + cx);
 				int v = int(fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy);
 				parts.push_back(point2d(u, v));

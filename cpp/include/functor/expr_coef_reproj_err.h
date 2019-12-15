@@ -13,8 +13,13 @@ public:
 	
     template<typename T>
 	bool operator () (const T* const expr_coef, T* residuals) const {
+		std::cout << "!!!" << std::endl;
 		T fx = T(model.get_fx()), fy = T(model.get_fy());
 		T cx = T(model.get_cx()), cy = T(model.get_cy());
+
+		std::cout << "???" << std::endl;
+		for(int i=0; i<29; i++)
+			std::cout << expr_coef[i] << std::endl;
 
 		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_expr(expr_coef);  
 
@@ -35,8 +40,8 @@ public:
 	}
 
 	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) {
-		return (new ceres::AutoDiffCostFunction<shape_coef_reproj_err, N_LANDMARK * 2, N_EXPR_PC>(
-			new shape_coef_reproj_err(observed_points, model)));
+		return (new ceres::AutoDiffCostFunction<expr_coef_reproj_err, N_LANDMARK * 2, N_EXPR_PC>(
+			new expr_coef_reproj_err(observed_points, model)));
 	}
 
 private:

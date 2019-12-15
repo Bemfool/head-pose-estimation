@@ -18,10 +18,12 @@ public:
 	hpe(std::string filename);
 	void init(std::string filename);
 	bfm &get_model() { return model; }
-	void solve_total();
-	void solve_ext_parm();
-	void solve_shape_coef();
-	void solve_expr_coef();
+	void iter_solve();
+	bool solve_total();
+	bool solve_parm();
+	bool solve_ext_parm();
+	bool solve_shape_coef();
+	bool solve_expr_coef();
 	void estimate_ext_parm();
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
 private:

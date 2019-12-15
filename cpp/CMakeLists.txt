@@ -41,9 +41,6 @@ target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIB
 add_executable(bfm-test bfm-test.cpp)
 target_link_libraries(bfm-test hpe)
 
-add_executable(hpe-oneshot-ceres-numericdiff-with-shape hpe-oneshot-ceres-numericdiff-with-shape.cpp)
-target_link_libraries(hpe-oneshot-ceres-numericdiff-with-shape hpe)
-
 add_executable(hpe-oneshot-ceres-autodiff hpe-oneshot-ceres-autodiff.cpp)
 target_link_libraries(hpe-oneshot-ceres-autodiff hpe)
 

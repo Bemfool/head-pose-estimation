@@ -25,17 +25,13 @@ public:
 	template<typename T>
 	dlib::matrix<T> generate_fp_face_by_shape(const T * const shape_coef_) const {
 		dlib::matrix<T> fp_current_shape_ = coef2object(shape_coef_, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
-		// std::cout << "fp_current_shape: " << fp_current_shape_(0, 0);
-		// dlib::matrix<T> fp_current_expr_ = dlib::matrix_cast<T>(coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev));
-		// std::cout << "fp_current_expr: " << fp_current_expr(0, 0);
 		dlib::matrix<T> fp_current_expr_ = dlib::matrix_cast<T>(fp_current_expr);
-		// std::cout << "fp_current_expr_: " << fp_current_expr_(0, 0);
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
 	}
 	template<typename T>
 	dlib::matrix<T> generate_fp_face_by_expr(const T * const expr_coef_) const {
-		dlib::matrix<T> fp_current_shape_ = dlib::matrix_cast<T>(coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc));
+		dlib::matrix<T> fp_current_shape_ = dlib::matrix_cast<T>(fp_current_shape);
 		dlib::matrix<T> fp_current_expr_ = coef2object(expr_coef_, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
@@ -146,7 +142,7 @@ private:
 	int n_expr_pc;
 	int n_landmark;
 
-	/* euler angle */
+	/* ZYX - euler angle */
 	/* yaw:   rotate around z axis */
 	/* pitch: rotate around y axis */
     /* roll:  rotate around x axis */

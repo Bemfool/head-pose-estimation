@@ -18,15 +18,20 @@ void hpe::estimate_ext_parm() {
 	x_axis.y() = 0;
 	dlib::matrix<double> fp_shape = model.get_fp_current_blendshape();
 
- 	/* Estimate ryaw angle using line crossing two eyes */
+ 	/* Estimate yaw angle using line crossing two eyes */
 	vec = observed_points.part(46) - observed_points.part(37);
 	ext_parm[0] -= acos(vec.dot(x_axis) / (vec.length() * x_axis.length()) ) * 180.0 / M_PI;
 	cout << "yaw: " << ext_parm[0] << endl;
 }
 
 
+void hpe::iter_solve() {
 
-void hpe::solve_total() {
+}
+
+
+
+bool hpe::solve_total() {
 	estimate_ext_parm();
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
@@ -43,24 +48,46 @@ void hpe::solve_total() {
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
 	model.generate_face();
+	return (summary.initial_cost == summary.final_cost);
+}
+
+bool hpe::solve_parm() {
+	ceres::Problem problem;
+	double *ext_parm = model.get_mutable_external_parm();
+	double *int_parm = model.get_mutable_intrinsic_parm();
+	ceres::CostFunction *cost_function = parm_reproj_err::create(observed_points, model);
+	problem.AddResidualBlock(cost_function, nullptr, ext_parm, int_parm);
+	ceres::Solver::Options options;
+	options.max_num_iterations = 100;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	std::cout << summary.BriefReport() << std::endl;	
+	return (summary.initial_cost == summary.final_cost);
 }
 
 
-void hpe::solve_ext_parm() {
+
+bool hpe::solve_ext_parm() {
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
+	ceres::CostFunction *reg_function = ext_parm_reg_term::create();
 	problem.AddResidualBlock(cost_function, nullptr, ext_parm);
+	problem.AddResidualBlock(reg_function, nullptr, ext_parm);
 	ceres::Solver::Options options;
+	options.max_num_iterations = 100;
 	options.num_threads = 8;
 	options.minimizer_progress_to_stdout = true;
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
+	return (summary.initial_cost == summary.final_cost);
 }
 
 
-void hpe::solve_shape_coef() {
+bool hpe::solve_shape_coef() {
 	ceres::Problem problem;
 	double *shape_coef = model.get_mutable_shape_coef();
 	ceres::CostFunction *cost_function = shape_coef_reproj_err::create(observed_points, model);
@@ -76,10 +103,11 @@ void hpe::solve_shape_coef() {
 	std::cout << summary.BriefReport() << std::endl;
 	model.generate_face();
 	model.generate_fp_face();
+	return (summary.initial_cost == summary.final_cost);
 }
 
 
-void hpe::solve_expr_coef() {
+bool hpe::solve_expr_coef() {
 	ceres::Problem problem;
 	double *expr_coef = model.get_mutable_expr_coef();
 	ceres::CostFunction *cost_function = expr_coef_reproj_err::create(observed_points, model);
@@ -93,6 +121,8 @@ void hpe::solve_expr_coef() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
+	// std::cout << summary.FullReport() << std::endl;
 	model.generate_face();
 	model.generate_fp_face();
+	return (summary.initial_cost == summary.final_cost);
 }

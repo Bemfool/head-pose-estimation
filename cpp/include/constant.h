@@ -14,6 +14,9 @@
 #define N_EXPR_PC  29
 #define N_EXT_PARM 6
 
+/* record my intrinsic parameters */
+// 1744.327628674942 1747.838275588676 800 600
+
 enum model_write_mode {
 	NONE_MODE      = 0L << 0, 
 	PICK_FP 	   = 1L << 0,

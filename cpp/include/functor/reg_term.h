@@ -24,7 +24,7 @@ public:
 			new total_reg_term()));
 	}
 private:
-	const double u = 0.0005;
+	const double u = 0.1;
 	const double v = 1.0;
 };
 
@@ -44,7 +44,7 @@ public:
 			new shape_coef_reg_term()));
 	}
 private:
-	const double u = 0.0005;
+	const double u = 0.003;
 };
 
 class expr_coef_reg_term {
@@ -62,5 +62,29 @@ public:
 			new expr_coef_reg_term()));
 	}
 private:
-	const double u = 0.0001;
+	const double u = 0.01;
+};
+
+
+class ext_parm_reg_term {
+public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+	ext_parm_reg_term() {}
+    template<typename T>
+	bool operator () (const T* const ext_parm, T* residuals) const {
+	    residuals[0] = T(u) * ext_parm[0];
+		residuals[1] = T(u) * ext_parm[1];
+		residuals[2] = T(u) * (ext_parm[2] + 180.0);
+	    residuals[3] = T(v) * ext_parm[3];
+		residuals[4] = T(v) * ext_parm[4];
+		residuals[5] = T(v) * ext_parm[5];
+		return true;
+	}
+
+	static ceres::CostFunction *create() {
+		return (new ceres::AutoDiffCostFunction<ext_parm_reg_term, 6, 6>(
+			new ext_parm_reg_term()));
+	}
+private:
+	const double u = 3.0;
+	const double v = 0.001;
 };

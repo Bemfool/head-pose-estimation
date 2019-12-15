@@ -219,10 +219,6 @@ void bfm::generate_face() {
 
 void bfm::generate_fp_face() {
 	fp_current_shape = coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
-	// print_shape_ev();
-	// print_fp_shape_pc();
-	// print_shape_coef();
-
 	fp_current_expr = coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 	fp_current_blendshape = fp_current_shape + fp_current_expr;
 }
