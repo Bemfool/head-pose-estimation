@@ -25,12 +25,6 @@ void hpe::estimate_ext_parm() {
 }
 
 
-void hpe::iter_solve() {
-
-}
-
-
-
 bool hpe::solve_total() {
 	estimate_ext_parm();
 	ceres::Problem problem;
@@ -48,7 +42,7 @@ bool hpe::solve_total() {
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
 	model.generate_face();
-	return (summary.initial_cost == summary.final_cost);
+	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
 bool hpe::solve_parm() {
@@ -64,7 +58,7 @@ bool hpe::solve_parm() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;	
-	return (summary.initial_cost == summary.final_cost);
+	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
 
@@ -75,7 +69,7 @@ bool hpe::solve_ext_parm() {
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
 	ceres::CostFunction *reg_function = ext_parm_reg_term::create();
 	problem.AddResidualBlock(cost_function, nullptr, ext_parm);
-	problem.AddResidualBlock(reg_function, nullptr, ext_parm);
+	// problem.AddResidualBlock(reg_function, nullptr, ext_parm);
 	ceres::Solver::Options options;
 	options.max_num_iterations = 100;
 	options.num_threads = 8;
@@ -83,7 +77,25 @@ bool hpe::solve_ext_parm() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
-	return (summary.initial_cost == summary.final_cost);
+	return (summary.termination_type == ceres::CONVERGENCE);
+}
+
+
+bool hpe::solve_int_parm() {
+	ceres::Problem problem;
+	double *int_parm = model.get_mutable_intrinsic_parm();
+	ceres::CostFunction *cost_function = int_parm_reproj_err::create(observed_points, model);
+	// ceres::CostFunction *reg_function = ext_parm_reg_term::create();
+	problem.AddResidualBlock(cost_function, nullptr, int_parm);
+	// problem.AddResidualBlock(reg_function, nullptr, ext_parm);
+	ceres::Solver::Options options;
+	options.max_num_iterations = 100;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	std::cout << summary.BriefReport() << std::endl;
+	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
 
@@ -101,9 +113,8 @@ bool hpe::solve_shape_coef() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
-	model.generate_face();
 	model.generate_fp_face();
-	return (summary.initial_cost == summary.final_cost);
+	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
 
@@ -121,8 +132,6 @@ bool hpe::solve_expr_coef() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
-	// std::cout << summary.FullReport() << std::endl;
-	model.generate_face();
 	model.generate_fp_face();
-	return (summary.initial_cost == summary.final_cost);
+	return (summary.termination_type == ceres::CONVERGENCE);
 }

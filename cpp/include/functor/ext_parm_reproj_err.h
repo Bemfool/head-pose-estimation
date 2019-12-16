@@ -1,3 +1,4 @@
+#pragma once
 #include <cmath>
 #include <ctime>
 #include "bfm.h"

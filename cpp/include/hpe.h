@@ -4,6 +4,7 @@
 #include <dlib/image_processing.h>
 #include <dlib/gui_widgets.h>
 #include <dlib/image_io.h>
+#include <dlib/opencv.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <fstream>
@@ -18,10 +19,10 @@ public:
 	hpe(std::string filename);
 	void init(std::string filename);
 	bfm &get_model() { return model; }
-	void iter_solve();
 	bool solve_total();
 	bool solve_parm();
 	bool solve_ext_parm();
+	bool solve_int_parm();
 	bool solve_shape_coef();
 	bool solve_expr_coef();
 	void estimate_ext_parm();

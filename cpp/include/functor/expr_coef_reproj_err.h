@@ -1,3 +1,4 @@
+#pragma once
 #include <cmath>
 #include <ctime>
 #include "bfm.h"
@@ -13,13 +14,8 @@ public:
 	
     template<typename T>
 	bool operator () (const T* const expr_coef, T* residuals) const {
-		std::cout << "!!!" << std::endl;
 		T fx = T(model.get_fx()), fy = T(model.get_fy());
 		T cx = T(model.get_cx()), cy = T(model.get_cy());
-
-		std::cout << "???" << std::endl;
-		for(int i=0; i<29; i++)
-			std::cout << expr_coef[i] << std::endl;
 
 		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_expr(expr_coef);  
 

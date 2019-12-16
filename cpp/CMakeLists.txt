@@ -33,26 +33,21 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 find_package(HDF5 REQUIRED C CXX)
 
+find_package(OpenCV QUIET)
+if (OpenCV_FOUND)
+   message("OpenCV found.")
+   include_directories(${OpenCV_INCLUDE_DIRS})
+else()
+   message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
+endif()
+
 include_directories(./include)
 add_library(hpe SHARED lib/hpe.cpp
                        lib/string_utils.cpp lib/bfm.cpp lib/random.cpp)
 target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
 
-add_executable(bfm-test bfm-test.cpp)
-target_link_libraries(bfm-test hpe)
+add_executable(hpe_oneshot hpe_oneshot.cpp)
+target_link_libraries(hpe_oneshot hpe)
 
-add_executable(hpe-oneshot-ceres-autodiff hpe-oneshot-ceres-autodiff.cpp)
-target_link_libraries(hpe-oneshot-ceres-autodiff hpe)
-
-
-add_executable(hpe-cam-ceres-numericdiff hpe-cam-ceres-numericdiff.cpp)
-add_executable(hpe-cam-ceres-analyticdiff hpe-cam-ceres-analyticdiff.cpp)
-
-find_package(OpenCV QUIET)
-if (OpenCV_FOUND)
-   include_directories(${OpenCV_INCLUDE_DIRS})
-   target_link_libraries(hpe-cam-ceres-numericdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} hpe)
-   target_link_libraries(hpe-cam-ceres-analyticdiff dlib::dlib ${CERES_LIBRARIES} ${OpenCV_LIBS} hpe)
-else()
-   message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
-endif()
+add_executable(hpe_webcam hpe_webcam.cpp)
+target_link_libraries(hpe_webcam hpe)
