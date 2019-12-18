@@ -48,7 +48,6 @@ int main(int argc, char** argv)
 			hpe_problem.solve_ext_parm();
 			hpe_problem.solve_shape_coef();
 			hpe_problem.solve_expr_coef();	
-
             hpe_problem.get_model().print_external_parm();
 			hpe_problem.get_model().print_intrinsic_parm();
 			hpe_problem.get_model().print_shape_coef();

@@ -67,9 +67,7 @@ bool hpe::solve_ext_parm() {
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
-	ceres::CostFunction *reg_function = ext_parm_reg_term::create();
 	problem.AddResidualBlock(cost_function, nullptr, ext_parm);
-	// problem.AddResidualBlock(reg_function, nullptr, ext_parm);
 	ceres::Solver::Options options;
 	options.max_num_iterations = 100;
 	options.num_threads = 8;
