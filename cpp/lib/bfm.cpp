@@ -224,6 +224,55 @@ void bfm::generate_fp_face() {
 }
 
 
+void bfm::generate_rotation_matrix() {
+	const double &yaw   = external_parm[0];
+	const double &pitch = external_parm[1];
+	const double &roll  = external_parm[2];
+	const double &tx    = external_parm[3];
+	const double &ty    = external_parm[4];
+	const double &tz    = external_parm[5];
+
+	double c1 = cos(yaw   * M_PI / 180.0), s1 = sin(yaw   * M_PI / 180.0);
+	double c2 = cos(pitch * M_PI / 180.0), s2 = sin(pitch * M_PI / 180.0);
+	double c3 = cos(roll  * M_PI / 180.0), s3 = sin(roll  * M_PI / 180.0);
+
+	R = c2 * c1, s3 * s2 * c1 - c3 * s1, c3 * s2 * c1 + s3 * s1,
+	    c2 * s1, s3 * s2 * s1 + c3 * c1, c3 * s2 * s1 - s3 * c1,
+	    -s2, s3 * c2, c3 * c2; 
+}
+
+void bfm::accumulate_external_parm(double *x) {
+	/* in every iteration, P = R`(RP+t)+t`, 
+	 * R_{new} = R`R_{old}
+	 * t_{new} = R`t_{old} + t`
+	 */
+	
+	double dyaw = x[0];
+	double dpitch = x[1];
+	double droll = x[2];
+	double dtx = x[3];
+	double dty = x[4];
+	double dtz = x[5];
+
+	/* accumulate rotation */
+	dlib::matrix<double> dR(3, 3);
+	dR = 1.0, -dyaw, dpitch,
+	    dyaw, 1.0, -droll,
+		-dpitch, droll, 1.0;
+	R = R * dR;
+
+	/* accumulate translation */
+	dlib::matrix<double> T(3, 1);
+	T = external_parm[3],
+		external_parm[4],
+		external_parm[5];
+	T = dR * T;
+	external_parm[3] = T(0, 0) + dtx;
+	external_parm[4] = T(1, 0) + dty;
+	external_parm[5] = T(2, 0) + dtz;	
+}	
+
+
 void bfm::ply_write(std::string fn, long mode) const {
 	std::ofstream out;
 	/* Note: In Linux Cpp, we should use std::ios::bfm_out as flag, which is not necessary in Windows */
@@ -330,4 +379,8 @@ void bfm::ply_write_fp(std::string fn) const {
 	}
 
 	out.close();	
+}
+
+dlib::matrix<double> bfm::get_fp_current_blendshape_transformed() const {
+	return matrix_transform(R, external_parm[3], external_parm[4], external_parm[5], fp_current_blendshape);
 }

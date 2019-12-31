@@ -9,19 +9,7 @@ void hpe::init(std::string filename) {
 }
 
 void hpe::estimate_ext_parm() {
-	double *ext_parm = model.get_mutable_external_parm();
 
- 	dlib::vector<double, 2> vec;
-	dlib::vector<double, 2> model_vec;
-	dlib::vector<double, 2> x_axis;
-	x_axis.x() = 1;
-	x_axis.y() = 0;
-	dlib::matrix<double> fp_shape = model.get_fp_current_blendshape();
-
- 	/* Estimate yaw angle using line crossing two eyes */
-	vec = observed_points.part(46) - observed_points.part(37);
-	ext_parm[0] -= acos(vec.dot(x_axis) / (vec.length() * x_axis.length()) ) * 180.0 / M_PI;
-	cout << "yaw: " << ext_parm[0] << endl;
 }
 
 
@@ -75,6 +63,47 @@ bool hpe::solve_ext_parm() {
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
 	std::cout << summary.BriefReport() << std::endl;
+	return (summary.termination_type == ceres::CONVERGENCE);
+}
+
+
+bool hpe::solve_ext_parm_test() {
+	model.generate_rotation_matrix();
+
+	ceres::Solver::Options options;
+	options.max_num_iterations = 100;
+	options.num_threads = 8;
+	options.minimizer_progress_to_stdout = true;
+	ceres::Solver::Summary summary;
+	double u = 1.0, v = 0.1;
+	double u_step = 0.000001, v_step = 0.000001;
+
+	while(true) {
+		ceres::Problem problem;
+		double small_ext_parm[6] = { 0.f };
+		ceres::CostFunction *cost_function = test_ext_parm_reproj_err::create(&observed_points, &model, u, v);
+		u = (u > u_step) ? u - u_step : 0.0;
+		v = (v > v_step) ? v - v_step : 0.0;
+		problem.AddResidualBlock(cost_function, nullptr, small_ext_parm);
+		ceres::Solve(options, &problem, &summary);
+		// std::cout << summary.BriefReport() << std::endl;
+
+		if(small_ext_parm[0] == 0 && small_ext_parm[1] == 0 &&
+		   small_ext_parm[2] == 0 && small_ext_parm[3] == 0 &&
+		   small_ext_parm[4] == 0 && small_ext_parm[5] == 0) {
+		   std::cout << summary.BriefReport() << std::endl;
+		   break; 
+		}
+
+		model.accumulate_external_parm(small_ext_parm);
+		// std::cout << small_ext_parm[0] << " " << small_ext_parm[1] << " " << small_ext_parm[2] << " " 
+		//           << small_ext_parm[3] << " " << small_ext_parm[4] << " " << small_ext_parm[5] << " " << std::endl;	
+		// model.print_R();
+		// model.print_external_parm();
+
+		// std::cin.get();								
+	}
+	std::cout << "final u: " << u << " " << " v: " << v << std::endl;
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
 

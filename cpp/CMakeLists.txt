@@ -43,7 +43,7 @@ endif()
 
 include_directories(./include)
 add_library(hpe SHARED lib/hpe.cpp
-                       lib/string_utils.cpp lib/bfm.cpp lib/random.cpp)
+                       lib/string_utils.cpp lib/bfm.cpp lib/random.cpp lib/transform.cpp)
 target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
 
 add_executable(hpe_oneshot hpe_oneshot.cpp)

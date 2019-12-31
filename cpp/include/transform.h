@@ -1,7 +1,13 @@
 #pragma once
 #include <cmath>
 #include <dlib/matrix.h>
+#include <dlib/opencv/to_open_cv.h>
+#include <opencv2/opencv.hpp> 
 #define _USE_MATH_DEFINES
+
+dlib::matrix<double> matrix_transform(dlib::matrix<double> R, double tx, double ty, double tz, 
+					      const dlib::matrix<double> &points);
+
 
 template<typename T, typename E>
 dlib::matrix<T> transform(const T * const ext_parm, const dlib::matrix<E> &before_points) {
@@ -33,6 +39,39 @@ dlib::matrix<T> transform(const T * const ext_parm, const dlib::matrix<E> &befor
     return after_points;
 }
 
+
+template<typename T, typename E>
+dlib::matrix<T> linearized_transform(const T * const ext_parm, const dlib::matrix<E> &points) {
+	dlib::matrix<T> before_points = dlib::matrix_cast<T>(points);
+	dlib::matrix<T> after_points;
+
+	const T &yaw   = ext_parm[0];
+	const T &pitch = ext_parm[1];
+	const T &roll  = ext_parm[2];
+	const T &tx    = ext_parm[3];
+	const T &ty    = ext_parm[4];
+	const T &tz    = ext_parm[5];
+
+	dlib::matrix<T> R(3, 3);
+	R = T(1), -yaw, pitch,
+	    yaw, T(1), -roll,
+		-pitch, roll, T(1);
+	// std::cout << R << std::endl;
+	int n_vertice = before_points.nr() / 3;
+	before_points = dlib::trans(dlib::reshape(before_points, n_vertice, 3));
+	// std::cout << "trans: " << before_points(0, 1) << " " << before_points(1, 1) << " " << before_points(2, 1) << std::endl; 
+	after_points = R * before_points;
+	// std::cout << "trans: " << after_points(0, 1) << " " << after_points(1, 1) << " " << after_points(2, 1) << std::endl; 
+	dlib::set_rowm(after_points, 0) = dlib::rowm(after_points, 0) + tx;
+	dlib::set_rowm(after_points, 1) = dlib::rowm(after_points, 1) + ty;
+	dlib::set_rowm(after_points, 2) = dlib::rowm(after_points, 2) + tz;
+	// std::cout << "trans: " << after_points(0, 1) << " " << after_points(1, 1) << " " << after_points(2, 1) << std::endl; 
+	after_points = dlib::reshape(dlib::trans(after_points), n_vertice * 3, 1);
+    return after_points;
+} 
+
+
+
 template<typename T>
 void transform(const double ext_parm[6], T &x, T &y, T &z) {
 	const double &yaw   = ext_parm[0];
@@ -55,3 +94,12 @@ void transform(const double ext_parm[6], T &x, T &y, T &z) {
 	y = ( c2 * s1) * X + (s3 * s2 * s1 + c3 * c1) * Y + (c3 * s2 * s1 - s3 * c1) * Z + ty;
 	z = (-s2     ) * X + (s3 * c2               ) * Y + (c3 * c2               ) * Z + tz; 
 }
+
+
+bool is_rotation_matrix(const dlib::matrix<double, 3, 3> &R);
+
+
+void satisfy_rotation_constraint(dlib::matrix<double, 3, 3> &R);
+
+
+double mat_norm(dlib::matrix<double> &m);

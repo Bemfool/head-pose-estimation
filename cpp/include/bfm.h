@@ -36,7 +36,8 @@ public:
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
 	}
-
+	void generate_rotation_matrix();
+	void accumulate_external_parm(double *x);
 	void ply_write(std::string fn = "face.ply", long mode = NONE_MODE) const;
 	void ply_write_fp(std::string fn = "fp_face.ply") const;
 
@@ -54,6 +55,7 @@ public:
 	double *get_mutable_intrinsic_parm() { return intrinsic_parm; }
 	const double *get_external_parm() const { return external_parm; }
 	const double *get_intrinsic_parm() const { return intrinsic_parm; }
+	const dlib::matrix<double> get_R() const { return R; }
 
 	const double get_fx() const { return intrinsic_parm[0]; }
 	const double get_fy() const { return intrinsic_parm[1]; }
@@ -82,6 +84,7 @@ public:
 	const dlib::matrix<double> &get_current_expr() const { return current_expr; }
 	const dlib::matrix<double> &get_current_blendshape() const { return current_blendshape; }
 	const dlib::matrix<double> &get_fp_current_blendshape() const { return fp_current_blendshape; }
+	dlib::matrix<double> get_fp_current_blendshape_transformed() const;
 	const dlib::matrix<double> &get_tl() const { return tl; }
 
 	void print_fp_shape_mu() const { bfm_out << "landmark - shape average:\n"  << fp_shape_mu; }
@@ -97,6 +100,7 @@ public:
 		bfm_out << "expression coef:\n";
 		for(int i=0; i<n_expr_pc; i++) bfm_out << expr_coef[i] << "\n";
 	}
+	void print_R() const { bfm_out << "R: \n" << R; }
 
 private:
 	bool read_parm_from_file(const std::string &filename);
@@ -146,6 +150,7 @@ private:
 	/* yaw:   rotate around z axis */
 	/* pitch: rotate around y axis */
     /* roll:  rotate around x axis */
+	dlib::matrix<double, 3, 3> R;
 	double external_parm[6] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };	/* yaw pitch roll tx ty tz */
 	double intrinsic_parm[4] = { 0.f };	/* fx fy cx cy */
 

@@ -44,20 +44,20 @@ int main(int argc, char** argv)
 			obj_detections.push_back(obj_detection);
 			hpe_problem.set_observed_points(obj_detection);
 
-			// 变量定义以及初始化
-			hpe_problem.solve_ext_parm();
-			hpe_problem.solve_shape_coef();
-			hpe_problem.solve_expr_coef();	
+			std::cout << "solving external parameters..." << std::endl;
+			hpe_problem.solve_ext_parm_test();
+			// std::cout << "solving shape coeficients..." << std::endl;
+			// hpe_problem.solve_shape_coef();
+			// std::cout << "solving expression coeficients..." << std::endl;
+			// hpe_problem.solve_expr_coef();	
             hpe_problem.get_model().print_external_parm();
 			hpe_problem.get_model().print_intrinsic_parm();
-			hpe_problem.get_model().print_shape_coef();
-			hpe_problem.get_model().print_expr_coef();
+			// hpe_problem.get_model().print_shape_coef();
+			// hpe_problem.get_model().print_expr_coef();
 			hpe_problem.get_model().generate_face();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
-			const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
-			const dlib::matrix<double> fp_shape = transform(
-				hpe_problem.get_model().get_mutable_external_parm(), _fp_shape);
+			const dlib::matrix<double> fp_shape = hpe_problem.get_model().get_fp_current_blendshape_transformed();
 			std::vector<point2d> parts;
 
 			for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
