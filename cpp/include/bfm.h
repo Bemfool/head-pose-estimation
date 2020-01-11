@@ -75,6 +75,12 @@ public:
 	void set_rotation(double yaw, double pitch, double roll) {
 		set_yaw(yaw); set_pitch(pitch); set_roll(roll);
 	}
+	void set_R(dlib::matrix<double> R_) { R = R_; }
+	void set_R(cv::Mat R_) { 
+		R(0, 0) = R_.at<double>(0, 0); R(0, 1) = R_.at<double>(0, 1); R(0, 2) = R_.at<double>(0, 2);
+		R(1, 0) = R_.at<double>(1, 0); R(1, 1) = R_.at<double>(1, 1); R(1, 2) = R_.at<double>(1, 2);
+		R(2, 0) = R_.at<double>(2, 0); R(2, 1) = R_.at<double>(2, 1); R(2, 2) = R_.at<double>(2, 2);
+	}
 	void set_tx(double tx) { external_parm[3] = tx; }
 	void set_ty(double ty) { external_parm[4] = ty; }
 	void set_tz(double tz) { external_parm[5] = tz; }

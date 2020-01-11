@@ -9,7 +9,32 @@ void hpe::init(std::string filename) {
 }
 
 void hpe::estimate_ext_parm() {
+	const double *int_parm = model.get_intrinsic_parm();
+	double camera_vec[3][3] = {
+		{int_parm[0], 0.0, int_parm[2]},
+		{0.0, int_parm[1], int_parm[3]},
+		{0.0, 0.0, 1.0}
+	};
+	cv::Mat camera_matrix = cv::Mat(3, 3, CV_64FC1, camera_vec);
+	std::cout << "camera matrix: " << camera_matrix << std::endl;
 
+	std::vector<float> dist_coef(0);
+	std::vector<cv::Point3f> out;
+	std::vector<cv::Point2f> in;
+	cv::Mat rvec,tvec;
+	dlib::matrix<double> fp_shape = model.get_fp_current_blendshape();
+	for(int i=0; i<68; i++) {
+		out.push_back(cv::Point3f(fp_shape(i*3), fp_shape(i*3+1), fp_shape(i*3+2)));
+		in.push_back(cv::Point2f(observed_points.part(i).x(), observed_points.part(i).y()));
+	}
+	cv::solvePnP(out, in, camera_matrix, dist_coef, rvec, tvec);
+	cv::Rodrigues(rvec, rvec);
+	std::cout << rvec << std::endl;
+	std::cout << tvec << std::endl;
+	model.set_R(rvec);
+	model.set_tx(tvec.at<double>(0));
+	model.set_ty(tvec.at<double>(1));
+	model.set_tz(tvec.at<double>(2));
 }
 
 
@@ -73,10 +98,10 @@ bool hpe::solve_ext_parm_test() {
 	ceres::Solver::Options options;
 	options.max_num_iterations = 100;
 	options.num_threads = 8;
-	options.minimizer_progress_to_stdout = true;
+	options.minimizer_progress_to_stdout = false;
 	ceres::Solver::Summary summary;
-	double u = 1.0, v = 0.1;
-	double u_step = 0.000001, v_step = 0.000001;
+	double u = 1.0f, v = 1.0;
+	double u_step = 0.f, v_step = 0.f;
 
 	while(true) {
 		ceres::Problem problem;
@@ -96,8 +121,8 @@ bool hpe::solve_ext_parm_test() {
 		}
 
 		model.accumulate_external_parm(small_ext_parm);
-		// std::cout << small_ext_parm[0] << " " << small_ext_parm[1] << " " << small_ext_parm[2] << " " 
-		//           << small_ext_parm[3] << " " << small_ext_parm[4] << " " << small_ext_parm[5] << " " << std::endl;	
+		std::cout << small_ext_parm[0] << " " << small_ext_parm[1] << " " << small_ext_parm[2] << " " 
+		          << small_ext_parm[3] << " " << small_ext_parm[4] << " " << small_ext_parm[5] << " " << std::endl;	
 		// model.print_R();
 		// model.print_external_parm();
 

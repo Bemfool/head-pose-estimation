@@ -42,8 +42,8 @@ class test_ext_parm_reproj_err {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 	test_ext_parm_reproj_err(dlib::full_object_detection *observed_points_, bfm *model_) 
 	: observed_points(observed_points_), model(model_) {}
-	test_ext_parm_reproj_err(dlib::full_object_detection *observed_points_, bfm *model_, double u_, double v_) 
-	: observed_points(observed_points_), model(model_), u(u_), v(v_) {}
+	test_ext_parm_reproj_err(dlib::full_object_detection *observed_points_, bfm *model_, double a_, double b_) 
+	: observed_points(observed_points_), model(model_), a(a_), b(b_) {}
 
 
     template<typename T>
@@ -65,12 +65,16 @@ public:
 			residuals[i*2+1] = T(observed_points->part(i).y()) - v;		
 		}
 
-	    residuals[N_LANDMARK*2]   = T(u) * x[0];
-		residuals[N_LANDMARK*2+1] = T(u) * x[1];
-		residuals[N_LANDMARK*2+2] = T(u) * x[2];
-		residuals[N_LANDMARK*2+3] = T(v) * x[3];
-		residuals[N_LANDMARK*2+4] = T(v) * x[4];
-		residuals[N_LANDMARK*2+5] = T(v) * x[5];
+		/* regularialization */
+	    residuals[N_LANDMARK*2]   = T(a) * x[0];
+		residuals[N_LANDMARK*2+1] = T(a) * x[1];
+		residuals[N_LANDMARK*2+2] = T(a) * x[2];
+		residuals[N_LANDMARK*2+3] = T(b) * x[3];
+		residuals[N_LANDMARK*2+4] = T(b) * x[4];
+		residuals[N_LANDMARK*2+5] = T(b) * x[5];
+		// std::cout << "res: " << std::endl;
+		// std::cout << residuals[68*2] << " " << residuals[68*2+1] << " " << residuals[68*2+2] << std::endl; 
+		// std::cout << residuals[68*2+3] << " " << residuals[68*2+4] << " " << residuals[68*2+5] << std::endl; 
 
 		return true;
 	}
@@ -79,15 +83,15 @@ public:
 		return (new ceres::AutoDiffCostFunction<test_ext_parm_reproj_err, N_LANDMARK * 2 + N_EXT_PARM, N_EXT_PARM>(
 			new test_ext_parm_reproj_err(observed_points, model)));
 	}
-	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model, double u, double v) {
+	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model, double a, double b) {
 		return (new ceres::AutoDiffCostFunction<test_ext_parm_reproj_err, N_LANDMARK * 2 + N_EXT_PARM, N_EXT_PARM>(
-			new test_ext_parm_reproj_err(observed_points, model, u, v)));
+			new test_ext_parm_reproj_err(observed_points, model, a, b)));
 	}
 
 
 private:
 	dlib::full_object_detection *observed_points;
     bfm *model;
-	double u = 1.0;
-	double v = 1.0;
+	double a = 1.0;
+	double b = 1.0;
 };

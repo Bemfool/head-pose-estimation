@@ -45,7 +45,9 @@ int main(int argc, char** argv)
 			hpe_problem.set_observed_points(obj_detection);
 
 			std::cout << "solving external parameters..." << std::endl;
-			hpe_problem.solve_ext_parm_test();
+			hpe_problem.estimate_ext_parm();
+			// hpe_problem.solve_ext_parm_test();
+			// hpe_problem.solve_ext_parm();
 			// std::cout << "solving shape coeficients..." << std::endl;
 			// hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;
