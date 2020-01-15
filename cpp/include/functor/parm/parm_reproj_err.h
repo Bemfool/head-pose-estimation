@@ -22,7 +22,7 @@ public:
 		tmp[1] = ext_parm[1];
 		tmp[2] = ext_parm[2];
 		
-		const dlib::matrix<T> fp_shape = transform(ext_parm, _fp_shape);
+		const dlib::matrix<T> fp_shape = transform_points(ext_parm, _fp_shape);
 
 		for(int i=0; i<N_LANDMARK; i++) {
 			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;

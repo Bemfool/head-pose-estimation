@@ -19,7 +19,7 @@ public:
 		_Tp fx = _Tp(model.get_fx()), fy = _Tp(model.get_fy());
 		_Tp cx = _Tp(model.get_cx()), cy = _Tp(model.get_cy());
 		const dlib::matrix<double> _fp_shape = model.get_fp_current_blendshape();
-		const dlib::matrix<_Tp> fp_shape = transform(x, _fp_shape);
+		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape);
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{
@@ -58,12 +58,12 @@ public:
 		_Tp fx = _Tp(_model->get_fx()), fy = _Tp(_model->get_fy());
 		_Tp cx = _Tp(_model->get_cx()), cy = _Tp(_model->get_cy());
 
-		std::cout << "for R: " << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << " " << x[5] << std::endl;
+		// std::cout << "for R: " << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << " " << x[5] << std::endl;
 		const dlib::matrix<double> _fp_shape = _model->get_fp_current_blendshape_transformed();
-		std::cout << _fp_shape(3) << " " << _fp_shape(4) << " " << _fp_shape(5) << std::endl;
+		// std::cout << _fp_shape(3) << " " << _fp_shape(4) << " " << _fp_shape(5) << std::endl;
 
-		const dlib::matrix<_Tp> fp_shape = transform(x, _fp_shape, true);
-		std::cout << fp_shape(3) << " " << fp_shape(4) << " " << fp_shape(5) << std::endl;
+		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape, true);
+		// std::cout << fp_shape(3) << " " << fp_shape(4) << " " << fp_shape(5) << std::endl;
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{

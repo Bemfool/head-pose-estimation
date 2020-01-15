@@ -1,12 +1,9 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <dlib/matrix.h>
 #include <dlib/opencv/to_open_cv.h>
 #include <opencv2/opencv.hpp> 
-#define _USE_MATH_DEFINES
-
-dlib::matrix<double> matrix_transform(dlib::matrix<double> R, double tx, double ty, double tz, 
-					      const dlib::matrix<double> &points);
 
 
 /* 
@@ -19,7 +16,7 @@ dlib::matrix<double> matrix_transform(dlib::matrix<double> R, double tx, double 
  * 		@is_linearized: Choose to use linearized Euler angle transform or not. If true, be sure yaw, pitch and roll
  * 						keep small.
  * Return:
- * 		Rotation matrix.
+ * 		Rotation matrix R.
  * 		If linearized:
  * 			R = [[1,      -yaw, pitch],
  * 				 [yaw,    1,    -roll],
@@ -81,9 +78,9 @@ template<typename _Tp> inline
 dlib::matrix<_Tp> ternary2quaternion(const dlib::matrix<_Tp> &ternary_points)
 {
 	dlib::matrix<_Tp> quaternion_points;
-	quaternion_points.set_size(ternary_points.nc()+1, 3);
-	dlib::set_subm(quaternion_points, dlib::range(0, ternary_points.nc()-1), dlib::range(0, 2)) = ternary_points;
-	dlib::set_colm(quaternion_points, 3) = (_Tp)1.0;	
+	quaternion_points.set_size(ternary_points.nr(), 4);
+	dlib::set_subm(quaternion_points, dlib::range(0, ternary_points.nr()-1), dlib::range(0, 2)) = ternary_points;
+	dlib::set_colm(quaternion_points, 3) = (_Tp)1.0;
 	return dlib::trans(quaternion_points);
 }
 
@@ -103,7 +100,7 @@ dlib::matrix<_Tp> ternary2quaternion(const dlib::matrix<_Tp> &ternary_points)
  */
 
 template<typename _Tp> inline
-dlib::matrix<_Tp> RT2P(const dlib::matrix<_Tp> &R, const dlib::matrix<_Tp> &T)
+dlib::matrix<_Tp> RT2P(const dlib::matrix<_Tp, 3, 3> &R, const dlib::matrix<_Tp, 3, 1> &T)
 {
 	dlib::matrix<_Tp> P;
 	P.set_size(3, 4);
@@ -113,12 +110,26 @@ dlib::matrix<_Tp> RT2P(const dlib::matrix<_Tp> &R, const dlib::matrix<_Tp> &T)
 }
 
 
+template<typename _Tp, typename _Ep>
+dlib::matrix<_Tp> transform_points(const dlib::matrix<_Tp, 3, 3> &R, const dlib::matrix<_Tp, 3, 1> &T, 
+					     		   const dlib::matrix<_Ep> &points) 
+{
+	dlib::matrix<_Tp> P(3, 4);
+    dlib::matrix<_Tp> tmp_points, before_points, after_points;
+	P = RT2P(R, T);
+	tmp_points = dlib::reshape(dlib::matrix_cast<_Tp>(points), points.nr()/3, 3);
+	before_points = ternary2quaternion(tmp_points);
+	after_points = P * before_points;
+    return dlib::reshape(after_points, points.nr(), 1);
+}
+
 
 template<typename _Tp, typename _Ep>
-dlib::matrix<_Tp> transform(const _Tp * const ext_parm, const dlib::matrix<_Ep> &points, bool is_linearized = false) 
+dlib::matrix<_Tp> transform_points(const _Tp * const ext_parm, const dlib::matrix<_Ep> &points, 
+								   bool is_linearized = false) 
 {
-	dlib::matrix<_Tp> R, T, P;
-    dlib::matrix<_Tp> tmp_points, before_points, after_points;
+	dlib::matrix<_Tp, 3, 3> R;
+	dlib::matrix<_Tp, 3 ,1> T;
 
 	const _Tp &yaw   = ext_parm[0];
 	const _Tp &pitch = ext_parm[1];
@@ -129,12 +140,7 @@ dlib::matrix<_Tp> transform(const _Tp * const ext_parm, const dlib::matrix<_Ep> 
 	
 	R = euler2matrix(yaw, pitch, roll, is_linearized);
 	T = tx, ty, tz;
-	P = RT2P(R, T);
-
-	tmp_points = dlib::reshape(dlib::matrix_cast<_Tp>(points), points.nc()/3, 3);
-	before_points = ternary2quaternion(tmp_points);
-	after_points = R * P;
-    return dlib::reshape(after_points, points.nc(), 1);
+	return transform_points(R, T, points);
 }
 
 

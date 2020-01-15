@@ -24,7 +24,7 @@ public:
         for(int i=0; i<6; i++)
             ext_parm_[i] = (T)(ext_parm[i]);
 
-		const dlib::matrix<T> fp_shape = transform(ext_parm_, fp_shape_);
+		const dlib::matrix<T> fp_shape = transform_points(ext_parm_, fp_shape_);
 
 		for(int i=0; i<N_LANDMARK; i++) {
 			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;

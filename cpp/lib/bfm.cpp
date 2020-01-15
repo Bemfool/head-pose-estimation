@@ -389,5 +389,5 @@ void bfm::ply_write_fp(std::string fn) const {
 }
 
 dlib::matrix<double> bfm::get_fp_current_blendshape_transformed() const {
-	return matrix_transform(R, external_parm[3], external_parm[4], external_parm[5], fp_current_blendshape);
+	return transform_points(R, T, fp_current_blendshape);
 }

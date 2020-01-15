@@ -18,7 +18,7 @@ public:
 		T cx = T(model.get_cx()), cy = T(model.get_cy());
 
 		dlib::matrix<T> _fp_shape = model.generate_fp_face(shape_coef, expr_coef);
-		dlib::matrix<T> fp_shape = transform(ext_parm, _fp_shape);
+		dlib::matrix<T> fp_shape = transform_points(ext_parm, _fp_shape);
 
 		for(int i=0; i<N_LANDMARK; i++) {
 			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
