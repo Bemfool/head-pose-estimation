@@ -93,8 +93,10 @@ bool hpe::solve_ext_parm() {
 
 
 bool hpe::solve_ext_parm_test() {
-	model.generate_rotation_matrix();
+	std::cout << "solve -> external parameters (linealized)\n";
+	model.generate_transform_matrix();
 
+	std::cout << "init ceres solve - ";
 	ceres::Solver::Options options;
 	options.max_num_iterations = 100;
 	options.num_threads = 8;
@@ -102,7 +104,9 @@ bool hpe::solve_ext_parm_test() {
 	ceres::Solver::Summary summary;
 	double u = 1.0f, v = 1.0;
 	double u_step = 0.f, v_step = 0.f;
+	std::cout << "success" << std::endl;
 
+	std::cout << "begin iteration" << std::endl;
 	while(true) {
 		ceres::Problem problem;
 		double small_ext_parm[6] = { 0.f };
@@ -125,7 +129,6 @@ bool hpe::solve_ext_parm_test() {
 		          << small_ext_parm[3] << " " << small_ext_parm[4] << " " << small_ext_parm[5] << " " << std::endl;	
 		// model.print_R();
 		// model.print_external_parm();
-
 		// std::cin.get();								
 	}
 	std::cout << "final u: " << u << " " << " v: " << v << std::endl;

@@ -224,29 +224,45 @@ void bfm::generate_fp_face() {
 }
 
 
-void bfm::generate_rotation_matrix() {
+void bfm::generate_rotation_matrix() 
+{
+	bfm_out << "generate rotation matrix - ";
 	const double &yaw   = external_parm[0];
 	const double &pitch = external_parm[1];
 	const double &roll  = external_parm[2];
-	const double &tx    = external_parm[3];
-	const double &ty    = external_parm[4];
-	const double &tz    = external_parm[5];
-
-	double c1 = cos(yaw   * M_PI / 180.0), s1 = sin(yaw   * M_PI / 180.0);
-	double c2 = cos(pitch * M_PI / 180.0), s2 = sin(pitch * M_PI / 180.0);
-	double c3 = cos(roll  * M_PI / 180.0), s3 = sin(roll  * M_PI / 180.0);
-
-	R = c2 * c1, s3 * s2 * c1 - c3 * s1, c3 * s2 * c1 + s3 * s1,
-	    c2 * s1, s3 * s2 * s1 + c3 * c1, c3 * s2 * s1 - s3 * c1,
-	    -s2, s3 * c2, c3 * c2; 
+	R = euler2matrix(yaw, pitch, roll, false);
+	bfm_out << "success\n";
+	print_R();
 }
+
+
+void bfm::generate_translation_vector()
+{
+	bfm_out << "generate translation vector - ";	
+	const double &tx = external_parm[0];
+	const double &ty = external_parm[1];
+	const double &tz = external_parm[2];
+	T = tx, ty, tz;	
+	bfm_out << "success\n";
+	print_T();
+}
+
+void bfm::generate_transform_matrix()
+{
+	bfm_out << "generate transform matrix (rotation + translation):\n";
+	generate_rotation_matrix();
+	generate_translation_vector();
+}
+
 
 void bfm::accumulate_external_parm(double *x) {
 	/* in every iteration, P = R`(RP+t)+t`, 
 	 * R_{new} = R`R_{old}
 	 * t_{new} = R`t_{old} + t`
 	 */
-	
+
+	dlib::matrix<double, 3, 3> dR;
+	dlib::matrix<double, 3, 1> dT;	
 	double dyaw = x[0];
 	double dpitch = x[1];
 	double droll = x[2];
@@ -255,21 +271,12 @@ void bfm::accumulate_external_parm(double *x) {
 	double dtz = x[5];
 
 	/* accumulate rotation */
-	dlib::matrix<double> dR(3, 3);
-	dR = 1.0, -dyaw, dpitch,
-	    dyaw, 1.0, -droll,
-		-dpitch, droll, 1.0;
+	dR = euler2matrix(dyaw, dpitch, droll, true);
 	R = R * dR;
 
 	/* accumulate translation */
-	dlib::matrix<double> T(3, 1);
-	T = external_parm[3],
-		external_parm[4],
-		external_parm[5];
-	T = dR * T;
-	external_parm[3] = T(0, 0) + dtx;
-	external_parm[4] = T(1, 0) + dty;
-	external_parm[5] = T(2, 0) + dtz;	
+	dT = dtx, dty, dtz;
+	T = dR * T + dT;
 }	
 
 

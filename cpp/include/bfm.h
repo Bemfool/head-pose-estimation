@@ -36,7 +36,9 @@ public:
 		dlib::matrix<T> fp_current_blendshape_ = fp_current_shape_ + fp_current_expr_;	
 		return fp_current_blendshape_;		
 	}
+	void generate_transform_matrix();
 	void generate_rotation_matrix();
+	void generate_translation_vector();
 	void accumulate_external_parm(double *x);
 	void ply_write(std::string fn = "face.ply", long mode = NONE_MODE) const;
 	void ply_write_fp(std::string fn = "fp_face.ply") const;
@@ -106,7 +108,8 @@ public:
 		bfm_out << "expression coef:\n";
 		for(int i=0; i<n_expr_pc; i++) bfm_out << expr_coef[i] << "\n";
 	}
-	void print_R() const { bfm_out << "R: \n" << R; }
+	inline void print_R() const { bfm_out << "R: \n" << R; }
+	inline void print_T() const { bfm_out << "T: \n" << T; }
 
 private:
 	bool read_parm_from_file(const std::string &filename);
@@ -157,6 +160,7 @@ private:
 	/* pitch: rotate around y axis */
     /* roll:  rotate around x axis */
 	dlib::matrix<double, 3, 3> R;
+	dlib::matrix<double, 3, 1> T;
 	double external_parm[6] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };	/* yaw pitch roll tx ty tz */
 	double intrinsic_parm[4] = { 0.f };	/* fx fy cx cy */
 
