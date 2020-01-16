@@ -46,7 +46,12 @@ int main(int argc, char** argv)
 
 			std::cout << "solving external parameters..." << std::endl;
 			// hpe_problem.estimate_ext_parm();
-			hpe_problem.solve_ext_parm_test();
+
+			if(argc > 2)
+				hpe_problem.solve_ext_parm_test(atof(argv[2]), atof(argv[3]));
+			else
+				hpe_problem.solve_ext_parm_test();
+				
 			// hpe_problem.solve_ext_parm();
 			// std::cout << "solving shape coeficients..." << std::endl;
 			// hpe_problem.solve_shape_coef();

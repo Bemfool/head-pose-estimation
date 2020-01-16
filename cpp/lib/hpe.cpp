@@ -77,6 +77,9 @@ bool hpe::solve_parm() {
 
 
 bool hpe::solve_ext_parm() {
+	std::cout << "solve -> external parameters" << std::endl;
+
+	std::cout << "init ceres solve - ";
 	ceres::Problem problem;
 	double *ext_parm = model.get_mutable_external_parm();
 	ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
@@ -86,15 +89,20 @@ bool hpe::solve_ext_parm() {
 	options.num_threads = 8;
 	options.minimizer_progress_to_stdout = true;
 	ceres::Solver::Summary summary;
+	std::cout << "success" << std::endl;
+
 	ceres::Solve(options, &problem, &summary);
+
 	std::cout << summary.BriefReport() << std::endl;
+	model.generate_transform_matrix();
+
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
 
-bool hpe::solve_ext_parm_test() 
+bool hpe::solve_ext_parm_test(double u, double v) 
 {
-	std::cout << "solve -> external parameters (linealized)\n";
+	std::cout << "solve -> external parameters (linealized)" << std::endl;
 	model.generate_transform_matrix();
 
 	std::cout << "init ceres solve - ";
@@ -103,9 +111,7 @@ bool hpe::solve_ext_parm_test()
 	options.num_threads = 8;
 	options.minimizer_progress_to_stdout = false;
 	ceres::Solver::Summary summary;
-	double u = 100000.0f, v = 1.0;
 	double u_step = 0.f, v_step = 0.f;
-	const double eps = 1e-8;
 	std::cout << "success" << std::endl;
 
 	std::cout << "begin iteration" << std::endl;
@@ -118,16 +124,16 @@ bool hpe::solve_ext_parm_test()
 		v = (v > v_step) ? v - v_step : 0.0;
 		problem.AddResidualBlock(cost_function, nullptr, small_ext_parm);
 		ceres::Solve(options, &problem, &summary);
-		// std::cout << summary.BriefReport() << std::endl;
+		std::cout << summary.BriefReport() << std::endl;
 
-		if(is_small_radians(small_ext_parm, 6)) 
+		if(is_close_enough(small_ext_parm, 6)) 
 		{
 		   std::cout << summary.BriefReport() << std::endl;
 		   break; 
 		}
 
 		model.accumulate_external_parm(small_ext_parm);
-		// print_array(small_ext_parm, 6);
+		print_array(small_ext_parm, 6);
 		// model.print_R();
 		// model.print_T();
 		// model.print_external_parm();
@@ -194,10 +200,13 @@ bool hpe::solve_expr_coef() {
 }
 
 
-bool hpe::is_small_radians(double *radians, int len, double eps)
+bool hpe::is_close_enough(double *ext_parm, double rotation_eps, double translation_eps)
 {
-	for(int i=0; i<len; i++)
-		if(abs(radians[i]) > eps)
+	for(int i=0; i<3; i++)
+		if(abs(ext_parm[i]) > rotation_eps)
+			return false;
+	for(int i=3; i<6; i++)
+		if(abs(ext_parm[i]) > translation_eps)
 			return false;
 	return true;
 }

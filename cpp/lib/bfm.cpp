@@ -176,9 +176,12 @@ void bfm::extract_landmark() {
 }
 
 void bfm::print_external_parm() const {
-	bfm_out << "yaw: "   << external_parm[0] << "\n";
-	bfm_out << "pitch: " << external_parm[1] << "\n";
-	bfm_out << "roll: "  << external_parm[2] << "\n";
+	bfm_out << "yaw: "   << external_parm[0] << " ";
+	bfm_out << "(" << (external_parm[0] * 180.0 / M_PI) << "\")\n";
+	bfm_out << "pitch: " << external_parm[1] << " ";
+	bfm_out << "(" << (external_parm[1] * 180.0 / M_PI) << "\")\n";
+	bfm_out << "roll: "  << external_parm[2] << " ";
+	bfm_out << "(" << (external_parm[2] * 180.0 / M_PI) << "\")\n";
 	bfm_out << "tx: "    << external_parm[3] << "\n";
 	bfm_out << "ty: "    << external_parm[4] << "\n";
 	bfm_out << "tz: "    << external_parm[5] << "\n";
@@ -194,33 +197,41 @@ void bfm::print_intrinsic_parm() const {
 
 
 void bfm::generate_random_face(double scale) {
+	bfm_out << "init random numbers (using the same scale) - ";
 	shape_coef = randn(n_id_pc, scale);
-	tex_coef = randn(n_id_pc, scale);
-	expr_coef = randn(n_expr_pc, scale);
+	tex_coef   = randn(n_id_pc, scale);
+	expr_coef  = randn(n_expr_pc, scale);
+	bfm_out << "success\n";
 	generate_face();
 }
 
 
 void bfm::generate_random_face(double shape_scale, double tex_scale, double expr_scale) {
+	bfm_out << "init random numbers (using different scales) - ";
 	shape_coef = randn(n_id_pc, shape_scale);
-	tex_coef = randn(n_id_pc, tex_scale);
-	expr_coef = randn(n_expr_pc, expr_scale);
+	tex_coef   = randn(n_id_pc, tex_scale);
+	expr_coef  = randn(n_expr_pc, expr_scale);
+	bfm_out << "success\n";
 	generate_face();
 }
 
 
 void bfm::generate_face() {
+	bfm_out << "generate face - ";
 	current_shape = coef2object(shape_coef, shape_mu, shape_pc, shape_ev, n_id_pc);
-	current_tex = coef2object(tex_coef, tex_mu, tex_pc, tex_ev, n_id_pc);
-	current_expr = coef2object(expr_coef, expr_mu, expr_pc, expr_ev, n_expr_pc);
+	current_tex   = coef2object(tex_coef, tex_mu, tex_pc, tex_ev, n_id_pc);
+	current_expr  = coef2object(expr_coef, expr_mu, expr_pc, expr_ev, n_expr_pc);
 	current_blendshape = current_shape + current_expr;
+	bfm_out << "success\n";
 }
 
 
 void bfm::generate_fp_face() {
+	bfm_out << "generate feature point face - ";
 	fp_current_shape = coef2object(shape_coef, fp_shape_mu, fp_shape_pc, shape_ev, n_id_pc);
 	fp_current_expr = coef2object(expr_coef, fp_expr_mu, fp_expr_pc, expr_ev, n_expr_pc);
 	fp_current_blendshape = fp_current_shape + fp_current_expr;
+	bfm_out << "success\n";
 }
 
 
@@ -239,9 +250,9 @@ void bfm::generate_rotation_matrix()
 void bfm::generate_translation_vector()
 {
 	bfm_out << "generate translation vector - ";	
-	const double &tx = external_parm[0];
-	const double &ty = external_parm[1];
-	const double &tz = external_parm[2];
+	const double &tx = external_parm[3];
+	const double &ty = external_parm[4];
+	const double &tz = external_parm[5];
 	T = tx, ty, tz;	
 	bfm_out << "success\n";
 	print_T();
@@ -357,6 +368,7 @@ void bfm::ply_write(std::string fn, long mode) const {
 	out.close();
 }
 
+
 void bfm::ply_write_fp(std::string fn) const {
 	std::ofstream out;
 	/* Note: In Linux Cpp, we should use std::ios::bfm_out as flag, which is not necessary in Windows */
@@ -387,6 +399,7 @@ void bfm::ply_write_fp(std::string fn) const {
 
 	out.close();	
 }
+
 
 dlib::matrix<double> bfm::get_fp_current_blendshape_transformed() const {
 	return transform_points(R, T, fp_current_blendshape);

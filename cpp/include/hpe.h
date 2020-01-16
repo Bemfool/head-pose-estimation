@@ -35,7 +35,7 @@ public:
 	bool solve_total();
 	bool solve_parm();
 	bool solve_ext_parm();
-	bool solve_ext_parm_test();
+	bool solve_ext_parm_test(double u = 1.0, double v = 1.0);
 	void solve_ext_parm_coarse() { }	// TODO
 	bool solve_int_parm();
 	bool solve_shape_coef();
@@ -43,7 +43,7 @@ public:
 	void estimate_ext_parm();
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
 private:
-	bool is_small_radians(double *radians, int len, double eps = 1e-8);
+	bool is_close_enough(double *ext_parm, double rotation_eps = 1e-4, double translation_eps = 1.0);
 	dlib::full_object_detection observed_points;
 	bfm model;
 };

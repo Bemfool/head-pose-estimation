@@ -10,9 +10,9 @@
  * Function: euler2matrix
  * Usage: dlib::matrix<T> R = euler2matrix(yaw, pitch, roll, false);
  * Parameters:
- * 		@yaw: Euler angle ;
- * 		@pitch: Euler angle;
- * 		@roll: Euler angle;
+ * 		@yaw: Euler angle (radian);
+ * 		@pitch: Euler angle (radian);
+ * 		@roll: Euler angle (radian);
  * 		@is_linearized: Choose to use linearized Euler angle transform or not. If true, be sure yaw, pitch and roll
  * 						keep small.
  * Return:
@@ -25,9 +25,9 @@
  *			R = [[c2*c1, s3*s2*c1-c3*s1, c3*s2*c1+s3*s1],
  *				 [c2*s1, s3*s2*s1+c3*c1, c3*s2*s1-s3*c1],
  *				 [-s2,   s3*c2,          c3*c2         ]]; 
- *			(c1=cos(yaw), s1=sin(yaw))
+ *			(c1=cos(yaw),   s1=sin(yaw))
  *			(c2=cos(pitch), s2=sin(pitch))
- *			(c3=cos(roll), s3=sin(roll))
+ *			(c3=cos(roll),  s3=sin(roll))
  * ----------------------------------------------------------------------------------------------------------------
  * Transform Euler angle into rotation matrix.
  * 
@@ -48,9 +48,15 @@ dlib::matrix<_Tp> euler2matrix(const _Tp &yaw, const _Tp &pitch, const _Tp &roll
 	}
 	else
 	{
-		_Tp c1 = cos(yaw   * _Tp(M_PI) / _Tp(180.0)), s1 = sin(yaw   * _Tp(M_PI) / _Tp(180.0));
-		_Tp c2 = cos(pitch * _Tp(M_PI) / _Tp(180.0)), s2 = sin(pitch * _Tp(M_PI) / _Tp(180.0));
-		_Tp c3 = cos(roll  * _Tp(M_PI) / _Tp(180.0)), s3 = sin(roll  * _Tp(M_PI) / _Tp(180.0));
+		/* (Deprecated) Using angles. */ 
+		// _Tp c1 = cos(yaw   * _Tp(M_PI) / _Tp(180.0)), s1 = sin(yaw   * _Tp(M_PI) / _Tp(180.0));
+		// _Tp c2 = cos(pitch * _Tp(M_PI) / _Tp(180.0)), s2 = sin(pitch * _Tp(M_PI) / _Tp(180.0));
+		// _Tp c3 = cos(roll  * _Tp(M_PI) / _Tp(180.0)), s3 = sin(roll  * _Tp(M_PI) / _Tp(180.0));
+		
+		/* Using radians */
+		_Tp c1 = cos(yaw),   s1 = sin(yaw);
+		_Tp c2 = cos(pitch), s2 = sin(pitch);
+		_Tp c3 = cos(roll),  s3 = sin(roll);
 		R = c2 * c1, s3 * s2 * c1 - c3 * s1, c3 * s2 * c1 + s3 * s1,
 			c2 * s1, s3 * s2 * s1 + c3 * c1, c3 * s2 * s1 - s3 * c1,
 			-s2,     s3 * c2,                c3 * c2; 
