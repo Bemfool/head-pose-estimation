@@ -60,10 +60,10 @@ public:
 
 		// std::cout << "for R: " << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << " " << x[5] << std::endl;
 		const dlib::matrix<double> _fp_shape = _model->get_fp_current_blendshape_transformed();
-		// std::cout << _fp_shape(3) << " " << _fp_shape(4) << " " << _fp_shape(5) << std::endl;
+		// std::cout << "fp" << _fp_shape(0) << " " << _fp_shape(1) << " " << _fp_shape(2) << std::endl;
 
 		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape, true);
-		// std::cout << fp_shape(3) << " " << fp_shape(4) << " " << fp_shape(5) << std::endl;
+		// std::cout << "tran_fp" << fp_shape(0) << " " << fp_shape(1) << " " << fp_shape(2) << std::endl;
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{
@@ -80,10 +80,8 @@ public:
 		residuals[N_LANDMARK*2+3] = _Tp(_b) * x[3];
 		residuals[N_LANDMARK*2+4] = _Tp(_b) * x[4];
 		residuals[N_LANDMARK*2+5] = _Tp(_b) * x[5];
-		// std::cout << "res: " << std::endl;
-		// std::cout << residuals[68*2] << " " << residuals[68*2+1] << " " << residuals[68*2+2] << std::endl; 
-		// std::cout << residuals[68*2+3] << " " << residuals[68*2+4] << " " << residuals[68*2+5] << std::endl; 
-
+		// print_array(residuals+N_LANDMARK*2, 6);
+		
 		return true;
 	}
 

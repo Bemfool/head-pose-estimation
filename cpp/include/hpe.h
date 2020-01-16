@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "ceres/ceres.h"
 #include "string_utils.h"
+#include "type_utils.h"
 #include "functor/functor.h"
 
 class hpe {
@@ -42,6 +43,7 @@ public:
 	void estimate_ext_parm();
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
 private:
+	bool is_small_radians(double *radians, int len, double eps = 1e-8);
 	dlib::full_object_detection observed_points;
 	bfm model;
 };

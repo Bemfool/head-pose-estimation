@@ -92,7 +92,8 @@ bool hpe::solve_ext_parm() {
 }
 
 
-bool hpe::solve_ext_parm_test() {
+bool hpe::solve_ext_parm_test() 
+{
 	std::cout << "solve -> external parameters (linealized)\n";
 	model.generate_transform_matrix();
 
@@ -102,12 +103,14 @@ bool hpe::solve_ext_parm_test() {
 	options.num_threads = 8;
 	options.minimizer_progress_to_stdout = false;
 	ceres::Solver::Summary summary;
-	double u = 1.0f, v = 1.0;
+	double u = 100000.0f, v = 1.0;
 	double u_step = 0.f, v_step = 0.f;
+	const double eps = 1e-8;
 	std::cout << "success" << std::endl;
 
 	std::cout << "begin iteration" << std::endl;
-	while(true) {
+	while(true) 
+	{
 		ceres::Problem problem;
 		double small_ext_parm[6] = { 0.f };
 		ceres::CostFunction *cost_function = test_ext_parm_reproj_err::create(&observed_points, &model, u, v);
@@ -117,17 +120,16 @@ bool hpe::solve_ext_parm_test() {
 		ceres::Solve(options, &problem, &summary);
 		// std::cout << summary.BriefReport() << std::endl;
 
-		if(small_ext_parm[0] == 0 && small_ext_parm[1] == 0 &&
-		   small_ext_parm[2] == 0 && small_ext_parm[3] == 0 &&
-		   small_ext_parm[4] == 0 && small_ext_parm[5] == 0) {
+		if(is_small_radians(small_ext_parm, 6)) 
+		{
 		   std::cout << summary.BriefReport() << std::endl;
 		   break; 
 		}
 
 		model.accumulate_external_parm(small_ext_parm);
-		std::cout << small_ext_parm[0] << " " << small_ext_parm[1] << " " << small_ext_parm[2] << " " 
-		          << small_ext_parm[3] << " " << small_ext_parm[4] << " " << small_ext_parm[5] << " " << std::endl;	
+		// print_array(small_ext_parm, 6);
 		// model.print_R();
+		// model.print_T();
 		// model.print_external_parm();
 		// std::cin.get();								
 	}
@@ -190,3 +192,13 @@ bool hpe::solve_expr_coef() {
 	model.generate_fp_face();
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
+
+
+bool hpe::is_small_radians(double *radians, int len, double eps)
+{
+	for(int i=0; i<len; i++)
+		if(abs(radians[i]) > eps)
+			return false;
+	return true;
+}
+

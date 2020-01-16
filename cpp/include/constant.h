@@ -2,10 +2,10 @@
 #include <string>
 
 #ifdef USE_QT
-#include <QDebug>
-#define bfm_out qDebug()
+	#include <QDebug>
+	#define bfm_out qDebug()
 #else
-#define bfm_out std::cout
+	#define bfm_out std::cout
 #endif
 
 /* just for my database */

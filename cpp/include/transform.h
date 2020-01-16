@@ -115,12 +115,15 @@ dlib::matrix<_Tp> transform_points(const dlib::matrix<_Tp, 3, 3> &R, const dlib:
 					     		   const dlib::matrix<_Ep> &points) 
 {
 	dlib::matrix<_Tp> P(3, 4);
+	// std::cout << "origin: " << points(0) << " " << points(1) << " " << points(2) << std::endl;
     dlib::matrix<_Tp> tmp_points, before_points, after_points;
 	P = RT2P(R, T);
+	// std::cout << "P: " << P << std::endl;
 	tmp_points = dlib::reshape(dlib::matrix_cast<_Tp>(points), points.nr()/3, 3);
 	before_points = ternary2quaternion(tmp_points);
+	// std::cout << "quar: " << before_points(0, 0) << " " << before_points(1, 0) << " " << before_points(2, 0) << " " << before_points(3, 0) << std::endl;
 	after_points = P * before_points;
-    return dlib::reshape(after_points, points.nr(), 1);
+    return dlib::reshape(dlib::trans(after_points), points.nr(), 1);
 }
 
 
