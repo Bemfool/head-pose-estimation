@@ -39,6 +39,7 @@ public:
 	void generate_transform_matrix();
 	void generate_rotation_matrix();
 	void generate_translation_vector();
+	void generate_external_parameter();
 	void accumulate_external_parm(double *x);
 	void ply_write(std::string fn = "face.ply", long mode = NONE_MODE) const;
 	void ply_write_fp(std::string fn = "fp_face.ply") const;

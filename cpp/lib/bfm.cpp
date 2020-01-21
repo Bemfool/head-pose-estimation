@@ -266,6 +266,32 @@ void bfm::generate_transform_matrix()
 }
 
 
+void bfm::generate_external_parameter()
+{
+	bfm_out << "generate external paramter - ";
+	if(!is_rotation_matrix(R))
+	{
+		satisfy_rotation_constraint(R);
+	}
+	double sy = sqrt(R(0,0) * R(0,0) +  R(1,0) * R(1,0));
+    bool singular = sy < 1e-6;
+
+    if (!singular) 
+	{
+        external_parm[2] = atan2(R(2,1) , R(2,2));
+        external_parm[1] = atan2(-R(2,0), sy);
+        external_parm[0] = atan2(R(1,0), R(0,0));
+    } 
+	else 
+	{
+        external_parm[2] = atan2(-R(1,2), R(1,1));
+        external_parm[1] = atan2(-R(2,0), sy);
+        external_parm[0] = 0;
+    }
+	bfm_out << "success\n";
+}
+
+
 void bfm::accumulate_external_parm(double *x) {
 	/* in every iteration, P = R`(RP+t)+t`, 
 	 * R_{new} = R`R_{old}
