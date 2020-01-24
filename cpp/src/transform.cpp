@@ -1,7 +1,5 @@
 #include "transform.h"
 
-
-
 bool is_rotation_matrix(const dlib::matrix<double, 3, 3> &R) 
 {
     dlib::matrix<double> RRt = R * dlib::trans(R);

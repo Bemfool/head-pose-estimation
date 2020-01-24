@@ -29,15 +29,9 @@ public:
 
 	bfm &get_model() { return model; }
 
-	/* function: solve_total
-	 * usage: hpe_problem.solve_total();
-	 */
-	bool solve_total();
-	bool solve_parm();
-	bool solve_ext_parm();
+	bool solve_ext_parm(long mode = USE_CERES, double u = 1.0, double v = 1.0);
 	bool solve_ext_parm_test(double u = 1.0, double v = 1.0);
 	void solve_ext_parm_coarse() { }	// TODO
-	bool solve_int_parm();
 	bool solve_shape_coef();
 	bool solve_expr_coef();
 	void estimate_ext_parm();

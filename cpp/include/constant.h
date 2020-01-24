@@ -26,6 +26,12 @@ enum model_write_mode {
 	EXTRA_EXT_PARM = 1L << 3,
 };
 
+enum solve_ext_parm_mode {
+	USE_CERES  = 0L << 0,
+	USE_OPENCV = 1L << 0,
+	USE_LINEARIZED_RADIANS = 1L << 1,
+};
+
 
 /* camera type */
 typedef int camera_type;

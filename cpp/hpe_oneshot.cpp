@@ -48,11 +48,11 @@ int main(int argc, char** argv)
 			// hpe_problem.estimate_ext_parm();
 
 			if(argc > 2)
-				hpe_problem.solve_ext_parm_test(atof(argv[2]), atof(argv[3]));
+				hpe_problem.solve_ext_parm(USE_CERES & USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
 			else
-				hpe_problem.solve_ext_parm_test();
+				hpe_problem.solve_ext_parm(USE_CERES & USE_LINEARIZED_RADIANS);
 				
-			// hpe_problem.solve_ext_parm();
+			// hpe_problem.solve_ext_parm(USE_CERES);
 			// std::cout << "solving shape coeficients..." << std::endl;
 			// hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;

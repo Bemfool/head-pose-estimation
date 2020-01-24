@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 				// hpe_problem.get_model().print_expr_coef();
 
 				const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
-				const dlib::matrix<double> fp_shape = transform(
+				const dlib::matrix<double> fp_shape = transform_points(
 					hpe_problem.get_model().get_mutable_external_parm(), _fp_shape);
 				std::vector<point2d> parts;
 
