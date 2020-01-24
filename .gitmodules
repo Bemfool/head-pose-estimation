@@ -1,0 +1,3 @@
+[submodule "cpp/lib"]
+	path = cpp/lib
+	url = git@github.com:Great-Keith/BFM-tools.git
