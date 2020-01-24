@@ -41,10 +41,13 @@ else()
    message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
 endif()
 
+add_subdirectory(lib/bfm)
+
 include_directories(./include)
+include_directories(./lib/bfm/include)
 add_library(hpe SHARED src/hpe.cpp
-                       src/string_utils.cpp src/bfm.cpp src/random.cpp src/transform.cpp)
-target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} cminpack m  ${OpenCV_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+                       src/string_utils.cpp)
+target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} bfm)
 
 add_executable(hpe_oneshot hpe_oneshot.cpp)
 target_link_libraries(hpe_oneshot hpe)
