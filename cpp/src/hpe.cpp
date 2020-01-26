@@ -44,6 +44,9 @@ bool hpe::solve_ext_parm(long mode, double u, double v) {
 	{
 		std::cout << "solve -> external parameters (linealized)" << std::endl;
 		model.generate_transform_matrix();
+		dlib::matrix<double> tmp =  model.get_fp_current_blendshape_transformed();
+		tmp = dlib::reshape(tmp, tmp.nr() / 3, 3);
+		mat_write("test.txt", tmp, "points");		
 
 		std::cout << "init ceres solve - ";
 		ceres::Solver::Options options;
@@ -68,19 +71,26 @@ bool hpe::solve_ext_parm(long mode, double u, double v) {
 
 			if(is_close_enough(small_ext_parm, 6)) 
 			{
-			std::cout << summary.BriefReport() << std::endl;
-			break; 
+				print_array(small_ext_parm, 6);
+				std::cout << summary.BriefReport() << std::endl;
+				break; 
 			}
 
 			model.accumulate_external_parm(small_ext_parm);
 			print_array(small_ext_parm, 6);
+			mat_write("test.txt", model.get_R(), "R");
+			mat_write("test.txt", model.get_T(), "T");
+			dlib::matrix<double> tmp =  model.get_fp_current_blendshape_transformed();
+			tmp = dlib::reshape(tmp, tmp.nr() / 3, 3);
+			mat_write("test.txt", tmp, "points");
+
 			// model.print_R();
 			// model.print_T();
 			// model.print_external_parm();
 			// std::cin.get();								
 		}
 		std::cout << "final u: " << u << " " << " v: " << v << std::endl;
-		model.generate_external_parameter();
+		// model.generate_external_parameter();
 		return (summary.termination_type == ceres::CONVERGENCE);
 	}
 	else

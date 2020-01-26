@@ -3,54 +3,44 @@
 project(head-pose-estimation)
 cmake_minimum_required(VERSION 2.8.12)
 
-# Five executable file:
-#    Name Format: hpe-[oneshot|cam]-[cminpack|ceres]-{numericdiff|analyticdiff}
-#
-#    file                          | picture source   | solver tool | diff method  | available
-#    ------------------------------|------------------|-------------|--------------|------------
-#    hpe-oneshot-cminpack          | one picture url  | minpack     | numeric diff | no
-#    hpe-oneshot-ceres-numericdiff | one picture url  | ceres       | numeric diff | yes
-#    hpe-cam-ceres-numericdiff     | camera           | ceres       | numeric diff | yes
-#    hpe-cam-ceres-analyticdiff        | camera           | ceres       | analytic diff    | no
-#    hpe-oneshot-ceres-analyticdiff    | one picture url  | ceres       | analytic diff    | no
+# Executable files:
+#    hpe_oneshot  
+#    hpe_webcam
 #
 # Link libraries:
-#    hdf5
+#    bfm (for manipulating Basel Face Model)
+#        - hdf5
+#        - dlib
+#        - opencv (for VideoCapture)
+#        - ceres
+#        - m (for mathematic operations)
 #    dlib
-#    opencv (for VideoCapture)
-#    cminpack
 #    ceres
-#    m (for mathematic operations)
+
 add_compile_options(-fPIC)
 
+# Dlib
 add_subdirectory(/home/keith/dlib-19.17/dlib dlib_build)
 
-include_directories (${CMINPACK_SOURCE_DIR})
-link_directories (${CMINPACK_BINARY_DIR})
-
+# Ceres
 find_package(Ceres REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
 
-find_package(HDF5 REQUIRED C CXX)
-
-find_package(OpenCV QUIET)
-if (OpenCV_FOUND)
-   message("OpenCV found.")
-   include_directories(${OpenCV_INCLUDE_DIRS})
-else()
-   message("OpenCV not found, so we won't build the landmark-fitting-cam example.")
-endif()
-
+# Bfm
 add_subdirectory(lib/bfm)
-
-include_directories(./include)
 include_directories(./lib/bfm/include)
-add_library(hpe SHARED src/hpe.cpp
-                       src/string_utils.cpp)
+
+# Head files
+include_directories(./include)
+
+# Source files
+add_library(hpe SHARED src/hpe.cpp src/string_utils.cpp)
 target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} bfm)
 
+# Executable - hpe_oneshot
 add_executable(hpe_oneshot hpe_oneshot.cpp)
 target_link_libraries(hpe_oneshot hpe)
 
+# Executable - hpe_webcam
 add_executable(hpe_webcam hpe_webcam.cpp)
 target_link_libraries(hpe_webcam hpe)

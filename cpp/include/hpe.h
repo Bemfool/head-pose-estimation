@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "ceres/ceres.h"
 #include "string_utils.h"
+#include "io_utils.h"
 #include "type_utils.h"
 #include "functor/functor.h"
 
@@ -30,11 +31,8 @@ public:
 	bfm &get_model() { return model; }
 
 	bool solve_ext_parm(long mode = USE_CERES, double u = 1.0, double v = 1.0);
-	bool solve_ext_parm_test(double u = 1.0, double v = 1.0);
-	void solve_ext_parm_coarse() { }	// TODO
 	bool solve_shape_coef();
 	bool solve_expr_coef();
-	void estimate_ext_parm();
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
 private:
 	bool is_close_enough(double *ext_parm, double rotation_eps = 1e-4, double translation_eps = 1.0);

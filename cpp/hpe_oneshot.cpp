@@ -45,7 +45,6 @@ int main(int argc, char** argv)
 			hpe_problem.set_observed_points(obj_detection);
 
 			std::cout << "solving external parameters..." << std::endl;
-			// hpe_problem.estimate_ext_parm();
 
 			if(argc > 2)
 				hpe_problem.solve_ext_parm(USE_CERES | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
@@ -53,6 +52,7 @@ int main(int argc, char** argv)
 				hpe_problem.solve_ext_parm(USE_CERES | USE_LINEARIZED_RADIANS);
 				
 			// hpe_problem.solve_ext_parm(USE_CERES);
+			
 			// std::cout << "solving shape coeficients..." << std::endl;
 			// hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;
