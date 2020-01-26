@@ -9,13 +9,13 @@ void hpe::init(std::string filename) {
 }
 
 
-bool hpe::solve_ext_parm(long mode, double u, double v) {
+bool hpe::solve_ext_params(long mode, double u, double v) {
 	if(mode & USE_OPENCV)
 	{
-		const double *int_parm = model.get_intrinsic_parm();
+		const double *int_params = model.get_intrinsic_params();
 		double camera_vec[3][3] = {
-			{int_parm[0], 0.0, int_parm[2]},
-			{0.0, int_parm[1], int_parm[3]},
+			{int_params[0], 0.0, int_params[2]},
+			{0.0, int_params[1], int_params[3]},
 			{0.0, 0.0, 1.0}
 		};
 		cv::Mat camera_matrix = cv::Mat(3, 3, CV_64FC1, camera_vec);
@@ -61,23 +61,23 @@ bool hpe::solve_ext_parm(long mode, double u, double v) {
 		while(true) 
 		{
 			ceres::Problem problem;
-			double small_ext_parm[6] = { 0.f };
-			ceres::CostFunction *cost_function = test_ext_parm_reproj_err::create(&observed_points, &model, u, v);
+			double small_ext_params[6] = { 0.f };
+			ceres::CostFunction *cost_function = test_ext_params_reproj_err::create(&observed_points, &model, u, v);
 			u = (u > u_step) ? u - u_step : 0.0;
 			v = (v > v_step) ? v - v_step : 0.0;
-			problem.AddResidualBlock(cost_function, nullptr, small_ext_parm);
+			problem.AddResidualBlock(cost_function, nullptr, small_ext_params);
 			ceres::Solve(options, &problem, &summary);
 			std::cout << summary.BriefReport() << std::endl;
 
-			if(is_close_enough(small_ext_parm, 6)) 
+			if(is_close_enough(small_ext_params, 6)) 
 			{
-				print_array(small_ext_parm, 6);
+				print_array(small_ext_params, 6);
 				std::cout << summary.BriefReport() << std::endl;
 				break; 
 			}
 
-			model.accumulate_external_parm(small_ext_parm);
-			print_array(small_ext_parm, 6);
+			model.accumulate_extrinsic_params(small_ext_params);
+			print_array(small_ext_params, 6);
 			mat_write("test.txt", model.get_R(), "R");
 			mat_write("test.txt", model.get_T(), "T");
 			dlib::matrix<double> tmp =  model.get_fp_current_blendshape_transformed();
@@ -86,7 +86,7 @@ bool hpe::solve_ext_parm(long mode, double u, double v) {
 
 			// model.print_R();
 			// model.print_T();
-			// model.print_external_parm();
+			// model.print_extrinsic_params();
 			// std::cin.get();								
 		}
 		std::cout << "final u: " << u << " " << " v: " << v << std::endl;
@@ -98,9 +98,9 @@ bool hpe::solve_ext_parm(long mode, double u, double v) {
 		std::cout << "solve -> external parameters" << std::endl;	
 		std::cout << "init ceres solve - ";
 		ceres::Problem problem;
-		double *ext_parm = model.get_mutable_external_parm();
-		ceres::CostFunction *cost_function = ext_parm_reproj_err::create(observed_points, model);
-		problem.AddResidualBlock(cost_function, nullptr, ext_parm);
+		double *ext_params = model.get_mutable_extrinsic_params();
+		ceres::CostFunction *cost_function = ext_params_reproj_err::create(observed_points, model);
+		problem.AddResidualBlock(cost_function, nullptr, ext_params);
 		ceres::Solver::Options options;
 		options.max_num_iterations = 100;
 		options.num_threads = 8;
@@ -153,13 +153,13 @@ bool hpe::solve_expr_coef() {
 }
 
 
-bool hpe::is_close_enough(double *ext_parm, double rotation_eps, double translation_eps)
+bool hpe::is_close_enough(double *ext_params, double rotation_eps, double translation_eps)
 {
 	for(int i=0; i<3; i++)
-		if(abs(ext_parm[i]) > rotation_eps)
+		if(abs(ext_params[i]) > rotation_eps)
 			return false;
 	for(int i=3; i<6; i++)
-		if(abs(ext_parm[i]) > translation_eps)
+		if(abs(ext_params[i]) > translation_eps)
 			return false;
 	return true;
 }

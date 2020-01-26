@@ -64,24 +64,24 @@ int main(int argc, char** argv)
 
 				if(is_first_frame)
 					while(true)
-						if( hpe_problem.solve_ext_parm() &&
+						if( hpe_problem.solve_ext_params() &&
 							hpe_problem.solve_shape_coef() &&
 							hpe_problem.solve_expr_coef())
 							break;
 				else
 					while(true) 
-						if( hpe_problem.solve_ext_parm() &&
+						if( hpe_problem.solve_ext_params() &&
 							hpe_problem.solve_expr_coef())
 							break;
 
-				// hpe_problem.get_model().print_external_parm();
-				// hpe_problem.get_model().print_intrinsic_parm();
+				// hpe_problem.get_model().print_extrinsic_params();
+				// hpe_problem.get_model().print_intrinsic_params();
 				// hpe_problem.get_model().print_shape_coef();
 				// hpe_problem.get_model().print_expr_coef();
 
 				const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
 				const dlib::matrix<double> fp_shape = transform_points(
-					hpe_problem.get_model().get_mutable_external_parm(), _fp_shape);
+					hpe_problem.get_model().get_mutable_extrinsic_params(), _fp_shape);
 				std::vector<point2d> parts;
 
 				for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {

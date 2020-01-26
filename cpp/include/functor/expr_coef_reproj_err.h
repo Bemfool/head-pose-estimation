@@ -1,11 +1,12 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <ctime>
 #include "bfm.h"
 #include "vec.h"
 #include "ceres/ceres.h"
 #include "transform.h"
-#define _USE_MATH_DEFINES
+#include "db_params.h"
 
 class expr_coef_reproj_err {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -19,12 +20,12 @@ public:
 
 		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_expr(expr_coef);  
 
-		const double *ext_parm = model.get_external_parm();
-        T *ext_parm_ = new T[6];
+		const double *extrinsic_params = model.get_extrinsic_params();
+        T *extrinsic_params_ = new T[6];
         for(int i=0; i<6; i++)
-            ext_parm_[i] = (T)(ext_parm[i]);
+            extrinsic_params_[i] = (T)(extrinsic_params[i]);
 
-		const dlib::matrix<T> fp_shape = transform_points(ext_parm_, fp_shape_);
+		const dlib::matrix<T> fp_shape = transform_points(extrinsic_params_, fp_shape_);
 
 		for(int i=0; i<N_LANDMARK; i++) {
 			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;

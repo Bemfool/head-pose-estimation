@@ -1,16 +1,17 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <ctime>
 #include "bfm.h"
 #include "vec.h"
 #include "ceres/ceres.h"
 #include "transform.h"
-#define _USE_MATH_DEFINES
+#include "db_params.h"
 
-class ext_parm_reproj_err 
+class ext_params_reproj_err 
 {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	ext_parm_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
+	ext_params_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
 	: observed_points(observed_points_), model(model_) { }
 	
     template<typename _Tp>
@@ -33,8 +34,8 @@ public:
 
 	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) 
 	{
-		return (new ceres::AutoDiffCostFunction<ext_parm_reproj_err, N_LANDMARK * 2, N_EXT_PARM>(
-			new ext_parm_reproj_err(observed_points, model)));
+		return (new ceres::AutoDiffCostFunction<ext_params_reproj_err, N_LANDMARK * 2, N_EXT_PARAMS>(
+			new ext_params_reproj_err(observed_points, model)));
 	}
 
 private:
@@ -42,13 +43,13 @@ private:
     bfm model;
 };
 
-class test_ext_parm_reproj_err 
+class test_ext_params_reproj_err 
 {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	test_ext_parm_reproj_err(dlib::full_object_detection *observed_points, bfm *model) 
+	test_ext_params_reproj_err(dlib::full_object_detection *observed_points, bfm *model) 
 	: _observed_points(observed_points), _model(model) { }
 
-	test_ext_parm_reproj_err(dlib::full_object_detection *observed_points, bfm *model, double a, double b) 
+	test_ext_params_reproj_err(dlib::full_object_detection *observed_points, bfm *model, double a, double b) 
 	: _observed_points(observed_points), _model(model), _a(a), _b(b) {}
 
 
@@ -87,14 +88,14 @@ public:
 
 	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model) 
 	{
-		return (new ceres::AutoDiffCostFunction<test_ext_parm_reproj_err, N_LANDMARK * 2 + N_EXT_PARM, N_EXT_PARM>(
-			new test_ext_parm_reproj_err(observed_points, model)));
+		return (new ceres::AutoDiffCostFunction<test_ext_params_reproj_err, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+			new test_ext_params_reproj_err(observed_points, model)));
 	}
 
 	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model, double a, double b) 
 	{
-		return (new ceres::AutoDiffCostFunction<test_ext_parm_reproj_err, N_LANDMARK * 2 + N_EXT_PARM, N_EXT_PARM>(
-			new test_ext_parm_reproj_err(observed_points, model, a, b)));
+		return (new ceres::AutoDiffCostFunction<test_ext_params_reproj_err, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+			new test_ext_params_reproj_err(observed_points, model, a, b)));
 	}
 
 
