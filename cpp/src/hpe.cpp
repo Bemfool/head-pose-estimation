@@ -90,7 +90,7 @@ bool hpe::solve_ext_params(long mode, double u, double v) {
 			// std::cin.get();								
 		}
 		std::cout << "final u: " << u << " " << " v: " << v << std::endl;
-		// model.generate_external_parameter();
+		model.generate_external_parameter();
 		return (summary.termination_type == ceres::CONVERGENCE);
 	}
 	else
