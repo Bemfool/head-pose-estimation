@@ -7,6 +7,8 @@
 #include "ceres/ceres.h"
 #include "transform.h"
 #include "db_params.h"
+#include "io_utils.h"
+#include "type_utils.h"
 
 class ext_params_reproj_err 
 {
@@ -27,7 +29,7 @@ public:
 			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
 			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
 			residuals[i*2] = _Tp(observed_points.part(i).x()) - u;
-			residuals[i*2+1] = _Tp(observed_points.part(i).y()) - v;		
+			residuals[i*2+1] = _Tp(observed_points.part(i).y()) - v;
 		}
 		return true;
 	}
@@ -59,19 +61,15 @@ public:
 		_Tp fx = _Tp(_model->get_fx()), fy = _Tp(_model->get_fy());
 		_Tp cx = _Tp(_model->get_cx()), cy = _Tp(_model->get_cy());
 
-		// std::cout << "for R: " << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << " " << x[5] << std::endl;
 		const dlib::matrix<double> _fp_shape = _model->get_fp_current_blendshape_transformed();
-		// std::cout << "fp" << _fp_shape(0) << " " << _fp_shape(1) << " " << _fp_shape(2) << std::endl;
-
 		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape, true);
-		// std::cout << "tran_fp" << fp_shape(0) << " " << fp_shape(1) << " " << fp_shape(2) << std::endl;
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{
 			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
 			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
 			residuals[i*2] = _Tp(_observed_points->part(i).x()) - u;
-			residuals[i*2+1] = _Tp(_observed_points->part(i).y()) - v;		
+			residuals[i*2+1] = _Tp(_observed_points->part(i).y()) - v;	
 		}
 
 		/* regularialization */

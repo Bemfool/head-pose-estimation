@@ -15,6 +15,7 @@
 #include "type_utils.h"
 #include "functor/functor.h"
 
+
 class hpe {
 public:
 	/* initialization 
@@ -30,13 +31,13 @@ public:
 
 	bfm &get_model() { return model; }
 
-	bool solve_ext_params(long mode = USE_CERES, double u = 1.0, double v = 1.0);
+	bool solve_ext_params(long mode = USE_CERES, double ca = 1.0, double cb = 0.0);
 	bool solve_shape_coef();
 	bool solve_expr_coef();
 	void set_observed_points(dlib::full_object_detection &observed_points_) {observed_points = observed_points_; }
 private:
-	bool is_close_enough(double *ext_params, double rotation_eps = 1e-4, double translation_eps = 1.0);
+	void dlt();
+	bool is_close_enough(double *ext_params, double rotation_eps = 0, double translation_eps = 0);
 	dlib::full_object_detection observed_points;
 	bfm model;
 };
-
