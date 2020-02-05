@@ -13,4 +13,5 @@ enum solve_ext_parm_mode
 	USE_CERES  = 0L << 0,
 	USE_OPENCV = 1L << 0,
 	USE_LINEARIZED_RADIANS = 1L << 1,
+	USE_DLT = 1L << 2,
 };

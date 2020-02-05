@@ -91,10 +91,16 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 	else if(mode & USE_LINEARIZED_RADIANS)
 	{
 		std::cout << "solve -> external parameters (linealized)" << std::endl;
-		std::cout << "	1) esitimate initial values by using DLT algorithm." << std::endl;
-		dlt();
-		// return true;
-
+		if(mode & USE_DLT)
+		{
+			std::cout << "	1) esitimate initial values by using DLT algorithm." << std::endl;
+			dlt();
+		}
+		else
+		{
+			std::cout << "	1) initial values have been set in advance or are 0s." << std::endl;
+		}
+		
 		model.generate_transform_matrix();
 
 		// const double *int_parms = model.get_intrinsic_params();
@@ -127,52 +133,8 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 				std::cout << summary.BriefReport() << std::endl;
 				break; 
 			}
-
-			// mat_write("test.txt", model.get_R(), "bR");
-			// mat_write("test.txt", model.get_T(), "bT");
-			// dlib::matrix<double> tmp =  model.get_fp_current_blendshape_transformed();
-			// double sum = 0;
-			// for(int i=0; i<N_LANDMARK; i++) 
-			// {
-			// 	double u = int_parms[0] * tmp(i*3) / tmp(i*3+2) + int_parms[2];
-			// 	double v = int_parms[1] * tmp(i*3+1) / tmp(i*3+2) + int_parms[3];
-			// 	sum = sum + (observed_points.part(i).x() - u) * (observed_points.part(i).x() - u);
-			// 	sum = sum + (observed_points.part(i).y() - v) * (observed_points.part(i).y() - v);		
-			// }
-			// str_write("test.txt", to_string(sum/2));
-			// const dlib::matrix<double> tmp2 = transform_points(small_ext_params, tmp, true);			
-			// sum = 0;
-			// for(int i=0; i<N_LANDMARK; i++) 
-			// {
-			// 	double u = int_parms[0] * tmp2(i*3) / tmp2(i*3+2) + int_parms[2];
-			// 	double v = int_parms[1] * tmp2(i*3+1) / tmp2(i*3+2) + int_parms[3];
-			// 	sum = sum + (observed_points.part(i).x() - u) * (observed_points.part(i).x() - u);
-			// 	sum = sum + (observed_points.part(i).y() - v) * (observed_points.part(i).y() - v);		
-			// }
-			// str_write("test.txt", to_string(sum/2));
-
 			model.accumulate_extrinsic_params(small_ext_params);
-			print_array(small_ext_params, 6);
-
-			// mat_write("test.txt", model.get_R(), "R");
-			// mat_write("test.txt", model.get_T(), "T");
-			// tmp =  model.get_fp_current_blendshape_transformed();
-			// sum = 0;
-			// for(int i=0; i<N_LANDMARK; i++) 
-			// {
-			// 	double u = int_parms[0] * tmp(i*3) / tmp(i*3+2) + int_parms[2];
-			// 	double v = int_parms[1] * tmp(i*3+1) / tmp(i*3+2) + int_parms[3];
-			// 	sum = sum + (observed_points.part(i).x() - u) * (observed_points.part(i).x() - u);
-			// 	sum = sum + (observed_points.part(i).y() - v) * (observed_points.part(i).y() - v);		
-			// }
-			// str_write("test.txt", to_string(sum/2));
-			// tmp = dlib::reshape(tmp, tmp.nr() / 3, 3);
-			// mat_write("test.txt", tmp, "after points");
-
-			// model.print_R();
-			// model.print_T();
-			// model.print_extrinsic_params();
-			// std::cin.get();								
+			print_array(small_ext_params, 6);							
 		}
 		model.generate_external_parameter();
 		return (summary.termination_type == ceres::CONVERGENCE);

@@ -44,3 +44,7 @@ target_link_libraries(hpe_oneshot hpe)
 # Executable - hpe_webcam
 add_executable(hpe_webcam hpe_webcam.cpp)
 target_link_libraries(hpe_webcam hpe)
+
+# Executable - time_recorder
+add_executable(time_recorder time_recorder.cpp)
+target_link_libraries(time_recorder hpe)
