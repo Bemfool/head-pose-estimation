@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
 			/* Use dlib to detect faces */
 			std::vector<rectangle> dets = detector(img);
-			// cout << "Number of faces detected: " << dets.size() << endl;
+			cout << "Number of faces detected: " << dets.size() << endl;
 	
 			std::vector<dlib::full_object_detection> obj_detections;
 
@@ -62,17 +62,27 @@ int main(int argc, char** argv)
 				obj_detections.push_back(obj_detection);
 				hpe_problem.set_observed_points(obj_detection);
 
+				bool state;
 				if(is_first_frame)
-					while(true)
-						if( hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS | USE_DLT) &&
-							hpe_problem.solve_shape_coef() &&
-							hpe_problem.solve_expr_coef())
-							break;
+				{
+					state = false;
+					while(!state)
+					{
+						state = hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS | USE_DLT);
+						state &= hpe_problem.solve_shape_coef();
+						state &= hpe_problem.solve_expr_coef();
+					}
+					is_first_frame = false;
+				}
 				else
-					while(true) 
-						if( hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS) &&
-							hpe_problem.solve_expr_coef())
-							break;
+				{
+					state = false;
+					while(!state)
+					{
+						state = hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS);
+						state &= hpe_problem.solve_expr_coef();
+					}
+				}
 
 				// hpe_problem.get_model().print_extrinsic_params();
 				// hpe_problem.get_model().print_intrinsic_params();
