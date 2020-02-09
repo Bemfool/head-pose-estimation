@@ -19,6 +19,18 @@ cmake_minimum_required(VERSION 2.8.12)
 
 add_compile_options(-fPIC)
 
+OPTION(SHUT_UP "Close output" ON)
+IF(SHUT_UP)
+    add_definitions("-DHPE_SHUT_UP")
+    add_definitions("-DBFM_SHUT_UP")
+ENDIF(SHUT_UP)
+
+add_definitions(
+    "-DUSE_AVX_INSTRUCTIONS"
+    "-DUSE_SSE2_INSTRUCTIONS"
+    "-DUSE_SSE4_INSTRUCTIONS"
+)
+
 # Dlib
 add_subdirectory(/home/keith/dlib-19.17/dlib dlib_build)
 
@@ -48,3 +60,6 @@ target_link_libraries(hpe_webcam hpe)
 # Executable - time_recorder
 add_executable(time_recorder time_recorder.cpp)
 target_link_libraries(time_recorder hpe)
+
+add_executable(opengl_test opengl_test.cpp lib/glad/glad.c)
+target_link_libraries(opengl_test GL glfw3 m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor)

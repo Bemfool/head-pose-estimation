@@ -67,9 +67,10 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 			{0.0, int_params[1], int_params[3]},
 			{0.0, 0.0, 1.0}
 		};
-		cv::Mat camera_matrix = cv::Mat(3, 3, CV_64FC1, camera_vec);
+		cv::Mat camera_matrix = cv::Mat(3, 3, CV_64FC1, camera_vec);		
+		#ifndef HPE_SHUT_UP
 		std::cout << "camera matrix: " << camera_matrix << std::endl;
-
+		#endif
 		std::vector<float> dist_coef(0);
 		std::vector<cv::Point3f> out;
 		std::vector<cv::Point2f> in;
@@ -81,8 +82,10 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		}
 		cv::solvePnP(out, in, camera_matrix, dist_coef, rvec, tvec);
 		cv::Rodrigues(rvec, rvec);
+		#ifndef HPE_SHUT_UP
 		std::cout << rvec << std::endl;
 		std::cout << tvec << std::endl;
+		#endif
 		model.set_R(rvec);
 		model.set_T(tvec);
 		model.generate_external_parameter();
@@ -90,6 +93,7 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 	}
 	else if(mode & USE_LINEARIZED_RADIANS)
 	{
+		#ifndef HPE_SHUT_UP
 		std::cout << "solve -> external parameters (linealized)" << std::endl;
 		if(mode & USE_DLT)
 		{
@@ -100,6 +104,9 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		{
 			std::cout << "	1) initial values have been set in advance or are 0s." << std::endl;
 		}
+		#else
+		if(mode & USE_DLT) dlt();
+		#endif
 		
 		model.generate_transform_matrix();
 
@@ -108,16 +115,20 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		// tmp = dlib::reshape(tmp, tmp.nr() / 3, 3);
 		// mat_write("test.txt", tmp, "points");		
 
+		#ifndef HPE_SHUT_UP
 		std::cout << "	2) iteration." << std::endl;
 		std::cout << "init ceres solve - ";
+		#endif
 		ceres::Solver::Options options;
 		options.max_num_iterations = 100;
 		options.num_threads = 8;
 		options.minimizer_progress_to_stdout = false;
 		ceres::Solver::Summary summary;
+		#ifndef HPE_SHUT_UP
 		std::cout << "success" << std::endl;
 
 		std::cout << "begin iteration" << std::endl;
+		#endif
 		while(true) 
 		{
 			ceres::Problem problem;
@@ -125,24 +136,31 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 			ceres::CostFunction *cost_function = test_ext_params_reproj_err::create(&observed_points, &model, ca, cb);
 			problem.AddResidualBlock(cost_function, nullptr, small_ext_params);
 			ceres::Solve(options, &problem, &summary);
+			#ifndef HPE_SHUT_UP
 			std::cout << summary.BriefReport() << std::endl;
-
+			#endif
 			if(is_close_enough(small_ext_params, 0, 0)) 
 			{
+				#ifndef HPE_SHUT_UP
 				print_array(small_ext_params, 6);
 				std::cout << summary.BriefReport() << std::endl;
+				#endif
 				break; 
 			}
 			model.accumulate_extrinsic_params(small_ext_params);
+			#ifndef HPE_SHUT_UP
 			print_array(small_ext_params, 6);							
+			#endif
 		}
 		model.generate_external_parameter();
 		return (summary.termination_type == ceres::CONVERGENCE);
 	}
 	else
 	{
+		#ifndef HPE_SHUT_UP
 		std::cout << "solve -> external parameters" << std::endl;	
 		std::cout << "init ceres solve - ";
+		#endif
 		ceres::Problem problem;
 		double *ext_params = model.get_mutable_extrinsic_params();
 		ceres::CostFunction *cost_function = ext_params_reproj_err::create(observed_points, model);
@@ -152,9 +170,13 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		options.num_threads = 8;
 		options.minimizer_progress_to_stdout = true;
 		ceres::Solver::Summary summary;
+		#ifndef HPE_SHUT_UP
 		std::cout << "success" << std::endl;
+		#endif
 		ceres::Solve(options, &problem, &summary);
+		#ifndef HPE_SHUT_UP
 		std::cout << summary.BriefReport() << std::endl;
+		#endif
 		model.generate_transform_matrix();
 		return (summary.termination_type == ceres::CONVERGENCE);
 	}
@@ -171,10 +193,16 @@ bool hpe::solve_shape_coef() {
 	ceres::Solver::Options options;
 	options.max_num_consecutive_invalid_steps = 10;
 	options.num_threads = 8;
+	#ifndef HPE_SHUT_UP
 	options.minimizer_progress_to_stdout = true;
+	#else
+	options.minimizer_progress_to_stdout = false;
+	#endif
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
+	#ifndef HPE_SHUT_UP
 	std::cout << summary.BriefReport() << std::endl;
+	#endif
 	model.generate_fp_face();
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
@@ -190,10 +218,16 @@ bool hpe::solve_expr_coef() {
 	ceres::Solver::Options options;
 	options.max_num_consecutive_invalid_steps = 10;
 	options.num_threads = 8;
+	#ifndef HPE_SHUT_UP
 	options.minimizer_progress_to_stdout = true;
+	#else
+	options.minimizer_progress_to_stdout = false;
+	#endif
 	ceres::Solver::Summary summary;
 	ceres::Solve(options, &problem, &summary);
+	#ifndef HPE_SHUT_UP
 	std::cout << summary.BriefReport() << std::endl;
+	#endif
 	model.generate_fp_face();
 	return (summary.termination_type == ceres::CONVERGENCE);
 }

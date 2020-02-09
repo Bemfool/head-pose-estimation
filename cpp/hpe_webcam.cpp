@@ -22,16 +22,16 @@ int main(int argc, char** argv)
 	dlib::image_window win;
 	try {
 		// Init Detector
-		cout << "initing detector..." << endl;
+		std::cout << "initing detector..." << std::endl;
 		dlib::frontal_face_detector detector = get_frontal_face_detector();
 		dlib::shape_predictor sp;
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
-		cout << "detector init successfully\n" << endl;
+		std::cout << "detector init successfully\n" << std::endl;
 
 		/* Use Camera */
 		cv::VideoCapture cap(0);
         if (!cap.isOpened()) {
-            cerr << "Unable to connect to camera" << endl;
+            std::cerr << "Unable to connect to camera" << std::endl;
             return 1;
         }		
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
 			/* Use dlib to detect faces */
 			std::vector<rectangle> dets = detector(img);
-			cout << "Number of faces detected: " << dets.size() << endl;
+			// cout << "Number of faces detected: " << dets.size() << endl;
 	
 			std::vector<dlib::full_object_detection> obj_detections;
 
@@ -64,13 +64,13 @@ int main(int argc, char** argv)
 
 				if(is_first_frame)
 					while(true)
-						if( hpe_problem.solve_ext_params() &&
+						if( hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS | USE_DLT) &&
 							hpe_problem.solve_shape_coef() &&
 							hpe_problem.solve_expr_coef())
 							break;
 				else
 					while(true) 
-						if( hpe_problem.solve_ext_params() &&
+						if( hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS) &&
 							hpe_problem.solve_expr_coef())
 							break;
 
