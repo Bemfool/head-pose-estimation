@@ -49,14 +49,14 @@ int main(int argc, char** argv)
 			// hpe_problem.solve_ext_params(USE_CERES);
 
 			if(argc > 2)
-				hpe_problem.solve_ext_params(USE_CERES | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
+				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
 			else
-				hpe_problem.solve_ext_params(USE_CERES | USE_LINEARIZED_RADIANS);
-							
+				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS);
+
 			// std::cout << "solving shape coeficients..." << std::endl;
-			hpe_problem.solve_shape_coef();
+			// hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;
-			hpe_problem.solve_expr_coef();	
+			// hpe_problem.solve_expr_coef();	
             hpe_problem.get_model().print_extrinsic_params();
 			hpe_problem.get_model().print_intrinsic_params();
 			// hpe_problem.get_model().print_shape_coef();
