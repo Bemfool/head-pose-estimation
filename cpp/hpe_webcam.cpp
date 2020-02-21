@@ -15,11 +15,44 @@
 #include "hpe.h"
 using namespace dlib;
 
+const int MAX_N_RECORD = 50;
+
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
 	hpe hpe_problem("/home/keith/Desktop/head-pose-estimation/cpp/inputs.txt");
 	dlib::image_window win;
+	std::ofstream out;
+	
+	/* Use Camera */
+	cv::VideoCapture cap;
+
+	if(argc == 2) 
+	{
+		out.open(argv[1], std::ios::out);
+	}
+	else if(argc == 3)
+	{
+		if(argv[1] == "0")
+		{
+			cap.open(0);
+		}
+		else
+		{
+			cap.open(argv[1]);
+		}
+		out.open(argv[2], std::ios::out);
+	} else
+	{
+		out.open("seq.txt", std::ios::out);
+	}	
+		
+	if (!out) 
+	{
+		std::cerr << "Creation of text file to be saved failed.\n";
+		return -1;
+	}
+	
 	try {
 		// Init Detector
 		std::cout << "initing detector..." << std::endl;
@@ -28,8 +61,6 @@ int main(int argc, char** argv)
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
 		std::cout << "detector init successfully\n" << std::endl;
 
-		/* Use Camera */
-		cv::VideoCapture cap(0);
         if (!cap.isOpened()) {
             std::cerr << "Unable to connect to camera" << std::endl;
             return 1;
@@ -39,6 +70,7 @@ int main(int argc, char** argv)
 		double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
 
 		bool is_first_frame = true;
+
 		while(!win.is_closed()) {
 			cv::Mat temp;
 			if(!cap.read(temp))
@@ -52,10 +84,9 @@ int main(int argc, char** argv)
 
 			/* Use dlib to detect faces */
 			std::vector<rectangle> dets = detector(img);
-			cout << "Number of faces detected: " << dets.size() << endl;
+			// cout << "Number of faces detected: " << dets.size() << endl;
 	
 			std::vector<dlib::full_object_detection> obj_detections;
-
 			for (unsigned long j = 0; j < dets.size(); ++j) {
 				// 将当前获得的特征点数据放置到全局
 				full_object_detection obj_detection = sp(img, dets[j]);
@@ -83,6 +114,8 @@ int main(int argc, char** argv)
 						state &= hpe_problem.solve_expr_coef();
 					}
 				}
+				// hpe_problem.get_model().write_ext_params_to_file(out);
+				hpe_problem.get_model().write_fp_to_file(out);
 
 				// hpe_problem.get_model().print_extrinsic_params();
 				// hpe_problem.get_model().print_intrinsic_params();
@@ -103,6 +136,7 @@ int main(int argc, char** argv)
 				final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
 				win.clear_overlay();
 				win.add_overlay(render_face_detections(final_obj_detection));
+
 			}
 			/* To avoid the situation that landmarks gets stuck with no face detected */
 			if(dets.size()==0)
@@ -113,7 +147,8 @@ int main(int argc, char** argv)
 	
 		}
 		// Press any key to exit
-		std::cin.get();
+		// std::cin.get();
+		out.close();
 	} catch (exception& e) {
 		std::cout << "\nexception thrown!" << std::endl;
 		std::cout << e.what() << std::endl;
