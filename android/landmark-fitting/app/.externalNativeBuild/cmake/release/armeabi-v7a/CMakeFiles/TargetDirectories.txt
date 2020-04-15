@@ -1,3 +1,0 @@
-/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir
-/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/.externalNativeBuild/cmake/release/armeabi-v7a/CMakeFiles/android_ceres.dir

@@ -1,9 +1,0 @@
-# ninja log v5
-0	2421	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	fcdb92f96a698138
-2421	3851	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libandroid_ceres.so	62e2d93ecfca7933
-203	4869	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	fcdb92f96a698138
-4869	5986	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libandroid_ceres.so	b9fff1650c8faebf
-4	2484	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	fcdb92f96a698138
-2484	3562	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libandroid_ceres.so	b9fff1650c8faebf
-1	2128	0	CMakeFiles/android_ceres.dir/android_ceres.cpp.o	fcdb92f96a698138
-2128	2232	0	/home/keith/Desktop/head-pose-estimation/android/landmark-fitting/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libandroid_ceres.so	b9fff1650c8faebf
