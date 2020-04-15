@@ -14,7 +14,8 @@ inputs.txt - 格式参见<https://github.com/Great-Keith/BFM-tools>
 
 ## 测试
 
-![](.\assets\1.png)
+!1](../asset/1.png)
+
 
 
 ## 编译
