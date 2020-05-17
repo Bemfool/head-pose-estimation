@@ -1,16 +1,12 @@
 #include "hpe.h"
 
-using ceres::CostFunction;
-using ceres::Problem;
-using ceres::Solver;
-using ceres::Solve;
 using namespace dlib;
 using namespace std;
 
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/Desktop/head-pose-estimation/cpp/inputs.txt");
+	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
 
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
@@ -25,7 +21,8 @@ int main(int argc, char** argv)
 	double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
 	double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
 
-	try {
+	try 
+	{
 		// 初始化detector
 		std::cout << "initing detector..." << std::endl;
 		dlib::frontal_face_detector detector = get_frontal_face_detector();
@@ -38,9 +35,10 @@ int main(int argc, char** argv)
 		std::cout << "Number of faces detected: " << dets.size() << std::endl;
 		std::vector<dlib::full_object_detection> obj_detections;
 		win.set_image(img);
-		for (unsigned long j = 0; j < dets.size(); ++j) {
+		if(dets.size() != 0) 
+		{
 			// 将当前获得的特征点数据放置到全局
-			full_object_detection obj_detection = sp(img, dets[j]);
+			full_object_detection obj_detection = sp(img, dets[0]);
 			obj_detections.push_back(obj_detection);
 			hpe_problem.set_observed_points(obj_detection);
 
@@ -56,11 +54,14 @@ int main(int argc, char** argv)
 			// std::cout << "solving shape coeficients..." << std::endl;
 			// hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;
-			// hpe_problem.solve_expr_coef();	
+			// hpe_problem.solve_expr_coef();
+			
             hpe_problem.get_model().print_extrinsic_params();
-			hpe_problem.get_model().print_intrinsic_params();
+			hpe_problem.get_model().set_rotation(0.5, 0.0, -M_PI);
+
 			// hpe_problem.get_model().print_shape_coef();
 			// hpe_problem.get_model().print_expr_coef();
+
 			hpe_problem.get_model().generate_face();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
@@ -75,7 +76,6 @@ int main(int argc, char** argv)
 			std::vector<dlib::full_object_detection> final_obj_detection;
 			final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
 			win.add_overlay(render_face_detections(final_obj_detection));
-
 		}
 		win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0, 0, 255)));
 

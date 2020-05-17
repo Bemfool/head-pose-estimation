@@ -1,3 +1,6 @@
 [submodule "lib/bfm"]
 	path = lib/bfm
 	url = git@github.com:Great-Keith/BFM-tools.git
+[submodule "lib/BFM-tools"]
+	path = lib/BFM-tools
+	url = git@github.com:Great-Keith/BFM-tools.git

@@ -1,10 +1,0 @@
-x64
-
-
-Release
-Debug
-bfm-tools/Debug
-*.ply
-.vs
-bfm-tools/inputs-outer.txt
-bfm-tools/inputs-inner.txt

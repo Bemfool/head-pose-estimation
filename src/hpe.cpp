@@ -5,6 +5,9 @@ hpe::hpe(std::string filename) {
 }
 
 void hpe::init(std::string filename) {
+	#ifndef HPE_SHUT_UP
+		std::cout << "HPE initing... " << std::endl;
+	#endif
 	model.init(filename);
 }
 

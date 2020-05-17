@@ -20,7 +20,7 @@ const int MAX_N_RECORD = 50;
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/Desktop/head-pose-estimation/cpp/inputs.txt");
+	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
 	dlib::image_window win;
 	std::ofstream out;
 	
@@ -40,11 +40,16 @@ int main(int argc, char** argv)
 		else
 		{
 			cap.open(argv[1]);
+			std::cout << "open video " << argv[1] << std::endl;
 		}
+	
 		out.open(argv[2], std::ios::out);
+		std::cout << "file name: " << argv[2] << std::endl;
+
 	} else
 	{
 		out.open("seq.txt", std::ios::out);
+		cap.open(0);
 	}	
 		
 	if (!out) 
@@ -93,6 +98,10 @@ int main(int argc, char** argv)
 				obj_detections.push_back(obj_detection);
 				hpe_problem.set_observed_points(obj_detection);
 
+				for(int i=0; i<obj_detection.num_parts(); i++) 
+					out << obj_detection.part(i).x() << " " << obj_detection.part(i).y() << " "; 
+				out << "\n";
+
 				bool state;
 				if(is_first_frame)
 				{
@@ -115,7 +124,6 @@ int main(int argc, char** argv)
 					}
 				}
 				// hpe_problem.get_model().write_ext_params_to_file(out);
-				hpe_problem.get_model().write_fp_to_file(out);
 
 				// hpe_problem.get_model().print_extrinsic_params();
 				// hpe_problem.get_model().print_intrinsic_params();
@@ -145,6 +153,8 @@ int main(int argc, char** argv)
 			win.set_image(img);
 			win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0,0, 255)));
 	
+			double *ext_params = hpe_problem.get_model().get_mutable_extrinsic_params();
+			std::cout << ext_params[0] << " " << ext_params[1] << " " << ext_params[2] << std::endl;
 		}
 		// Press any key to exit
 		// std::cin.get();
