@@ -222,64 +222,11 @@ int main(int argc, char** argv)
     // pass transformation matrices to the shader
     ourShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
     ourShader.setMat4("view", view);    
-    ourShader.setMat4("model", model);    
+    ourShader.setMat4("model", model);
+    ourShader.setBool("isMirror", false);
 
     modelShader.use();
-    view       = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-    projection = glm::mat4(1.0f);
-    model      = glm::mat4(1.0f);
-    float fx = (float)hpe_problem.get_model().get_fx();
-    float fy = (float)hpe_problem.get_model().get_fy();
-    float cx = (float)hpe_problem.get_model().get_cx();
-    float cy = (float)hpe_problem.get_model().get_cy();
-    float near = 0.1f, far = 1000000.0f;
-    projection = glm::mat4(
-        2.0f * fx / SCR_WIDTH, 0.0f, 1.0f - 2.0f * cx / SCR_WIDTH, 0.0f,
-        0.0f, 2.0f * fy / SCR_HEIGHT, 2.0f * cy / SCR_HEIGHT - 1.0f ,0.0f, 
-        0.0f, 0.0f, -(far + near) / (far - near), -2.0 * far * near / (far - near),
-        0.0, 0.0, -1.0, 0.0f
-    );
-    
-    // projection = glm::perspective(
-    //     glm::radians(45.0f), 
-    //     (float)SCR_WIDTH / (float)SCR_HEIGHT, 
-    //     0.1f, 
-    //     100000000.0f);
-    view = glm::lookAt(
-        glm::vec3(0.0, 0.0, 0.0), 
-        glm::vec3(0.0, 0.0, 1.0), 
-        glm::vec3(0.0, -1.0, 0.0));
-
-    // model = glm::rotate(model, (float)hpe_problem.get_model().get_yaw(), glm::vec3(0.0, 0.0, 1.0));
-    // model = glm::rotate(model, (float)hpe_problem.get_model().get_pitch(), glm::vec3(0.0, 1.0, 0.0));
-    // model = glm::rotate(model, (float)hpe_problem.get_model().get_roll(), glm::vec3(1.0, 0.0, 0.0));
-    // model = glm::translate(model, glm::vec3((float)hpe_problem.get_model().get_tx(),
-    //                                         (float)hpe_problem.get_model().get_ty(),
-    //                                         (float)hpe_problem.get_model().get_tz()));
-    
-    // dlib::matrix<double> R = hpe_problem.get_model().get_R();
-    // dlib::matrix<double> T = hpe_problem.get_model().get_T();
-    // for(int i=0; i<4; i++) {
-    //     for(int j=0; j<4; j++)
-    //         std::cout << model[i][j] << " ";
-    //     std::cout << std::endl;
-    // }
-    
-    // model = glm::mat4(
-    //     (float)R(0, 0), (float)R(0, 1), (float)R(0, 2), 0.0f,
-    //     (float)R(1, 0), (float)R(1, 1), (float)R(1, 2), 0.0f,
-    //     (float)R(2, 0), (float)R(2, 1), (float)R(2, 2), 0.0f,
-    //     (float)T(0), (float)T(1), (float)T(2), 1.0f
-    // );
-
-    // for(int i=0; i<4; i++) {
-    //     for(int j=0; j<4; j++)
-    //         std::cout << model[i][j] << " ";
-    //     std::cout << std::endl;
-    // }
-
-    modelShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-    modelShader.setMat4("view", view);    
+    model = glm::mat4(1.0f); 
     modelShader.setMat4("model", model);           
 
     glm::vec4 test(-52531.3-38902.8, 43535.6-28693.6, 82126.7+811562, 1.0);

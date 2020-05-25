@@ -14,8 +14,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 640;
+const unsigned int SCR_HEIGHT = 480;
+
+bool is_save = true;
 
 using namespace dlib;
 using namespace std;
@@ -28,9 +30,7 @@ int main(int argc, char** argv)
     dlib::matrix<float> tex = dlib::matrix_cast<float>(hpe_problem.get_model().get_std_tex());
     dlib::matrix<unsigned int> tr = dlib::matrix_cast<unsigned int>(hpe_problem.get_model().get_tl());
     for(auto i = tr.begin(); i != tr.end(); i++) 
-    {
         *i = (*i) - 1;
-    }
 
     // glfw: initialize and configure
     // ------------------------------
@@ -72,10 +72,10 @@ int main(int argc, char** argv)
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions        // texture coords
-         400.0f,  300.0f, 0.0f, 0.0f, 0.0f, // top right
-         400.0f, -300.0f, 0.0f, 0.0f, 1.0f, // bottom right
-        -400.0f, -300.0f, 0.0f, 1.0f, 1.0f, // bottom left
-        -400.0f,  300.0f, 0.0f, 1.0f, 0.0f  // top left 
+         320.0f,  240.0f, 0.0f, 0.0f, 0.0f, // top right
+         320.0f, -240.0f, 0.0f, 0.0f, 1.0f, // bottom right
+        -320.0f, -240.0f, 0.0f, 1.0f, 1.0f, // bottom left
+        -320.0f,  240.0f, 0.0f, 1.0f, 0.0f  // top left 
     };
     unsigned int indices[] = {
         0, 1, 3, // first triangle
@@ -123,7 +123,6 @@ int main(int argc, char** argv)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, n_tl * sizeof(unsigned int), tr.begin(), GL_STATIC_DRAW);
 
-
     // load and create a texture 
     // -------------------------
     unsigned int texture;
@@ -137,11 +136,20 @@ int main(int argc, char** argv)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     cv::VideoCapture cap;
-    cap.open(0);
+    if(argc > 1)
+        cap.open(argv[1]);
+    else
+        cap.open(0);
     if (!cap.isOpened()) {
         std::cerr << "Unable to connect to camera" << std::endl;
         return -1;
-    }	
+    }
+    cv::VideoWriter vid(
+        "output.avi", 
+        cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 
+        30, 
+        cv::Size(SCR_WIDTH, SCR_HEIGHT)
+    );
 
     // Init Detector
     std::cout << "initing detector..." << std::endl;
@@ -152,6 +160,7 @@ int main(int argc, char** argv)
 
     // render loop
     // -----------
+    cv::namedWindow("Model");
     bool is_first_frame = true;
     while (!glfwWindowShouldClose(window))
     {
@@ -225,11 +234,11 @@ int main(int argc, char** argv)
         hpe_problem.get_model().generate_face();
         std::cout << hpe_problem.get_model().get_mutable_shape_coef()[0] << std::endl;
         std::cout << hpe_problem.get_model().get_mutable_expr_coef()[0] << std::endl;
-        dlib::matrix<float> face = dlib::matrix_cast<float>(hpe_problem.get_model().get_current_blendshape());
+        dlib::matrix<float> face = dlib::matrix_cast<float>(hpe_problem.get_model().get_current_blendshape_transformed());
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBufferSubData(GL_ARRAY_BUFFER, 0, n_vec * 4, face.begin());
@@ -243,7 +252,7 @@ int main(int argc, char** argv)
         glm::mat4 projection = glm::mat4(1.0f);
         glm::mat4 model      = glm::mat4(1.0f);
         // projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        projection = glm::ortho(-400.0f, 400.0f, -300.0f, 300.0f, 0.1f, 100.0f);
+        projection = glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, 0.1f, 100.0f);
         view = glm::lookAt(glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0)); 
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         // pass transformation matrices to the shader
@@ -255,27 +264,7 @@ int main(int argc, char** argv)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     
         modelShader.use();
-        view       = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        projection = glm::mat4(1.0f);
-        model      = glm::mat4(1.0f);
-
-        projection = glm::perspective(
-            glm::radians(60.0f), 
-            (float)SCR_WIDTH / (float)SCR_HEIGHT, 
-            0.1f, 
-            20000000.0f);
-        view = glm::lookAt(
-            glm::vec3(0.0, 0.0, -500000), 
-            glm::vec3(0.0, 0.0, 0.0), 
-            glm::vec3(0.0, -1.0, 0.0)); 
-
-        model = glm::scale(model, glm::vec3(-1.0, 1.0, 1.0));
-        model = glm::rotate(model, (float)hpe_problem.get_model().get_yaw(), glm::vec3(0.0, 0.0, 1.0));
-        model = glm::rotate(model, (float)hpe_problem.get_model().get_pitch(), glm::vec3(0.0, 1.0, 0.0));
-        model = glm::rotate(model, (float)hpe_problem.get_model().get_roll(), glm::vec3(1.0, 0.0, 0.0));
-
-        modelShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-        modelShader.setMat4("view", view);    
+        modelShader.setBool("isMirror", true);
         modelShader.setMat4("model", model);           
 
         glEnable(GL_DEPTH_TEST);
@@ -287,6 +276,22 @@ int main(int argc, char** argv)
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
+
+        GLubyte *frame =
+            (GLubyte *)malloc(3 * SCR_WIDTH * SCR_HEIGHT * sizeof(GLubyte));
+        glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_BGR, GL_UNSIGNED_BYTE, frame);
+        cv::Mat src_frame, dst_frame;
+        src_frame = cv::Mat(SCR_HEIGHT, SCR_WIDTH, CV_8UC3, (unsigned char *)frame);
+        dst_frame.create(src_frame.rows, src_frame.cols, src_frame.type());
+        int rows = src_frame.rows;
+        for (int i = 0; i < rows; i++)
+            src_frame.row(rows - i - 1).copyTo(dst_frame.row(i));
+        vid << dst_frame;
+        cv::imshow("Model", dst_frame);
+        free(frame);
+
+        cv::waitKey(1000/30);
+
         glfwPollEvents();
     }
 
@@ -298,6 +303,7 @@ int main(int argc, char** argv)
     glDeleteVertexArrays(1, &faceVAO);
     glDeleteBuffers(1, &faceVBO);
     glDeleteBuffers(1, &faceEBO);
+    cap.release();
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
