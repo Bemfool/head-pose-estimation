@@ -18,11 +18,11 @@ int main(int argc, char** argv)
 {  
     MASK_COUT
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/Desktop/head-pose-estimation/cpp/inputs.txt");
+	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
     
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
-	std::string img_name = "test2.jpg";
+	std::string img_name = "test.jpg";
 
 	if(argc > 1) img_name = argv[1];	
 	std::cout << "processing image " << img_name << std::endl;
@@ -55,6 +55,20 @@ int main(int argc, char** argv)
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
                 hpe_problem.solve_ext_params(USE_CERES);
+                hpe_problem.get_model().clear_ext_params();
+                auto end = std::chrono::system_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+                MASK_COUT_END
+                std::cout << "  Cost: " << double(duration.count())
+                    * std::chrono::microseconds::period::num
+                    / std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+            }
+
+            {
+                std::cout << "Solve extrinsic parameters using direct euler angles(w/ dlt)." << std::endl;
+                MASK_COUT
+                auto start = std::chrono::system_clock::now();
+                hpe_problem.solve_ext_params(USE_CERES | USE_DLT);
                 hpe_problem.get_model().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);

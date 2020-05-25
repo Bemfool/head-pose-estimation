@@ -14,8 +14,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 640;
+const unsigned int SCR_HEIGHT = 480;
 
 using namespace dlib;
 using namespace std;
@@ -25,9 +25,6 @@ int main(int argc, char** argv)
 	google::InitGoogleLogging(argv[0]);
 	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
 
-    hpe_problem.get_model().write_hard_code();
-    return 0;
-
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
 	std::string img_name = "test.jpg";
@@ -35,6 +32,7 @@ int main(int argc, char** argv)
 	if(argc > 1) img_name = argv[1];	
 	std::cout << "processing image " << img_name << std::endl;
 	load_image(img, img_name);
+    
 
 	try 
 	{
@@ -45,7 +43,7 @@ int main(int argc, char** argv)
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
 		std::cout << "detector init successfully\n" << std::endl;
 
-		pyramid_up(img);
+		// pyramid_up(img);
 		std::vector<dlib::rectangle> dets = detector(img);
 		std::cout << "Number of faces detected: " << dets.size() << std::endl;
 		if(dets.size() != 0) 
@@ -64,9 +62,9 @@ int main(int argc, char** argv)
 				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS);
 
 			// std::cout << "solving shape coeficients..." << std::endl;
-			// hpe_problem.solve_shape_coef();
+			hpe_problem.solve_shape_coef();
 			// std::cout << "solving expression coeficients..." << std::endl;
-			// hpe_problem.solve_expr_coef();
+			hpe_problem.solve_expr_coef();
 			
             hpe_problem.get_model().print_extrinsic_params();
 			hpe_problem.get_model().print_intrinsic_params();
@@ -75,14 +73,22 @@ int main(int argc, char** argv)
 
 			hpe_problem.get_model().generate_face();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
-
-			const dlib::matrix<double> fp_shape = hpe_problem.get_model().get_fp_current_blendshape_transformed();
 		}
 
 	} catch (exception& e) {
 		cout << "\nexception thrown!" << endl;
 		cout << e.what() << endl;
 	}
+
+
+    dlib::matrix<float> face = dlib::matrix_cast<float>(hpe_problem.get_model().get_current_blendshape_transformed());
+    dlib::matrix<float> tex = dlib::matrix_cast<float>(hpe_problem.get_model().get_std_tex());
+    dlib::matrix<unsigned int> tr = dlib::matrix_cast<unsigned int>(hpe_problem.get_model().get_tl());
+    for(auto i = tr.begin(); i != tr.end(); i++) 
+    {
+        *i = (*i) - 1;
+    }
+    std::cout << face(0) << " " << face(1) << " " << face(2) << std::endl;
 
     // glfw: initialize and configure
     // ------------------------------
@@ -97,7 +103,7 @@ int main(int argc, char** argv)
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Head Pose Estimation - Oneshot", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -118,15 +124,16 @@ int main(int argc, char** argv)
     // build and compile our shader zprogram
     // ------------------------------------
     Shader ourShader("../shader/plane.vs", "../shader/plane.fs");
+    Shader modelShader("../shader/model.vs", "../shader/model.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions        // texture coords
-         400.0f,  300.0f, 0.0f, 1.0f, 1.0f, // top right
-         400.0f, -300.0f, 0.0f, 1.0f, 0.0f, // bottom right
-        -400.0f, -300.0f, 0.0f, 0.0f, 0.0f, // bottom left
-        -400.0f,  300.0f, 0.0f, 0.0f, 1.0f  // top left 
+         320.0f,  240.0f, 0.0f, 1.0f, 1.0f, // top right
+         320.0f, -240.0f, 0.0f, 1.0f, 0.0f, // bottom right
+        -320.0f, -240.0f, 0.0f, 0.0f, 0.0f, // bottom left
+        -320.0f,  240.0f, 0.0f, 0.0f, 1.0f  // top left 
     };
     unsigned int indices[] = {
         0, 1, 3, // first triangle
@@ -151,6 +158,28 @@ int main(int argc, char** argv)
     // texture coord attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    unsigned int faceVBO, faceVAO, faceEBO;
+
+    glGenVertexArrays(1, &faceVAO);
+    glGenBuffers(1, &faceVBO);
+    glGenBuffers(1, &faceEBO); 
+    glBindVertexArray(faceVAO);  
+
+    int n_vec = hpe_problem.get_model().get_n_vertice() * 3;
+    glBindBuffer(GL_ARRAY_BUFFER, faceVBO);
+    glBufferData(GL_ARRAY_BUFFER, 2 * n_vec * 4, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, n_vec * 4, face.begin());
+    glBufferSubData(GL_ARRAY_BUFFER, n_vec * 4, n_vec * 4, tex.begin());
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(46990 * 3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    int n_tl = hpe_problem.get_model().get_n_face() * 3;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, n_tl * sizeof(unsigned int), tr.begin(), GL_STATIC_DRAW);
 
 
     // load and create a texture 
@@ -187,13 +216,76 @@ int main(int argc, char** argv)
     glm::mat4 projection = glm::mat4(1.0f);
     glm::mat4 model      = glm::mat4(1.0f);
     // projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    projection = glm::ortho(-400.0f, 400.0f, -300.0f, 300.0f, 0.1f, 100.0f);
+    projection = glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, 0.1f, 100.0f);
     view = glm::lookAt(glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0)); 
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     // pass transformation matrices to the shader
     ourShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
     ourShader.setMat4("view", view);    
     ourShader.setMat4("model", model);    
+
+    modelShader.use();
+    view       = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    projection = glm::mat4(1.0f);
+    model      = glm::mat4(1.0f);
+    float fx = (float)hpe_problem.get_model().get_fx();
+    float fy = (float)hpe_problem.get_model().get_fy();
+    float cx = (float)hpe_problem.get_model().get_cx();
+    float cy = (float)hpe_problem.get_model().get_cy();
+    float near = 0.1f, far = 1000000.0f;
+    projection = glm::mat4(
+        2.0f * fx / SCR_WIDTH, 0.0f, 1.0f - 2.0f * cx / SCR_WIDTH, 0.0f,
+        0.0f, 2.0f * fy / SCR_HEIGHT, 2.0f * cy / SCR_HEIGHT - 1.0f ,0.0f, 
+        0.0f, 0.0f, -(far + near) / (far - near), -2.0 * far * near / (far - near),
+        0.0, 0.0, -1.0, 0.0f
+    );
+    
+    // projection = glm::perspective(
+    //     glm::radians(45.0f), 
+    //     (float)SCR_WIDTH / (float)SCR_HEIGHT, 
+    //     0.1f, 
+    //     100000000.0f);
+    view = glm::lookAt(
+        glm::vec3(0.0, 0.0, 0.0), 
+        glm::vec3(0.0, 0.0, 1.0), 
+        glm::vec3(0.0, -1.0, 0.0));
+
+    // model = glm::rotate(model, (float)hpe_problem.get_model().get_yaw(), glm::vec3(0.0, 0.0, 1.0));
+    // model = glm::rotate(model, (float)hpe_problem.get_model().get_pitch(), glm::vec3(0.0, 1.0, 0.0));
+    // model = glm::rotate(model, (float)hpe_problem.get_model().get_roll(), glm::vec3(1.0, 0.0, 0.0));
+    // model = glm::translate(model, glm::vec3((float)hpe_problem.get_model().get_tx(),
+    //                                         (float)hpe_problem.get_model().get_ty(),
+    //                                         (float)hpe_problem.get_model().get_tz()));
+    
+    // dlib::matrix<double> R = hpe_problem.get_model().get_R();
+    // dlib::matrix<double> T = hpe_problem.get_model().get_T();
+    // for(int i=0; i<4; i++) {
+    //     for(int j=0; j<4; j++)
+    //         std::cout << model[i][j] << " ";
+    //     std::cout << std::endl;
+    // }
+    
+    // model = glm::mat4(
+    //     (float)R(0, 0), (float)R(0, 1), (float)R(0, 2), 0.0f,
+    //     (float)R(1, 0), (float)R(1, 1), (float)R(1, 2), 0.0f,
+    //     (float)R(2, 0), (float)R(2, 1), (float)R(2, 2), 0.0f,
+    //     (float)T(0), (float)T(1), (float)T(2), 1.0f
+    // );
+
+    // for(int i=0; i<4; i++) {
+    //     for(int j=0; j<4; j++)
+    //         std::cout << model[i][j] << " ";
+    //     std::cout << std::endl;
+    // }
+
+    modelShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    modelShader.setMat4("view", view);    
+    modelShader.setMat4("model", model);           
+
+    glm::vec4 test(-52531.3-38902.8, 43535.6-28693.6, 82126.7+811562, 1.0);
+    glm::vec4 test2 = view * model * test;
+    std::cout << test2.w << std::endl;
+    std::cout << test2.x/test2.w << " " << test2.y/test2.w << " " << test2.z/test2.w << std::endl;
 
     // render loop
     // -----------
@@ -206,7 +298,7 @@ int main(int argc, char** argv)
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // bind textures on corresponding texture units
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -215,6 +307,13 @@ int main(int argc, char** argv)
         ourShader.use();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        modelShader.use();
+        glBindVertexArray(faceVAO);
+        glDrawElements(GL_TRIANGLES, 93322 * 3, GL_UNSIGNED_INT, 0);
+        glDisable(GL_DEPTH_TEST);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -227,6 +326,9 @@ int main(int argc, char** argv)
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &faceVAO);
+    glDeleteBuffers(1, &faceVBO);
+    glDeleteBuffers(1, &faceEBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------

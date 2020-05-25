@@ -5,9 +5,7 @@ bfm model("/home/keith/head-pose-estimation/inputs.txt");
 
 int main()
 {
-	gen_data(10, 0.03);
-    gen_data(10, 0.05);
-    gen_data(10, 0.07);    
+	gen_data(10, 0.015); 
     return 0;
 }
 

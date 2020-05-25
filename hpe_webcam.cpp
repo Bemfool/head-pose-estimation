@@ -13,6 +13,7 @@
  **********************************************************/
 
 #include "hpe.h"
+#include <chrono>
 using namespace dlib;
 
 const int MAX_N_RECORD = 50;
@@ -76,7 +77,17 @@ int main(int argc, char** argv)
 
 		bool is_first_frame = true;
 
+		auto f_start = std::chrono::system_clock::now();
+		auto f_end = std::chrono::system_clock::now();
+
 		while(!win.is_closed()) {
+			f_end = std::chrono::system_clock::now();
+			auto f_duration = std::chrono::duration_cast<std::chrono::microseconds>(f_end - f_start);
+			std::cout << "Frame cost: " << double(f_duration.count())
+				* std::chrono::microseconds::period::num
+				/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+			f_start = f_end;
+
 			cv::Mat temp;
 			if(!cap.read(temp))
 				break;
@@ -105,6 +116,7 @@ int main(int argc, char** argv)
 				bool state;
 				if(is_first_frame)
 				{
+					auto start = std::chrono::system_clock::now();
 					state = false;
 					while(!state)
 					{
@@ -112,16 +124,29 @@ int main(int argc, char** argv)
 						state &= hpe_problem.solve_shape_coef();
 						state &= hpe_problem.solve_expr_coef();
 					}
+					auto end = std::chrono::system_clock::now();
+                	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+                	std::cout << "First frame cost: " << double(duration.count())
+						* std::chrono::microseconds::period::num
+                    	/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+
 					is_first_frame = false;
 				}
 				else
 				{
+					auto start = std::chrono::system_clock::now();
 					state = false;
 					while(!state)
 					{
 						state = hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS);
 						state &= hpe_problem.solve_expr_coef();
 					}
+					auto end = std::chrono::system_clock::now();
+                	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+                	std::cout << "First frame cost: " << double(duration.count())
+						* std::chrono::microseconds::period::num
+                    	/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+
 				}
 				// hpe_problem.get_model().write_ext_params_to_file(out);
 

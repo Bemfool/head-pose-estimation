@@ -67,9 +67,14 @@ if(GEN_HPE_SAMPLES)
     target_link_libraries(hpe_oneshot_openGL GL glfw3 
                                              m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor
                                              hpe)
+
+    add_executable(hpe_webcam_openGL hpe_webcam_openGL.cpp lib/glad/glad.c)
+    target_link_libraries(hpe_webcam_openGL GL glfw3 
+                                            m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor
+                                            hpe)
 endif()
 
-OPTION(CHECK_TIME "Check time spending." OFF)
+OPTION(CHECK_TIME "Check time spending." ON)
 if(CHECK_TIME)
     # Executable - time_recorder
     add_executable(time_recorder time_recorder.cpp)

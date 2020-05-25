@@ -164,6 +164,22 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		std::cout << "solve -> external parameters" << std::endl;	
 		std::cout << "init ceres solve - ";
 		#endif
+
+		#ifndef HPE_SHUT_UP
+		if(mode & USE_DLT)
+		{
+			std::cout << "	1) esitimate initial values by using DLT algorithm." << std::endl;
+			dlt();
+		}
+		else
+		{
+			std::cout << "	1) initial values have been set in advance or are 0s." << std::endl;
+		}
+		#else
+		if(mode & USE_DLT) dlt();
+		#endif
+
+
 		ceres::Problem problem;
 		double *ext_params = model.get_mutable_extrinsic_params();
 		ceres::CostFunction *cost_function = ext_params_reproj_err::create(observed_points, model);

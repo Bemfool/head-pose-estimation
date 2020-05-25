@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
 		std::cout << "detector init successfully\n" << std::endl;
 
-		pyramid_up(img);
+		// pyramid_up(img);
 		std::vector<dlib::rectangle> dets = detector(img);
 		std::cout << "Number of faces detected: " << dets.size() << std::endl;
 		std::vector<dlib::full_object_detection> obj_detections;
@@ -57,7 +57,6 @@ int main(int argc, char** argv)
 			// hpe_problem.solve_expr_coef();
 			
             hpe_problem.get_model().print_extrinsic_params();
-			hpe_problem.get_model().set_rotation(0.5, 0.0, -M_PI);
 
 			// hpe_problem.get_model().print_shape_coef();
 			// hpe_problem.get_model().print_expr_coef();
