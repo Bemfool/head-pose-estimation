@@ -23,21 +23,25 @@ using namespace std;
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
+	/* Init head pose estimation problem */
+	// hpe hpe_problem("../example_inputs/example_inputs_68.txt");
 
-	// 打开图片获得人脸框选
+	/* If use different input file, 
+	 * please update corresponding parameters in include/db_params.h 
+	 */
+	// hpe hpe_problem("../example_inputs/example_inputs_6.txt");
+	hpe hpe_problem("../example_inputs/example_inputs_12.txt");
+
+	/* Open image with human face (default: test.jpg) */
 	array2d<rgb_pixel> img;
 	std::string img_name = "test.jpg";
-
 	if(argc > 1) img_name = argv[1];	
-	std::cout << "processing image " << img_name << std::endl;
-	load_image(img, img_name);
-    
+	std::cout << "Processing image: " << img_name << std::endl;
+	load_image(img, img_name);	
 
 	try 
 	{
-		// 初始化detector
-		std::cout << "initing detector..." << std::endl;
+		/* Init detector */
 		dlib::frontal_face_detector detector = get_frontal_face_detector();
 		dlib::shape_predictor sp;
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
@@ -46,40 +50,52 @@ int main(int argc, char** argv)
 		// pyramid_up(img);
 		std::vector<dlib::rectangle> dets = detector(img);
 		std::cout << "Number of faces detected: " << dets.size() << std::endl;
+
+        /* Only detect the first face */
 		if(dets.size() != 0) 
 		{
 			// 将当前获得的特征点数据放置到全局
 			full_object_detection obj_detection = sp(img, dets[0]);
 			hpe_problem.set_observed_points(obj_detection);
 
+            /* Start of solving */
+            auto start = std::chrono::system_clock::now();
+            
+            /* There are some different ways to choose to solve external parameters */
 			std::cout << "solving external parameters..." << std::endl;
+			hpe_problem.solve_ext_params(USE_CERES | USE_DLT);
 
-			// hpe_problem.solve_ext_params(USE_CERES);
+			// if(argc > 2)
+			// 	hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
+			// else
+			// 	hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS);
 
-			if(argc > 2)
-				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
-			else
-				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS);
-
-			// std::cout << "solving shape coeficients..." << std::endl;
+			std::cout << "solving shape coeficients..." << std::endl;
 			hpe_problem.solve_shape_coef();
-			// std::cout << "solving expression coeficients..." << std::endl;
+
+			std::cout << "solving expression coeficients..." << std::endl;
 			hpe_problem.solve_expr_coef();
 			
+			/* End of solving */
+			auto end = std::chrono::system_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+			std::cout << "Solve cost: " << double(duration.count())
+				* std::chrono::microseconds::period::num
+				/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+
             hpe_problem.get_model().print_extrinsic_params();
 			hpe_problem.get_model().print_intrinsic_params();
 			// hpe_problem.get_model().print_shape_coef();
 			// hpe_problem.get_model().print_expr_coef();
 
 			hpe_problem.get_model().generate_face();
-			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
+			// hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 		}
 
 	} catch (exception& e) {
 		cout << "\nexception thrown!" << endl;
 		cout << e.what() << endl;
 	}
-
 
     dlib::matrix<float> face = dlib::matrix_cast<float>(hpe_problem.get_model().get_current_blendshape_transformed());
     dlib::matrix<float> tex = dlib::matrix_cast<float>(hpe_problem.get_model().get_std_tex());
@@ -228,11 +244,6 @@ int main(int argc, char** argv)
     modelShader.use();
     model = glm::mat4(1.0f); 
     modelShader.setMat4("model", model);           
-
-    glm::vec4 test(-52531.3-38902.8, 43535.6-28693.6, 82126.7+811562, 1.0);
-    glm::vec4 test2 = view * model * test;
-    std::cout << test2.w << std::endl;
-    std::cout << test2.x/test2.w << " " << test2.y/test2.w << " " << test2.z/test2.w << std::endl;
 
     // render loop
     // -----------

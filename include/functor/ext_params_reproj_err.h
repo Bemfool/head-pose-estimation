@@ -26,10 +26,12 @@ public:
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{
+			int idx = model.get_dlib_fp_idx(i);
+			std::cout << idx << std::endl;
 			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
 			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = _Tp(observed_points.part(i).x()) - u;
-			residuals[i*2+1] = _Tp(observed_points.part(i).y()) - v;
+			residuals[i*2] = _Tp(observed_points.part(idx).x()) - u;
+			residuals[i*2+1] = _Tp(observed_points.part(idx).y()) - v;
 		}
 		return true;
 	}
@@ -66,10 +68,11 @@ public:
 
 		for(int i=0; i<N_LANDMARK; i++) 
 		{
+			int idx = _model->get_dlib_fp_idx(i);
 			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
 			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = _Tp(_observed_points->part(i).x()) - u;
-			residuals[i*2+1] = _Tp(_observed_points->part(i).y()) - v;	
+			residuals[i*2] = _Tp(_observed_points->part(idx).x()) - u;
+			residuals[i*2+1] = _Tp(_observed_points->part(idx).y()) - v;	
 		}
 
 		/* regularialization */

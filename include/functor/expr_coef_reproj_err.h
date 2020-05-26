@@ -28,10 +28,11 @@ public:
 		const dlib::matrix<T> fp_shape = transform_points(extrinsic_params_, fp_shape_);
 
 		for(int i=0; i<N_LANDMARK; i++) {
+			int idx = model.get_dlib_fp_idx(i);
 			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
 			T v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = T(observed_points.part(i).x()) - u;
-			residuals[i*2+1] = T(observed_points.part(i).y()) - v;		
+			residuals[i*2] = T(observed_points.part(idx).x()) - u;
+			residuals[i*2+1] = T(observed_points.part(idx).y()) - v;		
 		}
 		return true;
 	}

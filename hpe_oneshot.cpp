@@ -1,4 +1,5 @@
 #include "hpe.h"
+#include <chrono>
 
 using namespace dlib;
 using namespace std;
@@ -6,25 +7,33 @@ using namespace std;
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
 
-	// 打开图片获得人脸框选
+	/* Init head pose estimation problem */
+	hpe hpe_problem("../example_inputs/example_inputs_68.txt");
+
+	/* If use different input file, 
+	 * please update corresponding parameters in include/db_params.h 
+	 */
+	// hpe hpe_problem("../example_inputs/example_inputs_6.txt");
+
+	/* Open image with human face (default: test.jpg) */
 	array2d<rgb_pixel> img;
-	std::string img_name = "test2.jpg";
-
+	std::string img_name = "test.jpg";
 	if(argc > 1) img_name = argv[1];	
-	std::cout << "processing image " << img_name << std::endl;
-	load_image(img, img_name);
+	std::cout << "Processing image: " << img_name << std::endl;
+	load_image(img, img_name);	
 
+	/* Init window (Dlib support) */
 	image_window win;
 	win.clear_overlay();
+
+	/* Fetch intrinsic parameters */
 	double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
 	double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
 
 	try 
 	{
-		// 初始化detector
-		std::cout << "initing detector..." << std::endl;
+		// Init detector
 		dlib::frontal_face_detector detector = get_frontal_face_detector();
 		dlib::shape_predictor sp;
 		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
@@ -35,6 +44,8 @@ int main(int argc, char** argv)
 		std::cout << "Number of faces detected: " << dets.size() << std::endl;
 		std::vector<dlib::full_object_detection> obj_detections;
 		win.set_image(img);
+
+		/* Only detect the first face */
 		if(dets.size() != 0) 
 		{
 			// 将当前获得的特征点数据放置到全局
@@ -42,10 +53,12 @@ int main(int argc, char** argv)
 			obj_detections.push_back(obj_detection);
 			hpe_problem.set_observed_points(obj_detection);
 
+			/* Start of solving */
+			auto start = std::chrono::system_clock::now();
+
+			/* There are some different ways to choose to solve external parameters */
 			std::cout << "solving external parameters..." << std::endl;
-
 			// hpe_problem.solve_ext_params(USE_CERES);
-
 			if(argc > 2)
 				hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
 			else
@@ -56,6 +69,13 @@ int main(int argc, char** argv)
 			// std::cout << "solving expression coeficients..." << std::endl;
 			// hpe_problem.solve_expr_coef();
 			
+			/* End of solving */
+			auto end = std::chrono::system_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+			std::cout << "Solve cost: " << double(duration.count())
+				* std::chrono::microseconds::period::num
+				/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+
             hpe_problem.get_model().print_extrinsic_params();
 
 			// hpe_problem.get_model().print_shape_coef();
@@ -64,17 +84,20 @@ int main(int argc, char** argv)
 			hpe_problem.get_model().generate_face();
 			hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
 
-			const dlib::matrix<double> fp_shape = hpe_problem.get_model().get_fp_current_blendshape_transformed();
-			std::vector<point2d> parts;
+			if(N_LANDMARK == 68)
+			{
+				const dlib::matrix<double> fp_shape = hpe_problem.get_model().get_fp_current_blendshape_transformed();
+				std::vector<point2d> parts;
 
-			for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
-				int u = int(fx * fp_shape(i*3) / fp_shape(i*3+2) + cx);
-				int v = int(fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy);
-				parts.push_back(point2d(u, v));
+				for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
+					int u = int(fx * fp_shape(i*3) / fp_shape(i*3+2) + cx);
+					int v = int(fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy);
+					parts.push_back(point2d(u, v));
+				}
+				std::vector<dlib::full_object_detection> final_obj_detection;
+				final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
+				win.add_overlay(render_face_detections(final_obj_detection));
 			}
-			std::vector<dlib::full_object_detection> final_obj_detection;
-			final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
-			win.add_overlay(render_face_detections(final_obj_detection));
 		}
 		win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0, 0, 255)));
 

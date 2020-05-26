@@ -18,6 +18,10 @@ using namespace dlib;
 
 const int MAX_N_RECORD = 50;
 
+// settings
+const unsigned int SCR_WIDTH = 640;
+const unsigned int SCR_HEIGHT = 480;
+
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
@@ -27,7 +31,7 @@ int main(int argc, char** argv)
 	
 	/* Use Camera */
 	cv::VideoCapture cap;
-
+	bool is_save = false;
 	if(argc == 2) 
 	{
 		out.open(argv[1], std::ios::out);
@@ -40,13 +44,18 @@ int main(int argc, char** argv)
 		}
 		else
 		{
+			is_save = true;
 			cap.open(argv[1]);
 			std::cout << "open video " << argv[1] << std::endl;
 		}
-	
-		out.open(argv[2], std::ios::out);
-		std::cout << "file name: " << argv[2] << std::endl;
 
+		if(argv[2] != "0")
+		{
+			out.open(argv[2], std::ios::out);
+			std::cout << "file name: " << argv[2] << std::endl;
+		}
+		else
+			out.open("seq.txt", std::ios::out);
 	} else
 	{
 		out.open("seq.txt", std::ios::out);
@@ -58,6 +67,9 @@ int main(int argc, char** argv)
 		std::cerr << "Creation of text file to be saved failed.\n";
 		return -1;
 	}
+
+	array2d<rgb_pixel> blank_img;
+	load_image(blank_img, "blank.png");
 	
 	try {
 		// Init Detector
@@ -175,9 +187,10 @@ int main(int argc, char** argv)
 			if(dets.size()==0)
 				win.clear_overlay();
 
-			win.set_image(img);
+			win.set_image(blank_img);
+			// win.set_image(img);
 			win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0,0, 255)));
-	
+
 			double *ext_params = hpe_problem.get_model().get_mutable_extrinsic_params();
 			std::cout << ext_params[0] << " " << ext_params[1] << " " << ext_params[2] << std::endl;
 		}

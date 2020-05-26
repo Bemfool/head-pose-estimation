@@ -277,21 +277,23 @@ int main(int argc, char** argv)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
 
-        GLubyte *frame =
-            (GLubyte *)malloc(3 * SCR_WIDTH * SCR_HEIGHT * sizeof(GLubyte));
-        glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_BGR, GL_UNSIGNED_BYTE, frame);
-        cv::Mat src_frame, dst_frame;
-        src_frame = cv::Mat(SCR_HEIGHT, SCR_WIDTH, CV_8UC3, (unsigned char *)frame);
-        dst_frame.create(src_frame.rows, src_frame.cols, src_frame.type());
-        int rows = src_frame.rows;
-        for (int i = 0; i < rows; i++)
-            src_frame.row(rows - i - 1).copyTo(dst_frame.row(i));
-        vid << dst_frame;
-        cv::imshow("Model", dst_frame);
-        free(frame);
-
-        cv::waitKey(1000/30);
-
+        if(argc > 1) 
+        {
+            GLubyte *frame =
+                (GLubyte *)malloc(3 * SCR_WIDTH * SCR_HEIGHT * sizeof(GLubyte));
+            glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_BGR, GL_UNSIGNED_BYTE, frame);
+            cv::Mat src_frame, dst_frame;
+            src_frame = cv::Mat(SCR_HEIGHT, SCR_WIDTH, CV_8UC3, (unsigned char *)frame);
+            dst_frame.create(src_frame.rows, src_frame.cols, src_frame.type());
+            int rows = src_frame.rows;
+            for (int i = 0; i < rows; i++)
+                src_frame.row(rows - i - 1).copyTo(dst_frame.row(i));
+            vid << dst_frame;
+            cv::imshow("Model", dst_frame);
+            free(frame);
+            cv::waitKey(1000/30);
+        }
+        
         glfwPollEvents();
     }
 

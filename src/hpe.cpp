@@ -179,7 +179,6 @@ bool hpe::solve_ext_params(long mode, double ca, double cb)
 		if(mode & USE_DLT) dlt();
 		#endif
 
-
 		ceres::Problem problem;
 		double *ext_params = model.get_mutable_extrinsic_params();
 		ceres::CostFunction *cost_function = ext_params_reproj_err::create(observed_points, model);
