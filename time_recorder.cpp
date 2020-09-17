@@ -1,4 +1,4 @@
-#include "hpe.h"
+#include "hpe_problem.h"
 #include <chrono>
 
 using ceres::CostFunction;
@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 {  
     MASK_COUT
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
+	HeadPoseEstimationProblem hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
     
 	// 打开图片获得人脸框选
 	array2d<rgb_pixel> img;
@@ -28,8 +28,8 @@ int main(int argc, char** argv)
 	std::cout << "processing image " << img_name << std::endl;
 	load_image(img, img_name);
 
-	double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
-	double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
+	double fx = hpe_problem.getModel().getFx(), fy = hpe_problem.getModel().getFy();
+	double cx = hpe_problem.getModel().getCx(), cy = hpe_problem.getModel().getCy();
 
 	try {
 		// 初始化detector
@@ -48,14 +48,14 @@ int main(int argc, char** argv)
 			// 将当前获得的特征点数据放置到全局
 			full_object_detection obj_detection = sp(img, dets[j]);
 			obj_detections.push_back(obj_detection);
-			hpe_problem.set_observed_points(obj_detection);
+			hpe_problem.setObservedPoints(obj_detection);
 
             {
                 std::cout << "Solve extrinsic parameters using direct euler angles." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_ext_params(USE_CERES);
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExtParams(USE_CERES);
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -68,8 +68,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve extrinsic parameters using direct euler angles(w/ dlt)." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_ext_params(USE_CERES | USE_DLT);
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExtParams(USE_CERES | USE_DLT);
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -82,8 +82,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve extrinsic parameters using linearized euler angles (w/ DLT)." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_ext_params(USE_CERES | USE_LINEARIZED_RADIANS | USE_DLT);
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExtParams(USE_CERES | USE_LINEARIZED_RADIANS | USE_DLT);
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -96,8 +96,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve extrinsic parameters using linearized euler angles (w/o DLT)." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_ext_params(USE_CERES | USE_LINEARIZED_RADIANS);
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExtParams(USE_CERES | USE_LINEARIZED_RADIANS);
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -110,8 +110,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve extrinsic parameters using OpenCV." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_ext_params(USE_OPENCV);
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExtParams(USE_OPENCV);
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -124,8 +124,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve shape coefficients." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_shape_coef();
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveShapeCoef();
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END
@@ -138,8 +138,8 @@ int main(int argc, char** argv)
                 std::cout << "Solve expression coefficients." << std::endl;
                 MASK_COUT
                 auto start = std::chrono::system_clock::now();
-                hpe_problem.solve_expr_coef();
-                hpe_problem.get_model().clear_ext_params();
+                hpe_problem.solveExprCoef();
+                hpe_problem.getModel().clear_ext_params();
                 auto end = std::chrono::system_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
                 MASK_COUT_END

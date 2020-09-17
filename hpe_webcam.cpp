@@ -12,193 +12,186 @@
  * would become stuttering.
  **********************************************************/
 
-#include "hpe.h"
+#include "hpe_problem.h"
+
 #include <chrono>
-using namespace dlib;
+#include <getopt.h>
 
-const int MAX_N_RECORD = 50;
 
-// settings
+const int N_MAX_RECORDS = 50;
+
+const std::string INPUT_FILE_PATH = "/home/bemfoo/Project/head-pose-estimation/example_inputs/example_inputs_68.txt";
+const std::string DEFAULT_VIDEO_PATH = "/home/bemfoo/Project/head-pose-estimation/data/person0.avi";
+const std::string BACKGROUND_IMG_PATH = "/home/bemfoo/Project/head-pose-estimation/data/blank.jpg";
+const std::string DLIB_LANDMARK_DETECTOR_DATA_PATH = "/home/bemfoo/Data/shape_predictor_68_face_landmarks.dat";
+
 const unsigned int SCR_WIDTH = 640;
 const unsigned int SCR_HEIGHT = 480;
+
 
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
-	hpe hpe_problem("/home/keith/head-pose-estimation/inputs.txt");
+
+	// Init head pose estimation problem 
+	HeadPoseEstimationProblem *pHpeProblem = new HeadPoseEstimationProblem(INPUT_FILE_PATH);
+	BaselFaceModelManager *pBfmManager = pHpeProblem->getModel();
+
 	dlib::image_window win;
-	std::ofstream out;
-	
-	/* Use Camera */
 	cv::VideoCapture cap;
-	bool is_save = false;
-	if(argc == 2) 
-	{
-		out.open(argv[1], std::ios::out);
-	}
-	else if(argc == 3)
-	{
-		if(argv[1] == "0")
+
+	// Parse command parameters
+	int opt;
+    static struct option cmdOptions[] = {
+        {"video", optional_argument, nullptr, 'v'},
+		{"help", no_argument, nullptr, 'h'},
+        {0, 0, 0, 0} 
+    };
+    while ((opt = getopt_long(argc, argv, "v:", cmdOptions, nullptr)) != -1) {
+       switch(opt)
+	   {
+			case 'v':
+				if(optarg != nullptr)
+				{
+					BFM_DEBUG("Input local video: %s\n", optarg);
+					cap.open(optarg);
+				}
+				else
+				{
+					BFM_DEBUG("Input built-in front camera\n");
+					cap.open(0);
+				}
+				break;
+			case 'h':
+				BFM_DEBUG("Usage: hpe_webcam [OPTION] ... \n");
+				BFM_DEBUG("Estimate head pose for given video stream.\n");
+				BFM_DEBUG("\t-v\t--video[=FILE]\tLoad video stream. FILE can be video path (use built-in camera if omitted)\n");
+				BFM_DEBUG("\t-h\t--help\tDisplay this help and exit\n");
+				return 0;
+			default:
+				BFM_ERROR("Unrecognized command parameters\n");
+				return -1;
+	   }
+    }
+
+	if (!cap.isOpened()) {
+		BFM_ERROR("Unable to connect to camera\n");
+		BFM_DEBUG("Try to load default video path: %s\n", DEFAULT_VIDEO_PATH.c_str());
+		cap.open(DEFAULT_VIDEO_PATH);
+		if(!cap.isOpened())
 		{
-			cap.open(0);
+			BFM_ERROR("Still cannot open. Exit.\n");
+			return -1;
 		}
 		else
 		{
-			is_save = true;
-			cap.open(argv[1]);
-			std::cout << "open video " << argv[1] << std::endl;
+			BFM_DEBUG("Open successfully. Continue.\n");
 		}
+	}		
 
-		if(argv[2] != "0")
-		{
-			out.open(argv[2], std::ios::out);
-			std::cout << "file name: " << argv[2] << std::endl;
-		}
-		else
-			out.open("seq.txt", std::ios::out);
-	} else
-	{
-		out.open("seq.txt", std::ios::out);
-		cap.open(0);
-	}	
-		
-	if (!out) 
-	{
-		std::cerr << "Creation of text file to be saved failed.\n";
-		return -1;
-	}
-
-	array2d<rgb_pixel> blank_img;
-	load_image(blank_img, "blank.png");
+	dlib::array2d<dlib::rgb_pixel> arr2dBlankImg;
+	load_image(arr2dBlankImg, BACKGROUND_IMG_PATH);
 	
 	try {
 		// Init Detector
-		std::cout << "initing detector..." << std::endl;
-		dlib::frontal_face_detector detector = get_frontal_face_detector();
+		dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
 		dlib::shape_predictor sp;
-		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
-		std::cout << "detector init successfully\n" << std::endl;
+		dlib::deserialize(DLIB_LANDMARK_DETECTOR_DATA_PATH) >> sp;
+		BFM_DEBUG("Dlib landmark detector load path: %s\n", DLIB_LANDMARK_DETECTOR_DATA_PATH.c_str());
 
-        if (!cap.isOpened()) {
-            std::cerr << "Unable to connect to camera" << std::endl;
-            return 1;
-        }		
+		double dFx = pBfmManager->getFx(), dFy = pBfmManager->getFy();
+		double dCx = pBfmManager->getCx(), dCy = pBfmManager->getCy();
 
-		double fx = hpe_problem.get_model().get_fx(), fy = hpe_problem.get_model().get_fy();
-		double cx = hpe_problem.get_model().get_cx(), cy = hpe_problem.get_model().get_cy();
+		bool bIsFirstFrame = true;
 
-		bool is_first_frame = true;
-
-		auto f_start = std::chrono::system_clock::now();
-		auto f_end = std::chrono::system_clock::now();
+		auto timeFrameStart = std::chrono::system_clock::now();
+		auto timeFrameEnd = std::chrono::system_clock::now();
 
 		while(!win.is_closed()) {
-			f_end = std::chrono::system_clock::now();
-			auto f_duration = std::chrono::duration_cast<std::chrono::microseconds>(f_end - f_start);
-			std::cout << "Frame cost: " << double(f_duration.count())
-				* std::chrono::microseconds::period::num
-				/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
-			f_start = f_end;
+			timeFrameEnd = std::chrono::system_clock::now();
+			auto timeFrameDuration = std::chrono::duration_cast<std::chrono::microseconds>(timeFrameEnd - timeFrameStart);
+			BFM_DEBUG("Cost of frame: %lf Second\n", 
+				double(timeFrameDuration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den);             
+			timeFrameStart = timeFrameEnd;
 
-			cv::Mat temp;
-			if(!cap.read(temp))
+			cv::Mat matCurrentCapture;
+			if(!cap.read(matCurrentCapture))
 				break;
-			dlib::cv_image<bgr_pixel> img(temp);
+			dlib::cv_image<dlib::bgr_pixel> imgCurrentCapture(matCurrentCapture);
 
 			/* This type image could not use pyramid_up()， and also I think for talking-head 
 			 * video, this is unneccessary.
 			 */
-			// pyramid_up(img);
+			// pyramid_up(imgCurrentCapture);
 
-			/* Use dlib to detect faces */
-			std::vector<rectangle> dets = detector(img);
-			// cout << "Number of faces detected: " << dets.size() << endl;
-	
-			std::vector<dlib::full_object_detection> obj_detections;
-			for (unsigned long j = 0; j < dets.size(); ++j) {
-				// 将当前获得的特征点数据放置到全局
-				full_object_detection obj_detection = sp(img, dets[j]);
-				obj_detections.push_back(obj_detection);
-				hpe_problem.set_observed_points(obj_detection);
+			std::vector<dlib::rectangle> aDets = detector(imgCurrentCapture);
+			dlib::full_object_detection objDetection = sp(imgCurrentCapture, aDets[0]);
 
-				for(int i=0; i<obj_detection.num_parts(); i++) 
-					out << obj_detection.part(i).x() << " " << obj_detection.part(i).y() << " "; 
-				out << "\n";
+			if(aDets.size() != 0) {
+				pHpeProblem->setObservedPoints(&objDetection);
 
-				bool state;
-				if(is_first_frame)
+				bool bHasConverged;
+				if(bIsFirstFrame)
 				{
-					auto start = std::chrono::system_clock::now();
-					state = false;
-					while(!state)
+					auto timeStart = std::chrono::system_clock::now();
+					bHasConverged = false;
+					while(!bHasConverged)
 					{
-						state = hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS | USE_DLT);
-						state &= hpe_problem.solve_shape_coef();
-						state &= hpe_problem.solve_expr_coef();
+						bHasConverged = pHpeProblem->solveExtParams(SolveExtParamsMode_UseCeres | SolveExtParamsMode_UseDlt | SolveExtParamsMode_UseLinearizedRadians);
+						bHasConverged &= pHpeProblem->solveShapeCoef();
+						bHasConverged &= pHpeProblem->solveExprCoef();
 					}
-					auto end = std::chrono::system_clock::now();
-                	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-                	std::cout << "First frame cost: " << double(duration.count())
-						* std::chrono::microseconds::period::num
-                    	/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
-
-					is_first_frame = false;
+					auto timeEnd = std::chrono::system_clock::now();
+                	auto timeDuration = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart);
+					BFM_DEBUG("Solution cost of first frame: %lf Second\n", 
+						double(timeDuration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den);             
+					bIsFirstFrame = false;
 				}
 				else
 				{
-					auto start = std::chrono::system_clock::now();
-					state = false;
-					while(!state)
+					auto timeStart = std::chrono::system_clock::now();
+					bHasConverged = false;
+					while(!bHasConverged)
 					{
-						state = hpe_problem.solve_ext_params(USE_LINEARIZED_RADIANS);
-						state &= hpe_problem.solve_expr_coef();
+						bHasConverged = pHpeProblem->solveExtParams(SolveExtParamsMode_UseCeres | SolveExtParamsMode_UseLinearizedRadians);
+						bHasConverged &= pHpeProblem->solveExprCoef();
 					}
-					auto end = std::chrono::system_clock::now();
-                	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-                	std::cout << "First frame cost: " << double(duration.count())
-						* std::chrono::microseconds::period::num
-                    	/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
-
+					auto timeEnd = std::chrono::system_clock::now();
+                	auto timeDuration = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart);
+					BFM_DEBUG("Solution cost of frame: %lf Second\n", 
+						double(timeDuration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den);             
+					
 				}
-				// hpe_problem.get_model().write_ext_params_to_file(out);
 
-				// hpe_problem.get_model().print_extrinsic_params();
-				// hpe_problem.get_model().print_intrinsic_params();
-				// hpe_problem.get_model().print_shape_coef();
-				// hpe_problem.get_model().print_expr_coef();
+				unsigned int nLandmarks = pBfmManager->getNLandmarks();
+				if(nLandmarks == N_DLIB_LANDMARK)
+				{
+					const Eigen::VectorXd vecLandmarkTransformed = pBfmManager->getLandmarkCurrentBlendshapeTransformed();
+					std::vector<dlib::point> aPoints;
 
-				const dlib::matrix<double> _fp_shape = hpe_problem.get_model().get_fp_current_blendshape();
-				const dlib::matrix<double> fp_shape = transform_points(
-					hpe_problem.get_model().get_mutable_extrinsic_params(), _fp_shape);
-				std::vector<point2d> parts;
-
-				for(int i=0; i<hpe_problem.get_model().get_n_landmark(); i++) {
-					int u = int(fx * fp_shape(i*3) / fp_shape(i*3+2) + cx);
-					int v = int(fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy);
-					parts.push_back(point2d(u, v));
+					for(unsigned int iLandmark = 0; iLandmark < nLandmarks; iLandmark++) {
+						int u = int(dFx * vecLandmarkTransformed(iLandmark * 3) / vecLandmarkTransformed(iLandmark * 3 + 2) + dCx);
+						int v = int(dFy * vecLandmarkTransformed(iLandmark * 3 + 1) / vecLandmarkTransformed(iLandmark * 3 + 2) + dCy);
+						aPoints.push_back(dlib::point(u, v));
+					}
+					win.clear_overlay();
+					win.add_overlay(render_face_detections(dlib::full_object_detection(dlib::rectangle(), aPoints)));
 				}
-				std::vector<dlib::full_object_detection> final_obj_detection;
-				final_obj_detection.push_back(dlib::full_object_detection(dlib::rectangle(), parts));
-				win.clear_overlay();
-				win.add_overlay(render_face_detections(final_obj_detection));
-
 			}
-			/* To avoid the situation that landmarks gets stuck with no face detected */
-			if(dets.size()==0)
+			else
+			{
 				win.clear_overlay();
+			}
+			
+			// Select blank background or catured image
+			win.set_image(arr2dBlankImg);
+			// win.set_image(imgCurrentCapture); 
+			win.add_overlay(render_face_detections(objDetection, dlib::rgb_pixel(0,0, 255)));
 
-			win.set_image(blank_img);
-			// win.set_image(img);
-			win.add_overlay(render_face_detections(obj_detections, rgb_pixel(0,0, 255)));
-
-			double *ext_params = hpe_problem.get_model().get_mutable_extrinsic_params();
-			std::cout << ext_params[0] << " " << ext_params[1] << " " << ext_params[2] << std::endl;
 		}
 		// Press any key to exit
 		// std::cin.get();
-		out.close();
 	} catch (exception& e) {
-		std::cout << "\nexception thrown!" << std::endl;
-		std::cout << e.what() << std::endl;
+		BFM_ERROR("Exception thrown: %s\n", e.what());
 	}
 }

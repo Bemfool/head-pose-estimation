@@ -1,11 +1,7 @@
 #pragma once
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <ctime>
-#include "bfm.h"
-#include "vec.h"
+
+#include "bfm_manager.h"
 #include "ceres/ceres.h"
-#include "transform.h"
 #include "db_params.h"
 
 class total_reg_term {

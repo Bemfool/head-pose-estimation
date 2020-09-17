@@ -1,7 +1,8 @@
-#include "hpe.h"
+#include "hpe_problem.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <shader.h>
@@ -10,143 +11,142 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
 const unsigned int SCR_WIDTH = 640;
 const unsigned int SCR_HEIGHT = 480;
 
-using namespace dlib;
-using namespace std;
+/* If use different input file, 
+ * please update corresponding parameters in include/db_params.h 
+ */
+const std::string INPUT_FILE_PATH = "/home/bemfoo/Project/head-pose-estimation/example_inputs/example_inputs_68.txt";
+// const std::string INPUT_FILE_PATH = "/home/bemfoo/Project/head-pose-estimation/example_inputs/example_inputs_6.txt";
+// const std::string INPUT_FILE_PATH = "/home/bemfoo/Project/head-pose-estimation/example_inputs/example_inputs_12.txt";
+const std::string DEFAULT_IMG_PATH = "/home/bemfoo/Project/head-pose-estimation/data/profile0.jpg";
+const std::string DLIB_LANDMARK_DETECTOR_DATA_PATH = "/home/bemfoo/Data/shape_predictor_68_face_landmarks.dat";
+const char *MODEL_VERTEX_SHADER_PATH = "/home/bemfoo/Project/head-pose-estimation/shader/model.vs";
+const char *MODEL_FRAGMENT_SHADER_PATH = "/home/bemfoo/Project/head-pose-estimation/shader/model.fs";
+const char *PLANE_VERTEX_SHADER_PATH = "/home/bemfoo/Project/head-pose-estimation/shader/plane.vs";
+const char *PLANE_FRAGMENT_SHADER_PATH = "/home/bemfoo/Project/head-pose-estimation/shader/plane.fs";
+
 
 int main(int argc, char** argv)
 {  
 	google::InitGoogleLogging(argv[0]);
+
 	/* Init head pose estimation problem */
-	hpe hpe_problem("../example_inputs/example_inputs_68.txt");
+	HeadPoseEstimationProblem *pHpeProblem = new HeadPoseEstimationProblem(INPUT_FILE_PATH);
+	BaselFaceModelManager *pBfmManager = pHpeProblem->getModel();
 
-	/* If use different input file, 
-	 * please update corresponding parameters in include/db_params.h 
-	 */
-	// hpe hpe_problem("../example_inputs/example_inputs_6.txt");
-	// hpe hpe_problem("../example_inputs/example_inputs_12.txt");
-	// hpe hpe_problem("../example_inputs/example_inputs_21.txt");
-	// hpe hpe_problem("../example_inputs/example_inputs_33.txt");
-
-	/* Open image with human face (default: test.jpg) */
-	array2d<rgb_pixel> img;
-	std::string img_name = "test.jpg";
-	if(argc > 1) img_name = argv[1];	
-	std::cout << "Processing image: " << img_name << std::endl;
-	load_image(img, img_name);	
+	dlib::array2d<dlib::rgb_pixel> arr2dImg;
+	std::string strImgName = DEFAULT_IMG_PATH;
+	if(argc > 1) strImgName = argv[1];	
+	BFM_DEBUG("Image to be processed: %s\n", strImgName.c_str());
+	load_image(arr2dImg, strImgName);	
 
 	try 
 	{
-		/* Init detector */
-		dlib::frontal_face_detector detector = get_frontal_face_detector();
+		// Init detector
+		dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
 		dlib::shape_predictor sp;
-		deserialize("../data/shape_predictor_68_face_landmarks.dat") >> sp;
-		std::cout << "Detector init successfully\n" << std::endl;
+		dlib::deserialize(DLIB_LANDMARK_DETECTOR_DATA_PATH) >> sp;
+        BFM_DEBUG("Detector init successfully\n");
 
 		// pyramid_up(img);
-		std::vector<dlib::rectangle> dets = detector(img);
-		std::cout << "Number of faces detected: " << dets.size() << std::endl;
+		std::vector<dlib::rectangle> dets = detector(arr2dImg);
 
         /* Only detect the first face */
 		if(dets.size() != 0) 
 		{
             /* Load landmarks detected by Dlib */
-			full_object_detection obj_detection = sp(img, dets[0]);
-			hpe_problem.set_observed_points(obj_detection);
+			dlib::full_object_detection objDetection = sp(arr2dImg, dets[0]);
+			pHpeProblem->setObservedPoints(&objDetection);
 
-            /* Start of solving */
+            // Start of solving 
             auto start = std::chrono::system_clock::now();
             
-            /* There are some different ways to choose to solve external parameters */
-			std::cout << "Solving external parameers..." << std::endl;
-			hpe_problem.solve_ext_params(USE_CERES);
+            // There are some different ways to choose to solve external parameters 
+			if(argc > 2)
+				pHpeProblem->solveExtParams(
+					SolveExtParamsMode_UseCeres | SolveExtParamsMode_UseDlt | SolveExtParamsMode_UseLinearizedRadians, 
+					atof(argv[2]), atof(argv[3]));
+			else
+				pHpeProblem->solveExtParams(SolveExtParamsMode_UseCeres | SolveExtParamsMode_UseDlt | SolveExtParamsMode_UseLinearizedRadians);
+			// pHpeProblem->solveExtParams(SolveExtParamsMode_UseOpenCV);
 
-			// if(argc > 2)
-			// 	hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS, atof(argv[2]), atof(argv[3]));
-			// else
-			// 	hpe_problem.solve_ext_params(USE_CERES | USE_DLT | USE_LINEARIZED_RADIANS);
-
-			std::cout << "Solving shape coefficients..." << std::endl;
-			hpe_problem.solve_shape_coef();
-
-			std::cout << "Solving expression coefficients..." << std::endl;
-			hpe_problem.solve_expr_coef();
+			pHpeProblem->solveShapeCoef();
+			pHpeProblem->solveExprCoef();
 			
-			/* End of solving */
+			// End of solving
 			auto end = std::chrono::system_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-			std::cout << "Solve cost: " << double(duration.count())
-				* std::chrono::microseconds::period::num
-				/ std::chrono::microseconds::period::den << " Seconds\n" << std::endl;                
+			BFM_DEBUG("Cost of solution: %lf Second\n", 
+				double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den);             
+            pBfmManager->printExtParams();            
 
-            /* Show results */
-            hpe_problem.get_model().print_extrinsic_params();
-			// hpe_problem.get_model().print_intrinsic_params();
-			// hpe_problem.get_model().print_shape_coef();
-			// hpe_problem.get_model().print_expr_coef();
+            // Show results 
+            pBfmManager->printExtParams();
+			// pBfmManager->printShapeCoef();
+			// pBfmManager->printExprCoef();
 
-            /* Generate whole face, because before functions only process landmarks */
-			hpe_problem.get_model().generate_face();
+            // Generate whole face, because before functions only process landmarks
+			pBfmManager->genFace();
 
-            /* Write face into .ply model file */
-			// hpe_problem.get_model().ply_write("rnd_face.ply", (CAMERA_COORD | PICK_FP));
+            // Write face into .ply model file 
+			// pBfmManager->writePly("rnd_face.ply", (ModelWriteMode_CameraCoord | ModelWriteMode_PickLandmark));
+
 		}
 
 	} catch (exception& e) {
-		cout << "\nexception thrown!" << endl;
-		cout << e.what() << endl;
+        BFM_ERROR("Exception thrown: %s\n", e.what());
 	}
 
-    /* GLFW: Initialize and configure */
+    BFM_DEBUG(PRINT_GREEN "#################### OpenGL Init ####################\n" COLOR_END);
+    // Initialize and configure GLFW
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); /* Uncomment this statement to fix compilation on OS X */
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
 #endif
 
-    /* GLFW window creation */
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Head Pose Estimation - Oneshot", NULL, NULL);
-    if (window == NULL)
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Head Pose Estimation - Oneshot", nullptr, nullptr);
+    if (window == nullptr)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        BFM_ERROR("Failed to create GLFW window\n");
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    /* GLAD: Load all OpenGL function pointers */
+    // Load all OpenGL function pointers 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        BFM_ERROR("Failed to initialize GLAD\n");
         return -1;
     }
 
-    /* Build and compile shader program */
-    Shader planeShader("../shader/plane.vs", "../shader/plane.fs"); /* Shader of plane to show photo */
-    Shader modelShader("../shader/model.vs", "../shader/model.fs"); /* Shader of face model */
+    // Build and compile shader program
+    Shader planeShader(PLANE_VERTEX_SHADER_PATH, PLANE_FRAGMENT_SHADER_PATH); // Shader of plane to show photo
+    Shader modelShader(MODEL_VERTEX_SHADER_PATH, MODEL_FRAGMENT_SHADER_PATH); // Shader of face model 
 
-    /* Set up vertex data and buffers and configure vertex attributes */
+    // Set up vertex data and buffers and configure vertex attributes
     float vertices[] = {
-        /* Positions            Texture coords */
-         320.0f,  240.0f, 0.0f, 1.0f, 1.0f, /* Top right */
-         320.0f, -240.0f, 0.0f, 1.0f, 0.0f, /* Bottom right */
-        -320.0f, -240.0f, 0.0f, 0.0f, 0.0f, /* Bottom left */
-        -320.0f,  240.0f, 0.0f, 0.0f, 1.0f  /* Top left */ 
+        // Positions            Texture coords
+         320.0f,  240.0f, 0.0f, 1.0f, 1.0f, // Top right
+         320.0f, -240.0f, 0.0f, 1.0f, 0.0f, // Bottom right 
+        -320.0f, -240.0f, 0.0f, 0.0f, 0.0f, // Bottom left 
+        -320.0f,  240.0f, 0.0f, 0.0f, 1.0f  // Top left
     };
 
     unsigned int indices[] = {
-        0, 1, 3, /* First triangle */
-        1, 2, 3  /* Second triangle */
+        0, 1, 3, // First triangle
+        1, 2, 3  // Second triangle
     };
 
     unsigned int VBO, VAO, EBO;
@@ -162,19 +162,20 @@ int main(int argc, char** argv)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    /* Position attribute */
+    // Position attribute 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     
-    /* Texture coord attribute */
+    // Texture coord attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    dlib::matrix<float> face = dlib::matrix_cast<float>(hpe_problem.get_model().get_current_blendshape_transformed());
-    dlib::matrix<float> tex = dlib::matrix_cast<float>(hpe_problem.get_model().get_std_tex());
-    dlib::matrix<unsigned int> tr = dlib::matrix_cast<unsigned int>(hpe_problem.get_model().get_tl());
-    for(auto i = tr.begin(); i != tr.end(); i++) 
-        *i = (*i) - 1;  /* Triangle list's index begin with 1, need begin with 0 */
+    Eigen::VectorXf face = pBfmManager->getCurrentBlendshapeTransformed().cast<float>();
+    Eigen::VectorXf tex = pBfmManager->getStdTex().cast<float>();
+    Eigen::Matrix<unsigned int, Eigen::Dynamic, 1> tr = pBfmManager->getTriangleList();
+    // Triangle list's index begin with 1, need begin with 0
+    for(unsigned int iRow = 0; iRow < tr.rows(); iRow++)
+        tr[iRow]--; 
 
     unsigned int faceVBO, faceVAO, faceEBO;
 
@@ -183,29 +184,29 @@ int main(int argc, char** argv)
     glGenBuffers(1, &faceEBO); 
     glBindVertexArray(faceVAO);  
 
-    int n_vec = hpe_problem.get_model().get_n_vertice() * 3;
+    int n_vec = pBfmManager->getNVertices() * 3;
     glBindBuffer(GL_ARRAY_BUFFER, faceVBO);
     glBufferData(GL_ARRAY_BUFFER, 2 * n_vec * 4, nullptr, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, n_vec * 4, face.begin());
-    glBufferSubData(GL_ARRAY_BUFFER, n_vec * 4, n_vec * 4, tex.begin());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, n_vec * 4, face.data());
+    glBufferSubData(GL_ARRAY_BUFFER, n_vec * 4, n_vec * 4, tex.data());
 
     /* Position attribute */
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     /* Texture attribute */
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(46990 * 3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(pBfmManager->getNVertices() * 3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceEBO);
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER, 
-        hpe_problem.get_model().get_n_face() * 3 * sizeof(unsigned int), 
-        tr.begin(), 
+        pBfmManager->getNFaces() * 3 * sizeof(unsigned int), 
+        tr.data(), 
         GL_STATIC_DRAW
     );
 
-    /* Load and create a texture */
+    // Load and create a texture
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture); 
@@ -218,7 +219,7 @@ int main(int argc, char** argv)
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); /* Flip loaded texture's on the y-axis */
-    unsigned char *data = stbi_load(img_name.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(strImgName.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -291,7 +292,7 @@ void processInput(GLFWwindow *window)
 }
 
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }

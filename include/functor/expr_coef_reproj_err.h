@@ -1,48 +1,56 @@
-#pragma once
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <ctime>
-#include "bfm.h"
-#include "vec.h"
+#ifndef HPE_EXPR_COEF_REPROJ_ERR_H
+#define HPE_EXPR_COEF_REPROJ_ERR_H
+
+#include "bfm_manager.h"
 #include "ceres/ceres.h"
-#include "transform.h"
 #include "db_params.h"
 
-class expr_coef_reproj_err {
+using FullObjectDetection = dlib::full_object_detection;
+using Eigen::Matrix;
+using ceres::CostFunction;
+using ceres::AutoDiffCostFunction;
+
+class ExprCoefReprojErr {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	expr_coef_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
-	: observed_points(observed_points_), model(model_) { }
+	ExprCoefReprojErr(FullObjectDetection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> &aLandmarkMap) 
+	: m_pObservedPoints(observedPoints), m_pModel(model), m_aLandmarkMap(aLandmarkMap) { }
 	
-    template<typename T>
-	bool operator () (const T* const expr_coef, T* residuals) const {
-		T fx = T(model.get_fx()), fy = T(model.get_fy());
-		T cx = T(model.get_cx()), cy = T(model.get_cy());
+    template<typename _Tp>
+	bool operator () (const _Tp* const aExprCoef, _Tp* aResiduals) const {
+		_Tp fx = _Tp(m_pModel->getFx()), fy = _Tp(m_pModel->getFy());
+		_Tp cx = _Tp(m_pModel->getCx()), cy = _Tp(m_pModel->getCy());
 
-		const dlib::matrix<T> fp_shape_ = model.generate_fp_face_by_expr(expr_coef);  
+		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshape = m_pModel->genLandmarkFaceByExpr(aExprCoef);  
 
-		const double *extrinsic_params = model.get_extrinsic_params();
-        T *extrinsic_params_ = new T[6];
-        for(int i=0; i<6; i++)
-            extrinsic_params_[i] = (T)(extrinsic_params[i]);
+		const double *daExtParams = m_pModel->getExtParams();
+        _Tp *taExtParams = new _Tp[N_EXT_PARAMS];
+        for(unsigned int iParam = 0; iParam < N_EXT_PARAMS; iParam++)
+            taExtParams[iParam] = (_Tp)(daExtParams[iParam]);
 
-		const dlib::matrix<T> fp_shape = transform_points(extrinsic_params_, fp_shape_);
+		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(taExtParams, vecLandmarkBlendshape);
 
-		for(int i=0; i<N_LANDMARK; i++) {
-			int idx = model.get_dlib_fp_idx(i);
-			T u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
-			T v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = T(observed_points.part(idx).x()) - u;
-			residuals[i*2+1] = T(observed_points.part(idx).y()) - v;		
+		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
+		{
+			unsigned int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
+			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
+			_Tp v = fy * vecLandmarkBlendshapeTransformed(iLandmark * 3 + 1) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cy;
+			aResiduals[iLandmark * 2] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).x()) - u;
+			aResiduals[iLandmark * 2 + 1] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).y()) - v;
 		}
+
 		return true;
 	}
 
-	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) {
-		return (new ceres::AutoDiffCostFunction<expr_coef_reproj_err, N_LANDMARK * 2, N_EXPR_PC>(
-			new expr_coef_reproj_err(observed_points, model)));
+	static ceres::CostFunction *create(FullObjectDetection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) {
+		return (new ceres::AutoDiffCostFunction<ExprCoefReprojErr, N_LANDMARK * 2, N_EXPR_PC>(
+			new ExprCoefReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 
 private:
-	dlib::full_object_detection observed_points;
-	bfm model;
+	FullObjectDetection *m_pObservedPoints;
+	BaselFaceModelManager *m_pModel;
+	std::vector<unsigned int> m_aLandmarkMap;
 };
+
+
+#endif // HPE_EXPR_COEF_REPROJ_ERR_H

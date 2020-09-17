@@ -32,28 +32,46 @@ add_definitions(
     "-DCMAKE_BUILD_TYPE=Release"
 )
 
+add_library(hpe SHARED src/hpe_problem.cpp src/string_utils.cpp)
+target_compile_features(hpe PRIVATE cxx_std_17)
+
+# OpenCV
+set(OpenCV_DIR "/usr/local/opencv3/share/OpenCV")   
+find_package(OpenCV REQUIRED)
+target_include_directories(hpe PUBLIC ${OpenCV_INCLUDE_DIRS})
+
 # Dlib
-add_subdirectory(/home/keith/dlib-19.17/dlib dlib_build)
+add_subdirectory(/home/bemfoo/Repository/dlib dlib_build)
 
 # Ceres
 find_package(Ceres REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
+
+# Hdf5
+find_package(HDF5 REQUIRED C CXX)
+include_directories(${HDF5_INCLUDE_DIRS})
 
 # Bfm
 add_subdirectory(lib/BFM-tools)
 include_directories(./lib/BFM-tools/include)
 
 # GLM
-include_directories(/home/keith/glm)
+include_directories(/home/bemfoo/Repository/glm)
+
+# OpenGL
+include_directories(/home/bemfoo/Repository/glad/include)
+include_directories(/home/bemfoo/Repository/glfw/include)
+
+# stb_image.h
+include_directories(/home/bemfoo/Repository/stb)
 
 # Head files
 include_directories(./include)
 
 # Source files
-add_library(hpe SHARED src/hpe.cpp src/string_utils.cpp)
-target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} bfm)
+target_link_libraries(hpe dlib::dlib ${CERES_LIBRARIES} bfm_manager)
 
-OPTION(GEN_HPE_SAMPLES "Generate samples." OFF)
+OPTION(GEN_HPE_SAMPLES "Generate samples." ON)
 if(GEN_HPE_SAMPLES)
     # Executable - hpe_oneshot  
     add_executable(hpe_oneshot hpe_oneshot.cpp)
@@ -88,4 +106,3 @@ if(GEN_SYN_DATA)
     add_executable(hmr_gen_data hmr_gen_data.cpp)
     target_link_libraries(hmr_gen_data bfm)
 endif()
-

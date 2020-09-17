@@ -1,109 +1,114 @@
-#pragma once
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <ctime>
-#include "bfm.h"
-#include "vec.h"
+#ifndef HPE_EXT_PARAMS_REPROJ_ERR_H
+#define HPE_EXT_PARAMS_REPROJ_ERR_H
+
+#include "bfm_manager.h"
 #include "ceres/ceres.h"
-#include "transform.h"
 #include "db_params.h"
 #include "io_utils.h"
-#include "type_utils.h"
 
-class ext_params_reproj_err 
+using Eigen::VectorXd;
+using Eigen::Matrix;
+using Eigen::Dynamic;
+
+class ExtParamsReprojErr 
 {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	ext_params_reproj_err(dlib::full_object_detection &observed_points_, bfm &model_) 
-	: observed_points(observed_points_), model(model_) { }
+	ExtParamsReprojErr(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> &aLandmarkMap) 
+	: m_pObservedPoints(observedPoints), m_pModel(model), m_aLandmarkMap(aLandmarkMap) { }
 	
     template<typename _Tp>
-	bool operator () (const _Tp* const x, _Tp* residuals) const 
+	bool operator () (const _Tp* const aExtParams, _Tp* aResiduals) const 
 	{
-		_Tp fx = _Tp(model.get_fx()), fy = _Tp(model.get_fy());
-		_Tp cx = _Tp(model.get_cx()), cy = _Tp(model.get_cy());
-		const dlib::matrix<double> _fp_shape = model.get_fp_current_blendshape();
-		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape);
+		_Tp fx = _Tp(m_pModel->getFx()), fy = _Tp(m_pModel->getFy());
+		_Tp cx = _Tp(m_pModel->getCx()), cy = _Tp(m_pModel->getCy());
+		const VectorXd vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshape();
+		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(aExtParams, vecLandmarkBlendshape);
 
-		for(int i=0; i<N_LANDMARK; i++) 
+		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
 		{
-			int idx = model.get_dlib_fp_idx(i);
-			std::cout << idx << std::endl;
-			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
-			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = _Tp(observed_points.part(idx).x()) - u;
-			residuals[i*2+1] = _Tp(observed_points.part(idx).y()) - v;
+			int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
+			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
+			_Tp v = fy * vecLandmarkBlendshapeTransformed(iLandmark * 3 + 1) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cy;
+			aResiduals[iLandmark * 2] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).x()) - u;
+			aResiduals[iLandmark * 2 + 1] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).y()) - v;
 		}
 		return true;
 	}
 
-	static ceres::CostFunction *create(dlib::full_object_detection &observed_points, bfm &model) 
+	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) 
 	{
-		return (new ceres::AutoDiffCostFunction<ext_params_reproj_err, N_LANDMARK * 2, N_EXT_PARAMS>(
-			new ext_params_reproj_err(observed_points, model)));
+		return (new ceres::AutoDiffCostFunction<ExtParamsReprojErr, N_LANDMARK * 2, N_EXT_PARAMS>(
+			new ExtParamsReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 
 private:
-	dlib::full_object_detection observed_points;
-    bfm model;
+	dlib::full_object_detection *m_pObservedPoints;
+    BaselFaceModelManager *m_pModel;
+	std::vector<unsigned int> m_aLandmarkMap;
 };
 
-class test_ext_params_reproj_err 
+
+class LinearizedExtParamsReprojErr 
 {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	test_ext_params_reproj_err(dlib::full_object_detection *observed_points, bfm *model) 
-	: _observed_points(observed_points), _model(model) { }
+	LinearizedExtParamsReprojErr(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) 
+	: m_pObservedPoints(observedPoints), m_pModel(model), m_aLandmarkMap(aLandmarkMap) { }
 
-	test_ext_params_reproj_err(dlib::full_object_detection *observed_points, bfm *model, double a, double b) 
-	: _observed_points(observed_points), _model(model), _a(a), _b(b) {}
+	LinearizedExtParamsReprojErr(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap, double a, double b) 
+	: m_pObservedPoints(observedPoints), m_pModel(model), m_aLandmarkMap(aLandmarkMap), m_dRotWeight(a), m_dTranWeight(b) {}
 
 
     template<typename _Tp>
-	bool operator () (const _Tp* const x, _Tp* residuals) const 
+	bool operator () (const _Tp* const aExtParams, _Tp* aResiduals) const 
 	{
-		_Tp fx = _Tp(_model->get_fx()), fy = _Tp(_model->get_fy());
-		_Tp cx = _Tp(_model->get_cx()), cy = _Tp(_model->get_cy());
+		_Tp fx = _Tp(m_pModel->getFx()), fy = _Tp(m_pModel->getFy());
+		_Tp cx = _Tp(m_pModel->getCx()), cy = _Tp(m_pModel->getCy());
 
-		const dlib::matrix<double> _fp_shape = _model->get_fp_current_blendshape_transformed();
-		const dlib::matrix<_Tp> fp_shape = transform_points(x, _fp_shape, true);
+		const VectorXd vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshapeTransformed();
+		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(aExtParams, vecLandmarkBlendshape, true);
 
-		for(int i=0; i<N_LANDMARK; i++) 
+		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
 		{
-			int idx = _model->get_dlib_fp_idx(i);
-			_Tp u = fx * fp_shape(i*3) / fp_shape(i*3+2) + cx;
-			_Tp v = fy * fp_shape(i*3+1) / fp_shape(i*3+2) + cy;
-			residuals[i*2] = _Tp(_observed_points->part(idx).x()) - u;
-			residuals[i*2+1] = _Tp(_observed_points->part(idx).y()) - v;	
+			int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
+			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
+			_Tp v = fy * vecLandmarkBlendshapeTransformed(iLandmark * 3 + 1) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cy;
+			aResiduals[iLandmark * 2] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).x()) - u;
+			aResiduals[iLandmark * 2 + 1] = _Tp(m_pObservedPoints->part(iDlibLandmarkIdx).y()) - v;
 		}
 
 		/* regularialization */
-	    residuals[N_LANDMARK*2]   = _Tp(_a) * x[0];
-		residuals[N_LANDMARK*2+1] = _Tp(_a) * x[1];
-		residuals[N_LANDMARK*2+2] = _Tp(_a) * x[2];
-		residuals[N_LANDMARK*2+3] = _Tp(_b) * x[3];
-		residuals[N_LANDMARK*2+4] = _Tp(_b) * x[4];
-		residuals[N_LANDMARK*2+5] = _Tp(_b) * x[5];
-		// print_array(residuals+N_LANDMARK*2, 6);
+	    aResiduals[N_LANDMARK * 2]   = _Tp(m_dRotWeight) * aExtParams[0];
+		aResiduals[N_LANDMARK * 2 + 1] = _Tp(m_dRotWeight) * aExtParams[1];
+		aResiduals[N_LANDMARK * 2 + 2] = _Tp(m_dRotWeight) * aExtParams[2];
+		aResiduals[N_LANDMARK * 2 + 3] = _Tp(m_dTranWeight) * aExtParams[3];
+		aResiduals[N_LANDMARK * 2 + 4] = _Tp(m_dTranWeight) * aExtParams[4];
+		aResiduals[N_LANDMARK * 2 + 5] = _Tp(m_dTranWeight) * aExtParams[5];
+		// print_array(aResiduals+N_LANDMARK*2, 6);
 		
 		return true;
 	}
 
-	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model) 
+	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) 
 	{
-		return (new ceres::AutoDiffCostFunction<test_ext_params_reproj_err, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
-			new test_ext_params_reproj_err(observed_points, model)));
+		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+			new LinearizedExtParamsReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 
-	static ceres::CostFunction *create(dlib::full_object_detection *observed_points, bfm *model, double a, double b) 
+	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap, double a, double b) 
 	{
-		return (new ceres::AutoDiffCostFunction<test_ext_params_reproj_err, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
-			new test_ext_params_reproj_err(observed_points, model, a, b)));
+		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+			new LinearizedExtParamsReprojErr(observedPoints, model, aLandmarkMap, a, b)));
 	}
 
 
 private:
-	dlib::full_object_detection *_observed_points;
-    bfm *_model;
+	dlib::full_object_detection *m_pObservedPoints;
+    BaselFaceModelManager *m_pModel;
+	std::vector<unsigned int> m_aLandmarkMap;
 	/* residual coefficients */
-	double _a = 1.0;	/* for rotation */
-	double _b = 1.0;	/* for translation */
+	double m_dRotWeight = 1.0;	/* for rotation */
+	double m_dTranWeight = 1.0;	/* for translation */
 };
+
+
+#endif // HPE_EXT_PARAMS_REPROJ_ERR_H

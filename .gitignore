@@ -1,7 +1,12 @@
-build
+build/
 # Data
 *.dat
 *.h5
+*.ply
+*.txt
+*.avi
+*.jpg
+*.png
 
 # Prerequisites
 *.d
@@ -36,5 +41,10 @@ build
 *.out
 *.app
 
+# Third Party
 stb_image.h
 glad.c
+
+# Vscode
+.vscode/
+*.json
