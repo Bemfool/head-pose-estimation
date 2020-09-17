@@ -91,18 +91,3 @@ if(GEN_HPE_SAMPLES)
                                             m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor
                                             hpe)
 endif()
-
-OPTION(CHECK_TIME "Check time spending." ON)
-if(CHECK_TIME)
-    # Executable - time_recorder
-    add_executable(time_recorder time_recorder.cpp)
-    target_link_libraries(time_recorder hpe)
-endif()
-
-
-OPTION(GEN_SYN_DATA "Generate head motion recognition synthetic data." ON)
-if(GEN_SYN_DATA)
-    # Executable - time_recorder
-    add_executable(hmr_gen_data hmr_gen_data.cpp)
-    target_link_libraries(hmr_gen_data bfm)
-endif()
