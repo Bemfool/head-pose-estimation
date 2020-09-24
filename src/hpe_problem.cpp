@@ -274,7 +274,9 @@ bool HeadPoseEstimationProblem::solveShapeCoef() {
 	ceres::Problem problem;
 	double *aShapeCoef = m_pModel->getMutableShapeCoef();
 	ceres::CostFunction *costFunction = ShapeCoefReprojErr::create(m_pObservedPoints, m_pModel, m_aLandmarkMap);
-	ceres::CostFunction *regTerm = shape_coef_reg_term::create();
+	ceres::DynamicAutoDiffCostFunction<ShapeCoefRegTerm> *regTerm = ShapeCoefRegTerm::create(m_pModel);
+	regTerm->AddParameterBlock(m_pModel->getNIdPcs());
+	regTerm->SetNumResiduals(m_pModel->getNIdPcs());
 	problem.AddResidualBlock(costFunction, nullptr, aShapeCoef);
 	problem.AddResidualBlock(regTerm, nullptr, aShapeCoef);
 	CERES_INIT(N_CERES_ITERATIONS, N_CERES_THREADS, B_CERES_STDCOUT);
@@ -290,7 +292,9 @@ bool HeadPoseEstimationProblem::solveExprCoef() {
 	ceres::Problem problem;
 	double *aExprCoef = m_pModel->getMutableExprCoef();
 	ceres::CostFunction *costFunction = ExprCoefReprojErr::create(m_pObservedPoints, m_pModel, m_aLandmarkMap);
-	ceres::CostFunction *regTerm = expr_coef_reg_term::create();
+	ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm> *regTerm = ExprCoefRegTerm::create(m_pModel);
+	regTerm->AddParameterBlock(m_pModel->getNExprPcs());
+	regTerm->SetNumResiduals(m_pModel->getNExprPcs());
 	problem.AddResidualBlock(costFunction, nullptr, aExprCoef);
 	problem.AddResidualBlock(regTerm, nullptr, aExprCoef);
 	CERES_INIT(N_CERES_ITERATIONS, N_CERES_THREADS, B_CERES_STDCOUT);

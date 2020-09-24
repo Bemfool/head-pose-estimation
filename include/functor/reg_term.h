@@ -1,66 +1,52 @@
-#pragma once
+#ifndef HPE_REG_TERM_H
+#define HPE_REG_TERM_H
 
 #include "bfm_manager.h"
 #include "ceres/ceres.h"
 #include "db_params.h"
 
-class total_reg_term {
+
+class ShapeCoefRegTerm {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	total_reg_term() {}
-	
-    template<typename T>
-	bool operator () (const T* const shape_coef, const T* const expr_coef, T* residuals) const {
-        for(int i=0; i<N_ID_PC; i++)
-            residuals[i] = T(u) * shape_coef[i];
-        for(int i=0; i<N_EXPR_PC; i++)
-            residuals[i + N_ID_PC] = T(v) * expr_coef[i];
+	ShapeCoefRegTerm(BaselFaceModelManager *pModel) : m_pModel(pModel) {}
+    template<typename _Tp>
+	bool operator () (_Tp const* const* aParams, _Tp* aResiduals) const {
+		const _Tp* aShapeCoefs = aParams[0]; 
+        const unsigned int nIdPcs = m_pModel->getNIdPcs();
+		for(unsigned int iCoef = 0; iCoef < nIdPcs; iCoef++)
+	        aResiduals[iCoef] = _Tp(m_dWeight) * aShapeCoefs[iCoef];
 		return true;
 	}
 
-	static ceres::CostFunction *create() {
-		return (new ceres::AutoDiffCostFunction<total_reg_term, N_ID_PC + N_EXPR_PC, N_ID_PC, N_EXPR_PC>(
-			new total_reg_term()));
+	static ceres::DynamicAutoDiffCostFunction<ShapeCoefRegTerm> *create(BaselFaceModelManager *pModel) {
+		return (new ceres::DynamicAutoDiffCostFunction<ShapeCoefRegTerm>(new ShapeCoefRegTerm(pModel)));
 	}
+
 private:
-	const double u = 0.1;
-	const double v = 1.0;
+	const double m_dWeight = 0.003;
+	BaselFaceModelManager *m_pModel;
 };
 
 
-class shape_coef_reg_term {
+class ExprCoefRegTerm {
 public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	shape_coef_reg_term() {}
-    template<typename T>
-	bool operator () (const T* const shape_coef, T* residuals) const {
-        for(int i=0; i<N_ID_PC; i++)
-	        residuals[i] = T(u) * shape_coef[i];
+	ExprCoefRegTerm(BaselFaceModelManager *pModel) : m_pModel(pModel) {}
+    template<typename _Tp>
+	bool operator () (_Tp const* const* aParams, _Tp* aResiduals) const {
+		const _Tp* aExprCoefs = aParams[0];
+		const unsigned int nExprPcs = m_pModel->getNExprPcs();
+        for(unsigned int iCoef = 0; iCoef < nExprPcs; iCoef++)
+	        aResiduals[iCoef] = _Tp(m_dWeight) * aExprCoefs[iCoef];
 		return true;
 	}
 
-	static ceres::CostFunction *create() {
-		return (new ceres::AutoDiffCostFunction<shape_coef_reg_term, N_ID_PC, N_ID_PC>(
-			new shape_coef_reg_term()));
-	}
-private:
-	const double u = 0.003;
-};
-
-class expr_coef_reg_term {
-public:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	expr_coef_reg_term() {}
-    template<typename T>
-	bool operator () (const T* const expr_coef, T* residuals) const {
-        for(int i=0; i<N_EXPR_PC; i++)
-	        residuals[i] = T(u) * expr_coef[i];
-		return true;
+	static ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm> *create(BaselFaceModelManager *pModel) {
+		return (new ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm>(new ShapeCoefRegTerm(pModel)));
 	}
 
-	static ceres::CostFunction *create() {
-		return (new ceres::AutoDiffCostFunction<expr_coef_reg_term, N_EXPR_PC, N_EXPR_PC>(
-			new expr_coef_reg_term()));
-	}
 private:
-	const double u = 0.01;
+	const double m_dWeight = 0.01;
+	BaselFaceModelManager *m_pModel;
 };
 
 
@@ -86,3 +72,5 @@ private:
 	const double u = 3.0;
 	const double v = 0.001;
 };
+
+#endif // HPE_REG_TERM_H

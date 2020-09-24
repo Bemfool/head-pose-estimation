@@ -65,6 +65,9 @@ include_directories(/home/bemfoo/Repository/glfw/include)
 # stb_image.h
 include_directories(/home/bemfoo/Repository/stb)
 
+# tinyxml2
+include_directories(/home/bemfoo/Repository/tinyxml2)
+
 # Head files
 include_directories(./include)
 
@@ -82,12 +85,13 @@ if(GEN_HPE_SAMPLES)
     target_link_libraries(hpe_webcam hpe)
 
     add_executable(hpe_oneshot_openGL hpe_oneshot_openGL.cpp lib/glad/glad.c)
-    target_link_libraries(hpe_oneshot_openGL GL glfw3 
+    target_link_libraries(hpe_oneshot_openGL GL glfw3
                                              m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor
                                              hpe)
 
     add_executable(hpe_webcam_openGL hpe_webcam_openGL.cpp lib/glad/glad.c)
-    target_link_libraries(hpe_webcam_openGL GL glfw3 
+    target_link_libraries(hpe_webcam_openGL GL glfw3
                                             m Xrandr Xi X11 Xxf86vm pthread dl Xinerama Xcursor
                                             hpe)
+   
 endif()
