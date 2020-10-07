@@ -29,7 +29,7 @@ public:
 
 		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(taExtParams, vecLandmarkBlendshape);
 
-		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
+		for(int iLandmark = 0; iLandmark < N_LANDMARKS; iLandmark++) 
 		{
 			unsigned int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
 			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
@@ -42,7 +42,7 @@ public:
 	}
 
 	static CostFunction *create(FullObjectDetection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) {
-		return (new AutoDiffCostFunction<ShapeCoefReprojErr, N_LANDMARK * 2, N_ID_PC>(
+		return (new AutoDiffCostFunction<ShapeCoefReprojErr, N_LANDMARKS * 2, N_ID_PCS>(
 			new ShapeCoefReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 

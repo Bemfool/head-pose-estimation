@@ -1,4 +1,6 @@
 build/
+.VSCodeCounter/
+
 # Data
 *.dat
 *.h5

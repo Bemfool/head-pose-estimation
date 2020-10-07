@@ -24,7 +24,7 @@ public:
 		const VectorXd vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshape();
 		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(aExtParams, vecLandmarkBlendshape);
 
-		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
+		for(int iLandmark = 0; iLandmark < N_LANDMARKS; iLandmark++) 
 		{
 			int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
 			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
@@ -37,7 +37,7 @@ public:
 
 	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) 
 	{
-		return (new ceres::AutoDiffCostFunction<ExtParamsReprojErr, N_LANDMARK * 2, N_EXT_PARAMS>(
+		return (new ceres::AutoDiffCostFunction<ExtParamsReprojErr, N_LANDMARKS * 2, N_EXT_PARAMS>(
 			new ExtParamsReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 
@@ -67,7 +67,7 @@ public:
 		const VectorXd vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshapeTransformed();
 		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshapeTransformed = bfm_utils::TransPoints(aExtParams, vecLandmarkBlendshape, true);
 
-		for(int iLandmark = 0; iLandmark < N_LANDMARK; iLandmark++) 
+		for(int iLandmark = 0; iLandmark < N_LANDMARKS; iLandmark++) 
 		{
 			int iDlibLandmarkIdx = m_aLandmarkMap[iLandmark];
 			_Tp u = fx * vecLandmarkBlendshapeTransformed(iLandmark * 3) / vecLandmarkBlendshapeTransformed(iLandmark * 3 + 2) + cx;
@@ -77,12 +77,12 @@ public:
 		}
 
 		/* regularialization */
-	    aResiduals[N_LANDMARK * 2]   = _Tp(m_dRotWeight) * aExtParams[0];
-		aResiduals[N_LANDMARK * 2 + 1] = _Tp(m_dRotWeight) * aExtParams[1];
-		aResiduals[N_LANDMARK * 2 + 2] = _Tp(m_dRotWeight) * aExtParams[2];
-		aResiduals[N_LANDMARK * 2 + 3] = _Tp(m_dTranWeight) * aExtParams[3];
-		aResiduals[N_LANDMARK * 2 + 4] = _Tp(m_dTranWeight) * aExtParams[4];
-		aResiduals[N_LANDMARK * 2 + 5] = _Tp(m_dTranWeight) * aExtParams[5];
+	    aResiduals[N_LANDMARKS * 2]   = _Tp(m_dRotWeight) * aExtParams[0];
+		aResiduals[N_LANDMARKS * 2 + 1] = _Tp(m_dRotWeight) * aExtParams[1];
+		aResiduals[N_LANDMARKS * 2 + 2] = _Tp(m_dRotWeight) * aExtParams[2];
+		aResiduals[N_LANDMARKS * 2 + 3] = _Tp(m_dTranWeight) * aExtParams[3];
+		aResiduals[N_LANDMARKS * 2 + 4] = _Tp(m_dTranWeight) * aExtParams[4];
+		aResiduals[N_LANDMARKS * 2 + 5] = _Tp(m_dTranWeight) * aExtParams[5];
 		// print_array(aResiduals+N_LANDMARK*2, 6);
 		
 		return true;
@@ -90,13 +90,13 @@ public:
 
 	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap) 
 	{
-		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARKS * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
 			new LinearizedExtParamsReprojErr(observedPoints, model, aLandmarkMap)));
 	}
 
 	static ceres::CostFunction *create(dlib::full_object_detection *observedPoints, BaselFaceModelManager *model, std::vector<unsigned int> aLandmarkMap, double a, double b) 
 	{
-		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARK * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
+		return (new ceres::AutoDiffCostFunction<LinearizedExtParamsReprojErr, N_LANDMARKS * 2 + N_EXT_PARAMS, N_EXT_PARAMS>(
 			new LinearizedExtParamsReprojErr(observedPoints, model, aLandmarkMap, a, b)));
 	}
 

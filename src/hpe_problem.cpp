@@ -110,7 +110,7 @@ void HeadPoseEstimationProblem::dlt()
 	const double cx = m_pModel->getCx();
 	const double cy = m_pModel->getCy();
 
-	for(int i = 0; i < N_LANDMARK; i++, L += 24)
+	for(int i = 0; i < N_LANDMARKS; i++, L += 24)
 	{
 		double x = m_pObservedPoints->part(i).x(), y = m_pObservedPoints->part(i).y();
 		double X = vecLandmarkBlendshape(i * 3);
