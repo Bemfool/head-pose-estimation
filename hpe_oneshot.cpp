@@ -12,7 +12,6 @@ const std::string DLIB_LANDMARK_DETECTOR_DATA_PATH = "/home/bemfoo/Data/shape_pr
 
 int main(int argc, char** argv)
 {  
-
 	google::InitGoogleLogging(argv[0]);
 
 	// Init head pose estimation problem 

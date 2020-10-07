@@ -164,7 +164,7 @@ bool HeadPoseEstimationProblem::solveExtParams(long mode, double ca, double cb)
 		std::vector<cv::Point3f> out;
 		std::vector<cv::Point2f> in;
 		cv::Mat rvec, tvec;
-		VectorXd vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshape();
+		const VectorXd& vecLandmarkBlendshape = m_pModel->getLandmarkCurrentBlendshape();
 		for(unsigned int iLandmark = 0; iLandmark < 68; iLandmark++) {
 			out.push_back(cv::Point3f(
 				vecLandmarkBlendshape(iLandmark * 3), 
@@ -282,7 +282,7 @@ bool HeadPoseEstimationProblem::solveShapeCoef() {
 	CERES_INIT(N_CERES_ITERATIONS, N_CERES_THREADS, B_CERES_STDCOUT);
 	ceres::Solve(options, &problem, &summary);
 	BFM_DEBUG("%s\n", summary.BriefReport().c_str());
-	m_pModel->genLandmarkFace();
+	m_pModel->genLandmarkBlendshape();
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
 
@@ -300,7 +300,7 @@ bool HeadPoseEstimationProblem::solveExprCoef() {
 	CERES_INIT(N_CERES_ITERATIONS, N_CERES_THREADS, B_CERES_STDCOUT);
 	ceres::Solve(options, &problem, &summary);
 	BFM_DEBUG("%s\n", summary.BriefReport().c_str());
-	m_pModel->genLandmarkFace();
+	m_pModel->genLandmarkBlendshape();
 	return (summary.termination_type == ceres::CONVERGENCE);
 }
 

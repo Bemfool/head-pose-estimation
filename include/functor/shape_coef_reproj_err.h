@@ -20,7 +20,7 @@ public:
 		_Tp fx = _Tp(m_pModel->getFx()), fy = _Tp(m_pModel->getFy());
 		_Tp cx = _Tp(m_pModel->getCx()), cy = _Tp(m_pModel->getCy());
 		
-		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshape = m_pModel->genLandmarkFaceByShape(aShapeCoef);  
+		const Matrix<_Tp, Dynamic, 1> vecLandmarkBlendshape = m_pModel->genLandmarkBlendshapeByShape(aShapeCoef);  
 
 		const double *daExtParams = m_pModel->getExtParams();
         _Tp *taExtParams = new _Tp[N_EXT_PARAMS];

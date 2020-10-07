@@ -41,7 +41,7 @@ public:
 	}
 
 	static ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm> *create(BaselFaceModelManager *pModel) {
-		return (new ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm>(new ShapeCoefRegTerm(pModel)));
+		return (new ceres::DynamicAutoDiffCostFunction<ExprCoefRegTerm>(new ExprCoefRegTerm(pModel)));
 	}
 
 private:
